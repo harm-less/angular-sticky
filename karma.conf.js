@@ -14,21 +14,16 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-			'misc/test-lib/jquery-1.8.2.min.js',
-			'node_modules/angular/angular.js',
-			'node_modules/angular-mocks/angular-mocks.js',
-			'node_modules/angular-sanitize/angular-sanitize.js',
-			'misc/test-lib/helpers.js',
-			'src/**/*.js',
-			'template/**/*.js'
+			'bower_components/jquery/jquery.js',
+			'bower_components/angular/angular.js',
+			'bower_components/angular-mocks/angular-mocks.js',
+			'js/*.js',
+			'tests/*.js'
 		],
 
 
 		// list of files to exclude
-		exclude: [
-			'src/**/index.js',
-			'src/**/docs/*'
-		],
+		exclude: [],
 
 
 		// preprocess matching files before serving them to the browser

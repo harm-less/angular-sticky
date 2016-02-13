@@ -32,7 +32,7 @@ module.exports = function(grunt) {
 						'demo/angular.1.3.12.js',
 						'demo/angular-mocks.1.3.12.js',
 						'angular-tree-control.js',
-						'test/**/*.js'
+						'tests/**/*.js'
 					]
 				}
 			}
@@ -48,15 +48,49 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			options: {
-				livereload: true
+				livereload: true,
+				files: [
+					'js/*.js'
+				]
 			},
 			tests: {
-				files: ['*.js', 'test/**/*.js', '{demo,css,images}/*.*'],
+				files: ['*.js', 'tests/**/*.js', '{demo,css,images}/*.*'],
 				tasks: ['karma:dev:run']
 			},
 			angular3: {
-				files: ['*.js', 'test/**/*.js', '{demo,css,images}/*.*'],
+				files: ['*.js', 'tests/**/*.js', '{demo,css,images}/*.*'],
 				tasks: ['karma:angular3:run']
+			}
+		},
+		uglify: {
+			options: {
+				compress: {
+					warnings: false
+				},
+				mangle: true
+			},
+			demo: {
+				src: [
+					'bower_components/jquery/jquery.js',
+					'bower_components/angular/angular.js',
+					'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+					'bower_components/google-code-prettify/src/prettify.js'
+				],
+				dest: 'demo/vendor.min.js'
+			}
+		},
+		cssmin: {
+			options: {
+				shorthandCompacting: false,
+				roundingPrecision: -1
+			},
+			demo: {
+				files: {
+					'demo/vendor.min.css': [
+						'bower_components/bootstrap/dist/css/bootstrap.css',
+						'bower_components/google-code-prettify/src/prettify.css'
+					]
+				}
 			}
 		},
 		release: {
