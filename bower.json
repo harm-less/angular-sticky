@@ -2,6 +2,10 @@
 	"name": "angular-sticky",
 	"version": "0.0.1",
 	"author": "Harm van der Werf",
+	"keywords": [
+		"angular",
+		"sticky"
+	],
 	"main": [
 		"js/angular-sticky.js"
 	],
