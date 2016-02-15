@@ -28,10 +28,9 @@
 		"karma-jasmine": "~0.3.7",
 		"karma-chrome-launcher": "~0.2.2",
 		"karma-html2js-preprocessor": "~0.1.0",
-		"karma-phantomjs-launcher": "~1.0.0",
+		"karma-phantomjs-launcher": "~0.2.3",
 		"karma-coverage": "~0.5.3",
-		"load-grunt-tasks": "3.4.0",
-		"coveralls": "~2.6.1"
+		"load-grunt-tasks": "3.4.0"
 	},
 	"license": "MIT"
 }
