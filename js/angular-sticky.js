@@ -543,9 +543,8 @@ angular.module('hl-sticky', [])
 			restrict: 'A',
 			transclude: true,
 			replace: true,
-			template: '<div class="vu-sticky" ng-transclude></div>',
+			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
-				console.log('dff');
 				var stickyEl = $element;
 
 				var stickyElementFactory = stickyElementCollection({
