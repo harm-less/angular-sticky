@@ -32,7 +32,7 @@ describe('angular-sticky', function() {
 		body.html('');
 	});
 
-	fdescribe('factory:hlStickyStack', function() {
+	describe('factory:hlStickyStack', function() {
 
 		var hlStickyStack;
 
