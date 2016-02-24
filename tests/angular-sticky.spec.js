@@ -204,13 +204,13 @@ describe('angular-sticky', function() {
 				var stack = hlStickyStack();
 				expect(stack.length()).toBe(2);
 				expect(stack.totalHeightCurrent('top')).toBe(0);
-				$window.pageYOffset = 20;
+				window.pageYOffset = 20;
 				expect(stack.totalHeightCurrent('top')).toBe(0);
-				$window.pageYOffset = 21;
+				window.pageYOffset = 21;
 				expect(stack.totalHeightCurrent('top')).toBe(50);
-				$window.pageYOffset = 90;
+				window.pageYOffset = 90;
 				expect(stack.totalHeightCurrent('top')).toBe(50);
-				$window.pageYOffset = 91;
+				window.pageYOffset = 91;
 				expect(stack.totalHeightCurrent('top')).toBe(110);
 			});
 		});
