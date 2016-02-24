@@ -32,6 +32,19 @@ describe('angular-sticky', function() {
 		body.html('');
 	});
 
+	var scrollEvent = document.createEvent('CustomEvent');
+	scrollEvent.initCustomEvent('scroll', false, false, null);
+
+	function scrollTo(pixels) {
+		var expectedLeft = 0;
+		var expectedTop = pixels;
+
+		$window.document.body.style.minHeight = '9000px';
+		$window.document.body.style.minWidth = '9000px';
+		$window.scrollTo(expectedLeft, expectedTop);
+		$window.dispatchEvent(scrollEvent);
+	}
+
 	describe('factory:hlStickyStack', function() {
 
 		var hlStickyStack;
@@ -204,13 +217,13 @@ describe('angular-sticky', function() {
 				var stack = hlStickyStack();
 				expect(stack.length()).toBe(2);
 				expect(stack.totalHeightCurrent('top')).toBe(0);
-				window.pageYOffset = 20;
+				scrollTo(20);
 				expect(stack.totalHeightCurrent('top')).toBe(0);
-				window.pageYOffset = 21;
+				scrollTo(21);
 				expect(stack.totalHeightCurrent('top')).toBe(50);
-				window.pageYOffset = 90;
+				scrollTo(90);
 				expect(stack.totalHeightCurrent('top')).toBe(50);
-				window.pageYOffset = 91;
+				scrollTo(91);
 				expect(stack.totalHeightCurrent('top')).toBe(110);
 			});
 		});
