@@ -37,10 +37,12 @@ angular.module('hl-sticky', [])
 			$stack.stackName = stackName;
 
 			$stack.add = function (id, values) {
-				stickyZIndex -= 1;
 				values.id = id;
 				values.zIndex = stickyZIndex;
 				stack.push(values);
+				
+				stickyZIndex -= 1;
+				return values;
 			};
 			$stack.get = function (id) {
 				for (var i = 0; i < stack.length; i++) {
@@ -48,6 +50,15 @@ angular.module('hl-sticky', [])
 						return stack[i];
 					}
 				}
+				return false;
+			};
+			$stack.index = function (id) {
+				for (var i = 0; i < stack.length; i++) {
+					if (id == stack[i].id) { // jshint ignore:line
+						return i;
+					}
+				}
+				return -1;
 			};
 			$stack.range = function (start, end) {
 				return stack.slice(start, end);
@@ -66,23 +77,13 @@ angular.module('hl-sticky', [])
 				return stack[stack.length - 1];
 			};
 			$stack.remove = function (id) {
-				stickyZIndex += 1;
-				var idx = -1;
 				for (var i = 0; i < stack.length; i++) {
 					if (id == stack[i].id) { // jshint ignore:line
-						idx = i;
-						break;
+						stickyZIndex += 1;
+						return stack.splice(i, 1)[0];
 					}
 				}
-				return stack.splice(idx, 1)[0];
-			};
-			$stack.index = function (id) {
-				for (var i = 0; i < stack.length; i++) {
-					if (id == stack[i].id) { // jshint ignore:line
-						return i;
-					}
-				}
-				return -1;
+				return false;
 			};
 			$stack.removeTop = function () {
 				return stack.splice(stack.length - 1, 1)[0];
@@ -91,8 +92,12 @@ angular.module('hl-sticky', [])
 				return stack.length;
 			};
 
-			$stack.height = function () {
-
+			$stack.height = function (anchor) {
+				var height = 0;
+				angular.forEach(stack, function(item) {
+					height += item.computedHeight(anchor);
+				});
+				return height;
 			};
 			$stack.totalHeightAt = function (anchor, at) {
 				var atAdjusted = at - 1;
