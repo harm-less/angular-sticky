@@ -10,16 +10,16 @@ module.exports = function(grunt) {
 			},
 			ci: {
 				singleRun: true,
-				preprocessors: {'*.js': 'coverage'},
+				preprocessors: {'js/*': 'coverage'},
 				reporters: ['progress', 'coverage'],
 				coverageReporter: {type: 'lcov'}
 			},
 			ci_travis: {
 				singleRun: true,
-				preprocessors: {'*.js': 'coverage'},
+				preprocessors: {'js/*': 'coverage'},
 				reporters: ['progress', 'coverage'],
 				coverageReporter: {type: 'lcov'},
-				browsers: ['PhantomJS']
+				browsers: ['Chrome_travis_ci']
 			},
 			dev: {
 				background: true
