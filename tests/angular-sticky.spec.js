@@ -32,9 +32,60 @@ describe('angular-sticky', function() {
 		body.html('');
 	});
 
+	beforeEach(function () {
+		jasmine.addMatchers({
+			toBeSticky: function () {
+				return {
+					compare: function (stickyElement, expected) {
+
+						var result = {
+							pass: stickyElement.hasClass('is-sticky')
+						};
+
+						if (result.pass) {
+							result.message = 'Expected element to be sticky';
+						}
+						else {
+							result.message = 'Expected element to be sticky but it isn\'t';
+						}
+
+						return result;
+					}
+				};
+			},
+			toBeInTheViewport: function () {
+				return {
+					compare: function (stickyElement, expected) {
+
+						var boundingBox = stickyElement[0].getBoundingClientRect();
+						var isInViewport = (boundingBox.top + boundingBox.height) > 0;
+
+						var result = {
+							pass: isInViewport
+						};
+
+						if (result.pass) {
+							result.message = 'Expected element to be in the viewport';
+						}
+						else {
+							result.message = 'Expected element to be in the viewport, but it isn\'t';
+						}
+
+						return result;
+					}
+				};
+			}
+		})
+	});
+
+	// create a scroll event that can be picked up by Chromium in Travis CI
 	var scrollEvent = document.createEvent('CustomEvent');
 	scrollEvent.initCustomEvent('scroll', false, false, null);
 
+	/**
+	 * Allows you to scroll the viewport to a certain position in pixels
+	 * @param pixels number The amount of pixels you'd like the viewport to scroll
+	 */
 	function scrollTo(pixels) {
 		var expectedLeft = 0;
 		var expectedTop = pixels;
@@ -43,6 +94,22 @@ describe('angular-sticky', function() {
 		$window.document.body.style.minWidth = '9000px';
 		$window.scrollTo(expectedLeft, expectedTop);
 		$window.dispatchEvent(scrollEvent);
+	}
+
+	/**
+	 * Compiles a HTML string into a DOM element by adding it to the body
+	 * @param element string HTML string
+	 * @param scope Supply a scope if you want
+	 * @returns {IAugmentedJQuery|*}
+	 */
+	function compile(element, scope) {
+		scope = scope ? scope : $rootScope.$new();
+		var el = angular.element(element);
+		body.append(el);
+		$compile(el)(scope);
+		scope.$digest();
+
+		return el;
 	}
 
 	describe('factory:hlStickyStack', function() {
@@ -182,16 +249,6 @@ describe('angular-sticky', function() {
 
 		describe('calculate stack heights', function() {
 
-			function compile(element) {
-				var scope = $rootScope.$new();
-				var el = angular.element(element);
-				body.append(el);
-				$compile(el)(scope);
-				scope.$digest();
-
-				return el;
-			}
-
 			var el;
 			beforeEach(function () {
 				el = compile('<div><div id="before" style="height: 20px;">Before all the sticky bars</div><div hl-sticky style="height: 50px;">Sticky bar 1</div><div id="between" style="height: 20px;">Between all the sticky bars</div><div hl-sticky style="height: 60px;">Sticky bar 2</div><div id="underneath">Underneath all the sticky bars</div></div>');
@@ -225,6 +282,79 @@ describe('angular-sticky', function() {
 				expect(stack.totalHeightCurrent('top')).toBe(50);
 				scrollTo(91);
 				expect(stack.totalHeightCurrent('top')).toBe(110);
+			});
+		});
+	});
+
+	describe('factory:hlStickyElement', function() {
+
+		var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky"></div>';
+
+		var hlStickyElement;
+
+		var element;
+		var stickyElement;
+		var sticky;
+
+		beforeEach(inject(function (_hlStickyElement_) {
+			hlStickyElement = _hlStickyElement_;
+		}));
+
+		function compileSticky(html, options) {
+			element = compile('<div>' + html + '</div>');
+			stickyElement = element.find('#sticky');
+			sticky = hlStickyElement(stickyElement, options);
+		}
+
+		function drawAt(position, hlSticky) {
+			hlSticky = hlSticky ? hlSticky : sticky;
+			scrollTo(position);
+			hlSticky.draw();
+		}
+
+		describe('sticky top', function() {
+			it('should return a hlStickyElement instance and make it sticky', function() {
+				compileSticky(templateStickyElementOffsetSmall);
+
+				drawAt(49);
+				expect(stickyElement).not.toBeSticky();
+
+				drawAt(50);
+				expect(stickyElement).toBeSticky();
+			});
+
+			it('should make it sticky with offset', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					offsetTop: 30
+				});
+
+				drawAt(19);
+				expect(stickyElement).not.toBeSticky();
+
+				drawAt(20);
+				expect(stickyElement).toBeSticky();
+			});
+
+			fit('should stick within container', function() {
+				compileSticky('<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>', {
+					container: 'container'
+				});
+
+				// just before the container begins it should not be sticky
+				drawAt(49);
+				expect(stickyElement).not.toBeSticky();
+
+				// just when the container begins it become sticky
+				drawAt(50);
+				expect(stickyElement).toBeSticky();
+
+				// just before the container ends it should not be sticky
+				drawAt(149);
+				expect(stickyElement).toBeSticky();
+
+				// just when the container is not longer in the viewport, so shouldn't the sticky element
+				drawAt(150);
+				expect(stickyElement).not.toBeInTheViewport();
 			});
 		});
 	});

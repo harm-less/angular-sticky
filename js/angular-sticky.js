@@ -152,8 +152,8 @@ angular.module('hl-sticky', [])
 			var stickyClass = options.stickyClass || 'is-sticky';
 			var bodyClass = options.bodyClass || '';
 			var usePlaceholder = options.usePlaceholder || true;
-			var offsetTop = angular.isString(options.offsetTop) ? parseInt(options.offsetTop.replace(/px;?/, '')) : 0;
-			var offsetBottom = angular.isString(options.offsetBottom) ? parseInt(options.offsetBottom.replace(/px;?/, '')) : 0;
+			var offsetTop = options.offsetTop ? parseInt(options.offsetTop) : 0;
+			var offsetBottom = options.offsetBottom ? parseInt(options.offsetBottom) : 0;
 			var anchor = typeof options.anchor === 'string' ? options.anchor.toLowerCase().trim() : 'top';
 			var container = null;
 			var stack = options.stack || hlStickyStack();
