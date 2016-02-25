@@ -25,6 +25,7 @@
 		"grunt-release": "~0.13.0",
 		"grunt-karma": "~0.12.1",
 		"karma": "~0.13.5",
+		"jasmine-core": "^2.2.0",
 		"karma-jasmine": "~0.1.5",
 		"karma-chrome-launcher": "~0.2.2",
 		"karma-html2js-preprocessor": "~0.1.0",

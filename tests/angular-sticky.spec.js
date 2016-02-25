@@ -37,18 +37,15 @@ describe('angular-sticky', function() {
 			toBeSticky: function () {
 				return {
 					compare: function (stickyElement, expected) {
-
 						var result = {
 							pass: stickyElement.hasClass('is-sticky')
 						};
-
 						if (result.pass) {
 							result.message = 'Expected element to be sticky';
 						}
 						else {
 							result.message = 'Expected element to be sticky but it isn\'t';
 						}
-
 						return result;
 					}
 				};
@@ -56,21 +53,18 @@ describe('angular-sticky', function() {
 			toBeInTheViewport: function () {
 				return {
 					compare: function (stickyElement, expected) {
-
 						var boundingBox = stickyElement[0].getBoundingClientRect();
 						var isInViewport = (boundingBox.top + boundingBox.height) > 0;
 
 						var result = {
 							pass: isInViewport
 						};
-
 						if (result.pass) {
 							result.message = 'Expected element to be in the viewport';
 						}
 						else {
 							result.message = 'Expected element to be in the viewport, but it isn\'t';
 						}
-
 						return result;
 					}
 				};
@@ -335,7 +329,7 @@ describe('angular-sticky', function() {
 				expect(stickyElement).toBeSticky();
 			});
 
-			fit('should stick within container', function() {
+			it('should stick within container', function() {
 				compileSticky('<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>', {
 					container: 'container'
 				});
@@ -348,9 +342,10 @@ describe('angular-sticky', function() {
 				drawAt(50);
 				expect(stickyElement).toBeSticky();
 
-				// just before the container ends it should not be sticky
+				// just before the container ends it should be sticky and in the viewport
 				drawAt(149);
 				expect(stickyElement).toBeSticky();
+				expect(stickyElement).toBeInTheViewport();
 
 				// just when the container is not longer in the viewport, so shouldn't the sticky element
 				drawAt(150);
