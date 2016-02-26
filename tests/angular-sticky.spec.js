@@ -282,7 +282,7 @@ describe('angular-sticky', function() {
 
 	describe('factory:hlStickyElement', function() {
 
-		var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky"></div>';
+		var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky" style="height: 30px;"></div>';
 
 		var hlStickyElement;
 
@@ -310,11 +310,25 @@ describe('angular-sticky', function() {
 			it('should return a hlStickyElement instance and make it sticky', function() {
 				compileSticky(templateStickyElementOffsetSmall);
 
+				var originalStyle = stickyElement.attr('style');
+
+				// just before it get sticky
 				drawAt(49);
+				expect(stickyElement.attr('style')).toEqual(originalStyle);
+				expect(stickyElement.next().length).toBe(0);
 				expect(stickyElement).not.toBeSticky();
 
+				// just at the point it gets sticky
 				drawAt(50);
+				expect(stickyElement.attr('style')).toEqual('height: 30px; width: 9000px; position: fixed; left: 8px; z-index: 1039; margin-top: 0px; top: 0px;');
+				expect(stickyElement.next()[0].outerHTML).toBe('<div style="height: 30px;"></div>');
 				expect(stickyElement).toBeSticky();
+
+				// and back to un-sticky again
+				drawAt(49);
+				expect(stickyElement.attr('style')).toEqual(originalStyle);
+				expect(stickyElement.next().length).toBe(0);
+				expect(stickyElement).not.toBeSticky();
 			});
 
 			it('should make it sticky with offset', function() {
@@ -327,6 +341,39 @@ describe('angular-sticky', function() {
 
 				drawAt(20);
 				expect(stickyElement).toBeSticky();
+			});
+
+			it('should not have a placeholder', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					usePlaceholder: false
+				});
+
+				drawAt(50);
+				expect(stickyElement.next().length).toBe(0);
+
+				// and back to un-sticky again
+				drawAt(49);
+				expect(stickyElement.next().length).toBe(0);
+			});
+
+			it('should make it sticky with custom sticky class', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					stickyClass: 'custom-sticky-class'
+				});
+
+				drawAt(49);
+				expect(stickyElement.hasClass('custom-sticky-class')).toBeFalsy();
+
+				drawAt(50);
+				expect(stickyElement.hasClass('custom-sticky-class')).toBeTruthy();
+			});
+			it('should make it sticky with empty custom sticky class', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					stickyClass: null
+				});
+
+				drawAt(50);
+				expect(stickyElement.hasClass('is-sticky')).toBeTruthy();
 			});
 
 			it('should stick within container', function() {
