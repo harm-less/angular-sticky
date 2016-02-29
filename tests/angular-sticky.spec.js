@@ -6,16 +6,18 @@ describe('angular-sticky', function() {
 	var $compile;
 	var $document;
 	var $window;
+	var $log;
 
 	var body;
 	var bodyNg;
 
 	beforeEach(module('hl-sticky'));
-	beforeEach(inject(function(_$rootScope_, _$compile_, _$document_, _$window_) {
+	beforeEach(inject(function(_$rootScope_, _$compile_, _$document_, _$window_, _$log_) {
 		$rootScope = _$rootScope_;
 		$compile = _$compile_;
 		$document = _$document_;
 		$window = _$window_;
+		$log = _$log_;
 	}));
 
 	beforeEach(function() {
@@ -260,8 +262,8 @@ describe('angular-sticky', function() {
 				expect(stack.totalHeightAt('top', 0)).toBe(0);
 				expect(stack.totalHeightAt('top', 20)).toBe(0);
 				expect(stack.totalHeightAt('top', 21)).toBe(50);
-				expect(stack.totalHeightAt('top', 90)).toBe(50);
-				expect(stack.totalHeightAt('top', 91)).toBe(110);
+				expect(stack.totalHeightAt('top', 40)).toBe(50);
+				expect(stack.totalHeightAt('top', 41)).toBe(110);
 			});
 
 			it('calculate stack height at current position', function() {
@@ -272,9 +274,9 @@ describe('angular-sticky', function() {
 				expect(stack.totalHeightCurrent('top')).toBe(0);
 				scrollTo(21);
 				expect(stack.totalHeightCurrent('top')).toBe(50);
-				scrollTo(90);
+				scrollTo(40);
 				expect(stack.totalHeightCurrent('top')).toBe(50);
-				scrollTo(91);
+				scrollTo(41);
 				expect(stack.totalHeightCurrent('top')).toBe(110);
 			});
 		});
@@ -284,6 +286,7 @@ describe('angular-sticky', function() {
 
 		var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky" style="height: 30px;"></div>';
 		var templateStickyElementWithContainer = '<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>';
+		var templateMultipleStickyElements = '<div><div id="before" style="height: 20px;">Before all the sticky bars</div><div id="sticky" style="height: 50px;">Sticky bar 1</div><div id="between" style="height: 20px;">Between all the sticky bars</div><div id="sticky2" style="height: 60px;">Sticky bar 2</div><div id="underneath">Underneath all the sticky bars</div></div>';
 
 		var hlStickyElement;
 
@@ -330,6 +333,15 @@ describe('angular-sticky', function() {
 				expect(stickyElement.attr('style')).toEqual(originalStyle);
 				expect(stickyElement.next().length).toBe(0);
 				expect(stickyElement).not.toBeSticky();
+			});
+
+			it('should make it sticky with an unknown anchor', function() {
+				var error = spyOn($log, 'error');
+				compileSticky(templateStickyElementOffsetSmall, {
+					anchor: 'unknown'
+				});
+				drawAt(1);
+				expect(error).toHaveBeenCalledTimes(1);
 			});
 
 			it('should make it sticky with offset', function() {
@@ -410,20 +422,59 @@ describe('angular-sticky', function() {
 				expect(stickyElement).not.toBeInTheViewport();
 			});
 
-			xit('should stick with global offset', function() {
+			it('should stick with global offset', function() {
 				compileSticky(templateStickyElementWithContainer);
 
 				var drawOptions = {
 					offset: {
-						top: 100
+						top: 30
 					}
 				};
 
-				drawAt(149, null, drawOptions);
+				drawAt(19, null, drawOptions);
 				expect(stickyElement).not.toBeSticky();
 
-				drawAt(150, null, drawOptions);
+				drawAt(20, null, drawOptions);
 				expect(stickyElement).toBeSticky();
+			});
+
+			it('should stick with global offset when forced redraw is requested', function() {
+				compileSticky(templateStickyElementWithContainer);
+
+				var drawOptions = {
+					offset: {
+						top: 30
+					}
+				};
+
+				drawAt(20, null, drawOptions);
+				expect(stickyElement).toBeSticky();
+
+				// it was already sticky, so a redraw cannot be done because of caching
+				drawOptions.offset.top = null;
+				drawOptions.force = true;
+				drawAt(49, null, drawOptions);
+				expect(stickyElement).not.toBeSticky();
+
+				drawAt(50, null);
+				expect(stickyElement).toBeSticky();
+			});
+
+			it('should handle multiple sticky elements in a stack', function() {
+				compileSticky(templateMultipleStickyElements);
+
+				var stickyElement2 = element.find('#sticky2');
+				var sticky2 = hlStickyElement(stickyElement2);
+
+				drawAt(39);
+				drawAt(39, sticky2);
+				expect(stickyElement).toBeSticky();
+				expect(stickyElement2).not.toBeSticky();
+
+				drawAt(40);
+				drawAt(40, sticky2);
+				expect(stickyElement).toBeSticky();
+				expect(stickyElement2).toBeSticky();
 			});
 		});
 	});

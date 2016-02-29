@@ -37,6 +37,9 @@ angular.module('hl-sticky', [])
 			$stack.stackName = stackName;
 
 			$stack.add = function (id, values) {
+				if (!angular.isString(id) || id === '') {
+					id = $stack.length();
+				}
 				values.id = id;
 				values.zIndex = stickyZIndex;
 				stack.push(values);
@@ -147,7 +150,6 @@ angular.module('hl-sticky', [])
 			var documentEl = $document[0].documentElement;
 
 			// attributes
-			var id = options.id;
 			var stickyMediaQuery = angular.isDefined(options.mediaQuery) ? options.mediaQuery : false;
 			var stickyClass = angular.isString(options.stickyClass) && options.stickyClass !== '' ? options.stickyClass : 'is-sticky';
 			var usePlaceholder = angular.isDefined(options.usePlaceholder) ? options.usePlaceholder : true;
@@ -170,6 +172,9 @@ angular.module('hl-sticky', [])
 			//
 			function stickyLinePositionTop() {
 				if (isSticking) {
+					var test = _getTopOffset(nativeEl) - offsetTop - _stackOffsetTop();
+					var test2 = _getTopOffset(nativeEl);
+					var test3 = _stackOffsetTop();
 					return stickyLineTop;
 				}
 				stickyLineTop = _getTopOffset(nativeEl) - offsetTop - _stackOffsetTop();
@@ -204,7 +209,6 @@ angular.module('hl-sticky', [])
 			function sticksAtPositionTop(scrolledDistance) {
 				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
 				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
-
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
@@ -268,7 +272,7 @@ angular.module('hl-sticky', [])
 				element.removeClass(stickyClass);
 
 				// reset the original css we might have changed when the object was sticky
-				element.attr('style', initialCSS.style || '');
+				element.attr('style', initialCSS.style);
 
 
 				// if a placeholder was used, remove it from the DOM
@@ -332,13 +336,14 @@ angular.module('hl-sticky', [])
 				return 0;
 			}
 
-			// add element to the sticky stack
-			stack.add(id, {
+			// add element to the sticky stack and save the id
+			var stackItem = stack.add(options.id, {
 				width: elementWidth,
 				height: elementHeight,
 				computedHeight: computedHeight,
 				sticksAtPosition: sticksAtPosition
 			});
+			var id = stackItem.id;
 
 			var $api = {};
 
@@ -352,7 +357,7 @@ angular.module('hl-sticky', [])
 				}
 
 				// for resizing, we simply unstick the element and restick it using the render method
-				if (drawOptions.resize === true) {
+				if (drawOptions.force === true) {
 					unstickElement();
 				}
 				render();
@@ -424,7 +429,7 @@ angular.module('hl-sticky', [])
 				}
 
 				function resize() {
-					draw({resize: true});
+					draw({force: true});
 				}
 				function draw(drawOptions) {
 					angular.forEach($stickyElement.collections, function(collection) {
@@ -533,7 +538,7 @@ angular.module('hl-sticky', [])
 					parent: $attrs.collectionParent
 				});
 				stickyElementFactory.addElement(stickyEl, {
-					id: $attrs.sticky || $attrs.stickyId,
+					id: $attrs.hlSticky || $attrs.stickyId,
 					mediaQuery: $attrs.mediaQuery,
 					stickyClass: $attrs.stickyClass,
 					usePlaceholder: $attrs.usePlaceholder,
