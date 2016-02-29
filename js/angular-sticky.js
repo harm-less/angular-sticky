@@ -376,7 +376,7 @@ angular.module('hl-sticky', [])
 
 	.constant('DefaultStickyStackName', 'default-stack')
 
-	.provider('stickyElementCollection', function() {
+	.provider('hlStickyElementCollection', function() {
 
 		var $$count = 0;
 
@@ -485,12 +485,6 @@ angular.module('hl-sticky', [])
 						var deletedElement = trackedElements.splice(toDelete, 1)[0];
 						deletedElement.stickyElement.destroy();
 
-						// if the collection is empty, remove it from the factory
-						if (trackedElements.length === 0) {
-							delete $stickyElement.collections[collectionName];
-							destroy();
-						}
-
 						return deletedElement;
 					};
 
@@ -512,6 +506,18 @@ angular.module('hl-sticky', [])
 						});
 					};
 
+					$sticky.destroy = function(force) {
+						// if the collection is empty or force is set to true, remove it from the service
+						if (force === true || trackedElements.length === 0) {
+							delete $stickyElement.collections[collectionName];
+							destroy();
+						}
+					};
+
+					$sticky.trackedElements = function() {
+						return trackedElements;
+					};
+
 					// use new element collection
 					$stickyElement.collections[collectionName] = $sticky;
 					init();
@@ -524,7 +530,7 @@ angular.module('hl-sticky', [])
 		return $stickyElement;
 	})
 
-	.directive('hlSticky', function($log, $window, $document, stickyElementCollection) {
+	.directive('hlSticky', function($log, $window, $document, hlStickyElementCollection) {
 		return {
 			restrict: 'A',
 			transclude: true,
@@ -533,7 +539,7 @@ angular.module('hl-sticky', [])
 			link: function($scope, $element, $attrs) {
 				var stickyEl = $element;
 
-				var stickyElementFactory = stickyElementCollection({
+				var stickyElementFactory = hlStickyElementCollection({
 					name: $attrs.collection,
 					parent: $attrs.collectionParent
 				});
@@ -551,6 +557,7 @@ angular.module('hl-sticky', [])
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
 					stickyElementFactory.removeElement(stickyEl);
+					stickyElementFactory.destroy();
 				});
 			}
 		};

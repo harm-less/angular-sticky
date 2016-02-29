@@ -11,7 +11,12 @@ describe('angular-sticky', function() {
 	var body;
 	var bodyNg;
 
+	var hlStickyElementCollectionProvider;
+
 	beforeEach(module('hl-sticky'));
+	beforeEach(module(function (_hlStickyElementCollectionProvider_) {
+		hlStickyElementCollectionProvider = _hlStickyElementCollectionProvider_;
+	}));
 	beforeEach(inject(function(_$rootScope_, _$compile_, _$document_, _$window_, _$log_) {
 		$rootScope = _$rootScope_;
 		$compile = _$compile_;
@@ -107,6 +112,18 @@ describe('angular-sticky', function() {
 
 		return el;
 	}
+
+	function objectSize(obj) {
+		var size = 0, key;
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) size++;
+		}
+		return size;
+	}
+
+	var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky" style="height: 30px;"></div>';
+	var templateStickyElementWithContainer = '<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>';
+	var templateMultipleStickyElements = '<div><div id="before" style="height: 20px;">Before all the sticky bars</div><div id="sticky" style="height: 50px;">Sticky bar 1</div><div id="between" style="height: 20px;">Between all the sticky bars</div><div id="sticky2" style="height: 60px;">Sticky bar 2</div><div id="underneath">Underneath all the sticky bars</div></div>';
 
 	describe('factory:hlStickyStack', function() {
 
@@ -283,10 +300,6 @@ describe('angular-sticky', function() {
 	});
 
 	describe('factory:hlStickyElement', function() {
-
-		var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky" style="height: 30px;"></div>';
-		var templateStickyElementWithContainer = '<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>';
-		var templateMultipleStickyElements = '<div><div id="before" style="height: 20px;">Before all the sticky bars</div><div id="sticky" style="height: 50px;">Sticky bar 1</div><div id="between" style="height: 20px;">Between all the sticky bars</div><div id="sticky2" style="height: 60px;">Sticky bar 2</div><div id="underneath">Underneath all the sticky bars</div></div>';
 
 		var hlStickyElement;
 
@@ -477,6 +490,89 @@ describe('angular-sticky', function() {
 				expect(stickyElement2).toBeSticky();
 			});
 		});
+	});
+
+	fdescribe('provider:hlStickyElementCollection', function() {
+
+		var hlStickyElementCollection;
+		var DefaultStickyStackName;
+
+		beforeEach(inject(function (_hlStickyElementCollection_, _DefaultStickyStackName_) {
+			hlStickyElementCollection = _hlStickyElementCollection_;
+			DefaultStickyStackName = _DefaultStickyStackName_;
+		}));
+
+		it('creates a new instance of hlStickyElementCollection()', function() {
+			var element = compile(templateStickyElementOffsetSmall);
+
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
+
+			var collection = hlStickyElementCollection();
+			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements();
+			expect(trackedElements.length).toBe(0);
+
+			collection.addElement(element);
+			expect(trackedElements.length).toBe(1);
+
+			collection.removeElement(element);
+			expect(trackedElements.length).toBe(0);
+
+			collection.addElement(element);
+			expect(trackedElements.length).toBe(1);
+
+			collection.removeElement('sticky');
+			expect(trackedElements.length).toBe(0);
+		});
+
+		it('creates a new instance of hlStickyElementCollection() and reuse it', function() {
+			var element = compile(templateStickyElementOffsetSmall);
+
+			var collection = hlStickyElementCollection();
+			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements();
+
+			collection.addElement(element);
+			expect(trackedElements.length).toBe(1);
+
+			hlStickyElementCollection().addElement(element);
+		});
+
+		it('creates multiple instances of hlStickyElementCollection()', function() {
+			var collection1 = hlStickyElementCollection({
+				name: 'instance1'
+			});
+			var collection2 = hlStickyElementCollection({
+				name: 'instance2'
+			});
+			expect(objectSize(hlStickyElementCollectionProvider.collections)).toBe(2);
+			
+			collection1.destroy();
+			collection2.destroy();
+			expect(objectSize(hlStickyElementCollectionProvider.collections)).toBe(0);
+		});
+
+		it('destroys an instance of hlStickyElementCollection()', function() {
+			var element = compile(templateStickyElementOffsetSmall);
+
+			var collection = hlStickyElementCollection();
+			collection.addElement(element);
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements().length).toBe(1);
+
+			collection.destroy();
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements().length).toBe(1);
+
+			collection.removeElement(element);
+			collection.destroy();
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
+
+			// force the destruction
+			collection = hlStickyElementCollection();
+			collection.addElement(element);
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements().length).toBe(1);
+
+			collection.destroy(true);
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
+		});
+
 	});
 
 	describe('directive:hlSticky', function() {
