@@ -1,0 +1,35 @@
+.demo-sticky-collections .above-menu {
+  min-height: 50px;
+}
+.demo-sticky-collections .menu {
+  background-color: #595959;
+  min-height: 100px;
+}
+.demo-sticky-collections .between-menu {
+  background-color: #666666;
+  min-height: 50px;
+}
+.demo-sticky-collections .sub-menu {
+  background-color: #737373;
+  min-height: 100px;
+}
+.demo-sticky-collections .sidebar {
+  min-height: 2000px;
+  background-color: #666;
+}
+.demo-sticky-collections .sidebar .sidebar-space {
+  min-height: 50px;
+}
+.demo-sticky-collections .sidebar .sidebar-sticky {
+  min-height: 50px;
+}
+.demo-sticky-collections .sidebar .sidebar-sticky.sidebar-sticky-first {
+  background-color: #4d4d4d;
+}
+.demo-sticky-collections .sidebar .sidebar-sticky.sidebar-sticky-second {
+  background-color: #333333;
+}
+.demo-sticky-collections .content {
+  min-height: 2000px;
+  background-color: #b3b3b3;
+}

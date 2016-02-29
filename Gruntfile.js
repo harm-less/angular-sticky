@@ -60,6 +60,17 @@ module.exports = function(grunt) {
 			angular3: {
 				files: ['*.js', 'tests/**/*.js', '{demo,css,images}/*.*'],
 				tasks: ['karma:angular3:run']
+			},
+			demoLess: {
+				files: ['demo/less/**/*.less'],
+				tasks: ['less:demo']
+			}
+		},
+		less: {
+			demo: {
+				files: {
+					'demo/demo.css': 'demo/less/demo.less'
+				}
 			}
 		},
 		uglify: {

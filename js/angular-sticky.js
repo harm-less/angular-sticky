@@ -204,6 +204,7 @@ angular.module('hl-sticky', [])
 			function sticksAtPositionTop(scrolledDistance) {
 				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
 				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
+
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
@@ -299,18 +300,17 @@ angular.module('hl-sticky', [])
 			}
 
 			function _stackOffset(anchor) {
-
 				var stickIndex = stack.index(id);
-
 				var extraOffset = 0;
 
-				if (stickIndex > 0 || (anchor === 'top' && globalOffset.top > 0)) {
+				if (anchor === 'top' && globalOffset.top > 0) {
 					extraOffset += globalOffset.top;
+				}
+				if (stickIndex > 0) {
 					stack.range(0, stickIndex).forEach(function (stick) {
 						extraOffset += stick.computedHeight(anchor);
 					});
 				}
-
 				return extraOffset;
 			}
 			function _stackOffsetTop() { return _stackOffset('top'); }

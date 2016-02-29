@@ -283,6 +283,7 @@ describe('angular-sticky', function() {
 	describe('factory:hlStickyElement', function() {
 
 		var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky" style="height: 30px;"></div>';
+		var templateStickyElementWithContainer = '<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>';
 
 		var hlStickyElement;
 
@@ -300,10 +301,10 @@ describe('angular-sticky', function() {
 			sticky = hlStickyElement(stickyElement, options);
 		}
 
-		function drawAt(position, hlSticky) {
+		function drawAt(position, hlSticky, drawOptions) {
 			hlSticky = hlSticky ? hlSticky : sticky;
 			scrollTo(position);
-			hlSticky.draw();
+			hlSticky.draw(drawOptions);
 		}
 
 		describe('sticky top', function() {
@@ -377,7 +378,7 @@ describe('angular-sticky', function() {
 			});
 
 			it('should stick within container', function() {
-				compileSticky('<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>', {
+				compileSticky(templateStickyElementWithContainer, {
 					container: 'container'
 				});
 
@@ -397,6 +398,32 @@ describe('angular-sticky', function() {
 				// just when the container is not longer in the viewport, so shouldn't the sticky element
 				drawAt(150);
 				expect(stickyElement).not.toBeInTheViewport();
+			});
+
+			it('should stick within container given as an element', function() {
+				compileSticky(templateStickyElementWithContainer, {
+					container: element.find('#container')[0]
+				});
+
+				// just before the container begins it should not be sticky
+				drawAt(150);
+				expect(stickyElement).not.toBeInTheViewport();
+			});
+
+			xit('should stick with global offset', function() {
+				compileSticky(templateStickyElementWithContainer);
+
+				var drawOptions = {
+					offset: {
+						top: 100
+					}
+				};
+
+				drawAt(149, null, drawOptions);
+				expect(stickyElement).not.toBeSticky();
+
+				drawAt(150, null, drawOptions);
+				expect(stickyElement).toBeSticky();
 			});
 		});
 	});

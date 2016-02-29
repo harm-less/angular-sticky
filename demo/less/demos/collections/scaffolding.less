@@ -1,0 +1,40 @@
+.demo-sticky-collections {
+	.above-menu {
+		min-height: 50px;
+	}
+	.menu {
+		background-color: lighten(#000, 35%);
+		min-height: 100px;
+	}
+	.between-menu {
+		background-color: lighten(#000, 40%);
+		min-height: 50px;
+	}
+	.sub-menu {
+		background-color: lighten(#000, 45%);
+		min-height: 100px;
+	}
+
+	.sidebar {
+		min-height: 2000px;
+		background-color: @color-grey;
+
+		.sidebar-space {
+			min-height: 50px;
+		}
+		.sidebar-sticky {
+			min-height: 50px;
+
+			&.sidebar-sticky-first {
+				background-color: darken(@color-grey, 10%);
+			}
+			&.sidebar-sticky-second {
+				background-color: darken(@color-grey, 20%);
+			}
+		}
+	}
+	.content {
+		min-height: 2000px;
+		background-color: lighten(#000, 70%);
+	}
+}
