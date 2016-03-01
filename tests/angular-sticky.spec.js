@@ -492,12 +492,16 @@ describe('angular-sticky', function() {
 		});
 	});
 
-	fdescribe('provider:hlStickyElementCollection', function() {
+	describe('provider:hlStickyElementCollection', function() {
+
+		var $timeout;
 
 		var hlStickyElementCollection;
 		var DefaultStickyStackName;
 
-		beforeEach(inject(function (_hlStickyElementCollection_, _DefaultStickyStackName_) {
+		beforeEach(inject(function (_$timeout_, _hlStickyElementCollection_, _DefaultStickyStackName_) {
+			$timeout = _$timeout_;
+
 			hlStickyElementCollection = _hlStickyElementCollection_;
 			DefaultStickyStackName = _DefaultStickyStackName_;
 		}));
@@ -544,7 +548,7 @@ describe('angular-sticky', function() {
 				name: 'instance2'
 			});
 			expect(objectSize(hlStickyElementCollectionProvider.collections)).toBe(2);
-			
+
 			collection1.destroy();
 			collection2.destroy();
 			expect(objectSize(hlStickyElementCollectionProvider.collections)).toBe(0);
@@ -573,6 +577,52 @@ describe('angular-sticky', function() {
 			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
 		});
 
+		it('triggers a resize event so the collection gets rendered', function() {
+			var element = compile('<div>' + templateStickyElementOffsetSmall + '</div>');
+			var stickyElement = element.find('#sticky');
+
+			var collection = hlStickyElementCollection();
+			collection.addElement(stickyElement);
+
+			window.dispatchEvent(new Event('resize'));
+			$timeout.flush();
+
+			scrollTo(49);
+			expect(stickyElement).not.toBeSticky();
+
+			scrollTo(50);
+			expect(stickyElement).toBeSticky();
+		});
+
+		it('triggers a resize event with a collection parent', function() {
+			var element = compile('<div>' + templateMultipleStickyElements + '</div>');
+			var stickyElement = element.find('#sticky');
+			var stickyElement2 = element.find('#sticky2');
+
+			var parentName = 'parent';
+
+			var collection1 = hlStickyElementCollection({
+				name: parentName
+			});
+			collection1.addElement(stickyElement);
+
+			var collection2 = hlStickyElementCollection({
+				name: 'child',
+				parent: parentName
+			});
+			collection2.addElement(stickyElement2);
+
+			window.dispatchEvent(new Event('resize'));
+			$timeout.flush();
+
+			scrollTo(39);
+			expect(stickyElement).toBeSticky();
+			expect(stickyElement2).not.toBeSticky();
+
+			scrollTo(40);
+			expect(stickyElement).toBeSticky();
+			expect(stickyElement2).toBeSticky();
+		});
 	});
 
 	describe('directive:hlSticky', function() {

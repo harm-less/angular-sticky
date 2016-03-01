@@ -407,7 +407,7 @@ angular.module('hl-sticky', [])
 					// bind events
 					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay, {leading: false});
 					windowEl.on('resize', throttledResize);
-					windowEl.on('scroll', draw);
+					windowEl.on('scroll', drawEvent);
 
 					unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
 					unbindIncludeContentLoaded = $rootScope.$on('$includeContentLoaded', throttledResize);
@@ -423,11 +423,14 @@ angular.module('hl-sticky', [])
 
 					// unbind events
 					windowEl.off('resize', throttledResize);
-					windowEl.off('scroll', draw);
+					windowEl.off('scroll', drawEvent);
 					unbindViewContentLoaded();
 					unbindIncludeContentLoaded();
 				}
 
+				function drawEvent() {
+					draw();
+				}
 				function resize() {
 					draw({force: true});
 				}
@@ -494,11 +497,9 @@ angular.module('hl-sticky', [])
 							var parentStack = hlStickyStack({
 								name: options.parent
 							});
-							if (parentStack) {
-								_drawOptions.offset = {
-									top: parentStack.totalHeightCurrent('top')
-								};
-							}
+							_drawOptions.offset = {
+								top: parentStack.totalHeightCurrent('top')
+							};
 						}
 						angular.extend(_drawOptions, drawOptions || {});
 						angular.forEach(trackedElements, function(element) {
