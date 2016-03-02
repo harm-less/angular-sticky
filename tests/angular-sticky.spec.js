@@ -640,6 +640,9 @@ describe('angular-sticky', function() {
 		it('passes the simplest directive usage', function () {
 			var element = compile('<div hl-sticky></div>');
 			expect(element.hasClass('hl-sticky')).toBe(true);
+
+			scope.$destroy();
+			expect(objectSize(hlStickyElementCollectionProvider.collections)).toBe(0);
 		});
 	});
 });
