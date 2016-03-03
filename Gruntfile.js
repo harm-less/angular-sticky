@@ -106,7 +106,8 @@ module.exports = function(grunt) {
 		},
 		release: {
 			options: {
-				additionalFiles: ['bower.json']
+				additionalFiles: ['bower.json'],
+				indentation: '\t'
 			}
 		}
 	});

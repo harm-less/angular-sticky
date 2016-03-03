@@ -10,10 +10,11 @@
     "js/angular-sticky.js"
   ],
   "ignore": [
+    "/.*",
     "Gruntfile.js",
-    "package.json",
-    "test",
-    "karma.conf.js"
+    "karma.conf.js",
+    "demo/less",
+    "tests"
   ],
   "dependencies": {
     "angular": "~1.4.0"
