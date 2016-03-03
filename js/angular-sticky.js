@@ -165,7 +165,7 @@ angular.module('hl-sticky', [])
 
 			// initial style
 			var initialCSS = {
-				style: element.attr('style')
+				style: element.attr('style') || ''
 			};
 
 			// Methods
@@ -270,7 +270,6 @@ angular.module('hl-sticky', [])
 
 				// reset the original css we might have changed when the object was sticky
 				element.attr('style', initialCSS.style);
-
 
 				// if a placeholder was used, remove it from the DOM
 				if (placeholder) {

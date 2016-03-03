@@ -122,6 +122,7 @@ describe('angular-sticky', function() {
 	}
 
 	var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky" style="height: 30px;"></div>';
+	var templateStickyElementOffsetSmallWithoutStyle = '<div style="height: 50px;"></div><div id="sticky"></div>';
 	var templateStickyElementWithContainer = '<div style="height: 50px;"></div><div id="container" style="height: 100px"><div id="sticky" style="height: 20px;"></div></div>';
 	var templateMultipleStickyElements = '<div><div id="before" style="height: 20px;">Before all the sticky bars</div><div id="sticky" style="height: 50px;">Sticky bar 1</div><div id="between" style="height: 20px;">Between all the sticky bars</div><div id="sticky2" style="height: 60px;">Sticky bar 2</div><div id="underneath">Underneath all the sticky bars</div></div>';
 
@@ -355,6 +356,17 @@ describe('angular-sticky', function() {
 				});
 				drawAt(1);
 				expect(error).toHaveBeenCalledTimes(1);
+			});
+
+			fit('should make it sticky with an unknown anchor', function() {
+				compileSticky(templateStickyElementOffsetSmallWithoutStyle);
+
+				drawAt(50);
+				expect(stickyElement).toBeSticky();
+
+				drawAt(49);
+				expect(stickyElement).not.toBeSticky();
+				expect(stickyElement.attr('style')).toBe('');
 			});
 
 			it('should make it sticky with offset', function() {
