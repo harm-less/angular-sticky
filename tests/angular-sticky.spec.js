@@ -347,6 +347,8 @@ describe('angular-sticky', function() {
 				expect(stickyElement.attr('style')).toEqual(originalStyle);
 				expect(stickyElement.next().length).toBe(0);
 				expect(stickyElement).not.toBeSticky();
+
+				sticky.destroy();
 			});
 
 			it('should make it sticky with an unknown anchor', function() {
@@ -358,7 +360,7 @@ describe('angular-sticky', function() {
 				expect(error).toHaveBeenCalledTimes(1);
 			});
 
-			fit('should make it sticky with an unknown anchor', function() {
+			it('should make it sticky with an unknown anchor', function() {
 				compileSticky(templateStickyElementOffsetSmallWithoutStyle);
 
 				drawAt(50);

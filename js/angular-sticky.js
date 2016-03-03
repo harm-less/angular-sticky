@@ -360,9 +360,7 @@ angular.module('hl-sticky', [])
 			};
 
 			$api.destroy = function() {
-				if (placeholder) {
-					placeholder.remove();
-				}
+				unstickElement();
 				stack.remove(id);
 			};
 
