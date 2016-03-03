@@ -335,6 +335,8 @@ describe('angular-sticky', function() {
 				expect(stickyElement.attr('style')).toEqual(originalStyle);
 				expect(stickyElement.next().length).toBe(0);
 				expect(stickyElement).not.toBeSticky();
+				// shouldn't have any notion of a place holder
+				expect(stickyElement.next().length).toBe(0);
 
 				// just at the point it gets sticky
 				drawAt(50);
@@ -342,13 +344,35 @@ describe('angular-sticky', function() {
 				expect(stickyElement.next()[0].outerHTML).toBe('<div style="height: 30px;"></div>');
 				expect(stickyElement).toBeSticky();
 
+				var placeHolder = stickyElement.next();
+				// place holder should now be findable
+				expect(placeHolder).not.toBeFalsy();
+				placeHolder.attr('id', 'placeHolder');
+
 				// and back to un-sticky again
 				drawAt(49);
 				expect(stickyElement.attr('style')).toEqual(originalStyle);
 				expect(stickyElement.next().length).toBe(0);
+				expect(element.has('#placeHolder').size()).toBe(0);
 				expect(stickyElement).not.toBeSticky();
+			});
+
+			it('should destroy a hlStickyElement properly', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					stickyClass: 'custom-sticky-class'
+				});
+
+				var originalStyle = stickyElement.attr('style');
+
+				drawAt(50);
+				expect(stickyElement.next().length).toBe(1);
+				expect(stickyElement.hasClass('custom-sticky-class')).toBeTruthy();
 
 				sticky.destroy();
+				// place holder is removed
+				expect(stickyElement.next().length).toBe(0);
+				expect(stickyElement.attr('style')).toEqual(originalStyle);
+				expect(stickyElement.hasClass('custom-sticky-class')).toBeFalsy();
 			});
 
 			it('should make it sticky with an unknown anchor', function() {
