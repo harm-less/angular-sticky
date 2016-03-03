@@ -1,29 +1,29 @@
 {
-	"name": "angular-sticky",
-	"version": "0.0.1",
-	"author": "Harm van der Werf",
-	"keywords": [
-		"angular",
-		"sticky"
-	],
-	"main": [
-		"js/angular-sticky.js"
-	],
-	"ignore": [
-		"Gruntfile.js",
-		"package.json",
-		"test",
-		"karma.conf.js"
-	],
-	"dependencies": {
-		"angular": "~1.4.0"
-	},
-	"devDependencies": {
-		"underscore": "~1.8.3",
-		"jquery": "~2.0.3",
-		"bootstrap": "~3.3.6",
-		"angular-mocks": "~1.4.4",
-		"angular-bootstrap": "~1.1.2",
-		"google-code-prettify": "1.0.1"
-	}
+  "name": "angular-sticky",
+  "version": "1.0.1",
+  "author": "Harm van der Werf",
+  "keywords": [
+    "angular",
+    "sticky"
+  ],
+  "main": [
+    "js/angular-sticky.js"
+  ],
+  "ignore": [
+    "Gruntfile.js",
+    "package.json",
+    "test",
+    "karma.conf.js"
+  ],
+  "dependencies": {
+    "angular": "~1.4.0"
+  },
+  "devDependencies": {
+    "underscore": "~1.8.3",
+    "jquery": "~2.0.3",
+    "bootstrap": "~3.3.6",
+    "angular-mocks": "~1.4.4",
+    "angular-bootstrap": "~1.1.2",
+    "google-code-prettify": "1.0.1"
+  }
 }

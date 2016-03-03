@@ -1,38 +1,38 @@
 {
-	"author": "https://github.com/harm-less",
-	"name": "angular-sticky",
-	"version": "1.0.0",
-	"homepage": "https://github.com/harm-less/angular-sticky",
-	"files": [
-		"js/"
-	],
-	"main": "js/angular-sticky.js",
-	"scripts": {
-		"test": "grunt test"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/harm-less/angular-sticky.git"
-	},
-	"dependencies": {},
-	"devDependencies": {
-		"grunt": "~0.4.5",
-		"grunt-contrib-less": "~1.2.0",
-		"grunt-contrib-uglify": "~0.11.1",
-		"grunt-contrib-cssmin": "~0.14.0",
-		"grunt-contrib-watch": "~0.6.1",
-		"grunt-contrib-connect": "~0.11.2",
-		"grunt-bower": "~0.21.0",
-		"grunt-release": "~0.13.0",
-		"grunt-karma": "~0.12.1",
-		"karma": "~0.13.5",
-		"jasmine-core": "^2.2.0",
-		"karma-jasmine": "~0.3.7",
-		"karma-chrome-launcher": "~0.2.2",
-		"karma-html2js-preprocessor": "~0.1.0",
-		"karma-phantomjs-launcher": "~0.1.1",
-		"karma-coverage": "~0.5.3",
-		"load-grunt-tasks": "3.4.0"
-	},
-	"license": "MIT"
+  "author": "https://github.com/harm-less",
+  "name": "angular-sticky",
+  "version": "1.0.1",
+  "homepage": "https://github.com/harm-less/angular-sticky",
+  "files": [
+    "js/"
+  ],
+  "main": "js/angular-sticky.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harm-less/angular-sticky.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-less": "~1.2.0",
+    "grunt-contrib-uglify": "~0.11.1",
+    "grunt-contrib-cssmin": "~0.14.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-connect": "~0.11.2",
+    "grunt-bower": "~0.21.0",
+    "grunt-release": "~0.13.0",
+    "grunt-karma": "~0.12.1",
+    "karma": "~0.13.5",
+    "jasmine-core": "^2.2.0",
+    "karma-jasmine": "~0.3.7",
+    "karma-chrome-launcher": "~0.2.2",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.1",
+    "karma-coverage": "~0.5.3",
+    "load-grunt-tasks": "3.4.0"
+  },
+  "license": "MIT"
 }
