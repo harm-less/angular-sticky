@@ -54,11 +54,11 @@ module.exports = function(grunt) {
 				]
 			},
 			tests: {
-				files: ['*.js', 'tests/**/*.js', '{demo,css,images}/*.*'],
+				files: ['tests/**/*.js', '{demo,css,images}/*.*'],
 				tasks: ['karma:dev:run']
 			},
 			angular3: {
-				files: ['*.js', 'tests/**/*.js', '{demo,css,images}/*.*'],
+				files: ['tests/**/*.js', '{demo,css,images}/*.*'],
 				tasks: ['karma:angular3:run']
 			},
 			demoLess: {

@@ -172,9 +172,6 @@ angular.module('hl-sticky', [])
 			//
 			function stickyLinePositionTop() {
 				if (isSticking) {
-					var test = _getTopOffset(nativeEl) - offsetTop - _stackOffsetTop();
-					var test2 = _getTopOffset(nativeEl);
-					var test3 = _stackOffsetTop();
 					return stickyLineTop;
 				}
 				stickyLineTop = _getTopOffset(nativeEl) - offsetTop - _stackOffsetTop();
@@ -212,7 +209,7 @@ angular.module('hl-sticky', [])
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset;
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
 				var scrollBottom = scrolledDistance + window.innerHeight;
 				return scrollBottom <= stickyLinePositionBottom();
 			}

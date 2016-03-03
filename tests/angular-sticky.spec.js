@@ -622,6 +622,14 @@ describe('angular-sticky', function() {
 			scrollTo(40);
 			expect(stickyElement).toBeSticky();
 			expect(stickyElement2).toBeSticky();
+
+			scrollTo(39);
+			expect(stickyElement).toBeSticky();
+			expect(stickyElement2).not.toBeSticky();
+
+			scrollTo(19);
+			expect(stickyElement).not.toBeSticky();
+			expect(stickyElement2).not.toBeSticky();
 		});
 	});
 

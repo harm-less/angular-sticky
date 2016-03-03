@@ -22,6 +22,7 @@
 }
 .demo-sticky-collections .sidebar .sidebar-sticky {
   min-height: 50px;
+  color: #fff;
 }
 .demo-sticky-collections .sidebar .sidebar-sticky.sidebar-sticky-first {
   background-color: #4d4d4d;
