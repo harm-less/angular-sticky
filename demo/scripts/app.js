@@ -50,10 +50,18 @@ var demo = angular.module('demo', [
 		$urlRouterProvider.otherwise("/");
 
 		$stateProvider
-			.state('demo', {
+			.state('demo-container', {
+				abstract: true,
+				templateUrl: '/demo/views/demo.html',
+				controller: 'DemoCtrl'
+			})
+			.state('demo-container.demo', {
 				url: '/demo/:name',
 				templateUrl: function (stateParams) {
 					return '/demo/demos/' + stateParams.name + '.html';
+				},
+				controller: function($rootScope, $stateParams) {
+					$rootScope.demoName = $stateParams.name;
 				}
 			});
 	})
@@ -61,6 +69,22 @@ var demo = angular.module('demo', [
 	.config(['$controllerProvider', function($controllerProvider) {
 		$controllerProvider.allowGlobals();
 	}])
+
+	.controller('DemoCtrl', function($rootScope, $scope, $stateParams, $savedContent) {
+		$scope.hasContent = function(content) {
+			return $savedContent[content];
+		};
+
+		$rootScope.$watch('demoName', function(newName) {
+			$scope.demoName = newName;
+		});
+	})
+
+	.filter('firstToUpperCase', function(s) {
+		return function(str) {
+			return s.firstToUpperCase(str);
+		};
+	})
 
 
 	.factory("$savedContent", function() {
@@ -70,8 +94,7 @@ var demo = angular.module('demo', [
 		return {
 			restrict: "A",
 			compile: function($element, $attrs) {
-				var content = $element.html();
-				$savedContent[$attrs.saveContent] = content;
+				$savedContent[$attrs.saveContent] = $element.html();
 			}
 		}
 	})
@@ -82,8 +105,9 @@ var demo = angular.module('demo', [
 				return function($scope, $element, $attrs) {
 					var content = $savedContent[$attrs.applyContent];
 					var lang = $attrs.highlightLang;
-					if (lang == "html")
+					if (lang == "html") {
 						content = escapeHtml(content);
+					}
 					content = trimIndent(content);
 					var pre = prettyPrintOne(content, lang);
 					$element.html(pre);

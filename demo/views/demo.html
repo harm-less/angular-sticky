@@ -1,0 +1,29 @@
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-lg-12">
+			<h2>Demo: {{demoName | firstToUpperCase}}</h2>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-lg-7">
+			<uib-tabset>
+				<uib-tab heading="Markup" ng-if="hasContent('html');">
+					<pre class="code" apply-content="html" highlight-lang="html"></pre>
+				</uib-tab>
+				<uib-tab heading="JavaScript" ng-if="hasContent('js');">
+					<pre class="code" apply-content="js" highlight-lang="js"></pre>
+				</uib-tab>
+				<uib-tab heading="CSS" ng-if="hasContent('css');">
+					<pre class="code" apply-content="css" highlight-lang="css"></pre>
+				</uib-tab>
+			</uib-tabset>
+		</div>
+		<div class="col-lg-5">
+			<div ui-view class="demo-sticky-{{demoName}}"></div>
+		</div>
+	</div>
+</div>
