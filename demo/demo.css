@@ -1,3 +1,7 @@
+.well-demo {
+  overflow: scroll;
+  max-height: 500px;
+}
 .demo-sticky-collections .above-menu {
   min-height: 50px;
 }

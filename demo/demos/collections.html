@@ -1,0 +1,81 @@
+<div class="row">
+	<uib-tabset>
+		<uib-tab heading="Markup">
+			<pre class="code" apply-content="classic-html" highlight-lang="html"></pre>
+		</uib-tab>
+		<uib-tab heading="JavaScript">
+			<pre class="code" apply-content="classic-js" highlight-lang="js"></pre>
+		</uib-tab>
+	</uib-tabset>
+</div>
+
+<script save-content="classic-js">
+	function Collections($scope) {
+		$scope.stickySidebars = [
+			{
+				name: 'First'
+			},
+			{
+				name: 'Second'
+			},
+			{
+				name: 'Third'
+			}
+		];
+	}
+</script>
+
+<div>
+	<div class="demo-sticky-collections" save-content="classic-html" ng-controller="Collections">
+		<header id="header">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="above-menu">Above menu</div>
+					</div>
+					<div class="col-lg-12">
+						<div hl-sticky="menu" container="header" collection="header" class="menu">Menu (should be sticky to the top but is container within the header only)</div>
+					</div>
+					<div class="col-lg-12">
+						<div class="between-menu">Adds some space between the menu and the sub-menu to see if they will stick together when you scroll down enough</div>
+					</div>
+					<div class="col-lg-12">
+						<div hl-sticky="sub-menu" collection="header" class="sub-menu">Sub-menu (should be sticky to the top but underneath the menu)</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<section>
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-4">
+						<div class="sidebar">
+							<div class="sidebar-space">
+								Some space
+							</div>
+							<div hl-sticky="sidebar-first" collection="sidebar" offset-top="20" collection-parent="header" class="sidebar-sticky sidebar-sticky-first">
+								First sticky sidebar element with 20 pixels offset
+							</div>
+							<div ng-repeat="sticky in stickySidebars track by $index">
+								<div class="sidebar-space">
+									Some space
+								</div>
+								<div hl-sticky="sidebar-sticky-{{$index}}" collection="sidebar" collection-parent="header" class="sidebar-sticky sidebar-sticky-second">
+									Sticky sidebar element
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-8">
+						<div class="content">
+							<div hl-sticky="content-header" collection="content" collection-parent="header" class="">
+								Content header (should appear at the top of the content section)
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</div>

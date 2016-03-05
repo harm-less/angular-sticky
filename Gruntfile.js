@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 			options: {
 				livereload: true,
 				port: 9000,
-				open: 'http://localhost:<%= connect.options.port %>/index.html'
+				open: 'http://localhost:<%= connect.options.port %>/'
 			},
 			server: {
 			}
@@ -54,12 +54,8 @@ module.exports = function(grunt) {
 				]
 			},
 			tests: {
-				files: ['tests/**/*.js', '{demo,css,images}/*.*'],
+				files: ['tests/**/*.js'],
 				tasks: ['karma:dev:run']
-			},
-			angular3: {
-				files: ['tests/**/*.js', '{demo,css,images}/*.*'],
-				tasks: ['karma:angular3:run']
 			},
 			demoLess: {
 				files: ['demo/less/**/*.less'],
@@ -84,6 +80,7 @@ module.exports = function(grunt) {
 				src: [
 					'bower_components/jquery/jquery.js',
 					'bower_components/angular/angular.js',
+					'bower_components/angular-ui-router/release/angular-ui-router.js',
 					'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
 					'bower_components/google-code-prettify/src/prettify.js'
 				],
@@ -106,6 +103,9 @@ module.exports = function(grunt) {
 		},
 		release: {
 			options: {
+				beforeBump: [
+
+				],
 				additionalFiles: ['bower.json'],
 				indentation: '\t'
 			}
@@ -124,7 +124,18 @@ module.exports = function(grunt) {
 		}
 	});
 
+	grunt.registerTask('build', [
+		'uglify:demo',
+		'less:demo',
+		'cssmin:demo'
+	]);
+
 	//to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
-	grunt.registerTask('serve', ['karma:dev', 'connect', 'watch']);
+	grunt.registerTask('serve', [
+		'build',
+		'karma:dev',
+		'connect',
+		'watch'
+	]);
 	grunt.registerTask('angular3', ['karma:angular3', 'watch:angular3']);
 };

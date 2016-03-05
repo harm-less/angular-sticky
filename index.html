@@ -5,13 +5,15 @@
 	<script src="/demo/vendor.min.js"></script>
 
 	<link  href="/demo/vendor.min.css" rel="stylesheet" type="text/css">
-	<script src="/demo/script.js"></script>
+
+	<script src="/demo/scripts/app.js"></script>
+	<script src="/demo/scripts/utils/strings.js"></script>
 
 	<script src="js/angular-sticky.js"></script>
 
 	<link rel="stylesheet" href="/demo/demo.css" />
 </head>
-<body ng-app="demo" ng-controller="DemoCtrl" style="min-height: 2000px;">
+<body ng-app="demo" style="min-height: 2000px;">
 <a href="https://github.com/harm-less/angular-sticky"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
 <div class="header">
 	<div class="head-container">
@@ -20,58 +22,7 @@
 	</div>
 </div>
 
-<div class="demo-sticky-collections">
-	<header id="header">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="above-menu">Above menu</div>
-				</div>
-				<div class="col-lg-12">
-					<div hl-sticky="menu" container="header" collection="header" class="menu">Menu (should be sticky to the top but is container within the header only)</div>
-				</div>
-				<div class="col-lg-12">
-					<div class="between-menu">Adds some space between the menu and the sub-menu to see if they will stick together when you scroll down enough</div>
-				</div>
-				<div class="col-lg-12">
-					<div hl-sticky="sub-menu" collection="header" class="sub-menu">Sub-menu (should be sticky to the top but underneath the menu)</div>
-				</div>
-			</div>
-		</div>
-	</header>
-
-	<section>
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-4">
-					<div class="sidebar">
-						<div class="sidebar-space">
-							Some space
-						</div>
-						<div hl-sticky="sidebar-first" collection="sidebar" offset-top="20" collection-parent="header" class="sidebar-sticky sidebar-sticky-first">
-							First sticky sidebar element with 20 pixels offset
-						</div>
-						<div ng-repeat="sticky in stickySidebars track by $index">
-							<div class="sidebar-space">
-								Some space
-							</div>
-							<div hl-sticky="sidebar-sticky-{{$index}}" collection="sidebar" collection-parent="header" class="sidebar-sticky sidebar-sticky-second">
-								Sticky sidebar element
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-8">
-					<div class="content">
-						<div hl-sticky="content-header" collection="content" collection-parent="header" class="">
-							Content header (should appear at the top of the content section)
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-</div>
+<div ui-view></div>
 
 <div hl-sticky>
 	fgfd
