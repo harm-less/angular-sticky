@@ -1,23 +1,33 @@
-.demo-sticky-collections {
-	.above-menu {
-		min-height: 50px;
+.demo-collections {
+
+	#header {
+		color: #fff;
 	}
+
 	.menu {
-		background-color: lighten(#000, 35%);
+		background-color: lighten(#000, 25%);
 		min-height: 100px;
+		.box-shadow(0 10px 20px 0px rgba(0,0,0, .4));
+		z-index: 1;
+		padding: 10px;
 	}
 	.between-menu {
-		background-color: lighten(#000, 40%);
+		background-color: lighten(#000, 30%);
 		min-height: 50px;
+		padding: 10px;
 	}
 	.sub-menu {
-		background-color: lighten(#000, 45%);
+		background-color: lighten(#000, 35%);
 		min-height: 100px;
+		.box-shadow(0 10px 20px 0px rgba(0,0,0, .4));
+		z-index: 2;
+		padding: 10px;
+		opacity: .95;
 	}
 
 	.sidebar {
 		min-height: 2000px;
-		background-color: @color-grey;
+		background-color: lighten(#000, 40%);
 
 		.sidebar-space {
 			min-height: 50px;
@@ -36,6 +46,16 @@
 	}
 	.content {
 		min-height: 2000px;
-		background-color: lighten(#000, 70%);
+
+		.sticky-content-title {
+			background: #f1f1f1;
+			border-top: 1px solid #ccc;
+			border-bottom: 1px solid #ccc;
+			padding: 20px 0;
+
+			h3 {
+				margin: 0;
+			}
+		}
 	}
 }
