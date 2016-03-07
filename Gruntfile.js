@@ -60,9 +60,21 @@ module.exports = function(grunt) {
 			demoLess: {
 				files: ['demo/less/**/*.less'],
 				tasks: ['less:demo']
+			},
+			bootstrapLess: {
+				files: ['demo/less/bootstrap/**/*.less'],
+				tasks: ['less:bootstrap']
 			}
 		},
+		clean: {
+			build: [".tmp"]
+		},
 		less: {
+			bootstrap: {
+				files: {
+					'.tmp/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
+				}
+			},
 			demo: {
 				files: {
 					'demo/demo.css': 'demo/less/demo.less'
@@ -95,8 +107,14 @@ module.exports = function(grunt) {
 			demo: {
 				files: {
 					'demo/vendor.min.css': [
-						'bower_components/bootstrap/dist/css/bootstrap.css',
 						'bower_components/google-code-prettify/src/prettify.css'
+					]
+				}
+			},
+			bootstrap: {
+				files: {
+					'demo/bootstrap.min.css': [
+						'.tmp/bootstrap.css'
 					]
 				}
 			}
@@ -104,7 +122,7 @@ module.exports = function(grunt) {
 		release: {
 			options: {
 				beforeBump: [
-
+					'build'
 				],
 				additionalFiles: ['bower.json'],
 				indentation: '\t'
@@ -125,6 +143,9 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask('build', [
+		'clean:build',
+		'less:bootstrap',
+		'cssmin:bootstrap',
 		'uglify:demo',
 		'less:demo',
 		'cssmin:demo'

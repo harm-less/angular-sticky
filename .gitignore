@@ -14,6 +14,7 @@ lib-cov
 # test coverage files
 .coverage/
 
+.tmp
 node_modules
 bower_components
 npm-debug.log
