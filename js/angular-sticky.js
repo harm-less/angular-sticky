@@ -250,7 +250,7 @@ angular.module('hl-sticky', [])
 					'width': elementWidth() + 'px',
 					'position': 'fixed',
 					'left': rect.left + 'px',
-					'z-index': stack.get(id).zIndex
+					'z-index': stack.get(id).zIndex - (globalOffset.zIndex || 0)
 				};
 
 				css['margin-' + anchor] = 0;
@@ -326,7 +326,8 @@ angular.module('hl-sticky', [])
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
-					var containerBottom = !hasScrollDistance ? container.getBoundingClientRect().bottom : (container.offsetTop + container.getBoundingClientRect().height) - scrolledDistance;
+					var containerRect = container.getBoundingClientRect();
+					var containerBottom = !hasScrollDistance ? containerRect.bottom : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
 					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight()) - containerBottom);
 				}
 				return 0;
@@ -350,6 +351,7 @@ angular.module('hl-sticky', [])
 					// setting global offsets added to the local offsets of the sticky element
 					globalOffset.top = offset.top || 0;
 					globalOffset.bottom = offset.bottom || 0;
+					globalOffset.zIndex = offset.zIndex;
 				}
 
 				// for resizing, we simply unstick the element and restick it using the render method
@@ -492,7 +494,8 @@ angular.module('hl-sticky', [])
 								name: options.parent
 							});
 							_drawOptions.offset = {
-								top: parentStack.totalHeightCurrent('top')
+								top: parentStack.totalHeightCurrent('top'),
+								zIndex: parentStack.length()
 							};
 						}
 						angular.extend(_drawOptions, drawOptions || {});
