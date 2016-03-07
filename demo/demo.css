@@ -44,3 +44,6 @@
   min-height: 2000px;
   background-color: #b3b3b3;
 }
+.navbar {
+  margin-bottom: 0;
+}
