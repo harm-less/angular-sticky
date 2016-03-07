@@ -326,7 +326,8 @@ angular.module('hl-sticky', [])
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
-					var containerBottom = !hasScrollDistance ? container.getBoundingClientRect().bottom : (container.offsetTop + container.getBoundingClientRect().height) - scrolledDistance;
+					var containerRect = container.getBoundingClientRect();
+					var containerBottom = !hasScrollDistance ? containerRect.bottom : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
 					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight()) - containerBottom);
 				}
 				return 0;
