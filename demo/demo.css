@@ -1,36 +1,75 @@
-.demo-sticky-collections .above-menu {
+.fork-label img {
+  z-index: 2000;
+}
+.hl-sticky {
+  position: relative;
+}
+.well-demo {
+  overflow: scroll;
+  max-height: 500px;
+}
+.text-angular-dark {
+  color: #a6120d;
+}
+.demo-collections #header,
+.demo-collections .sidebar {
+  color: #ccc;
+}
+.demo-collections #header .sticky,
+.demo-collections #header .between-headers {
+  -webkit-box-shadow: 0 10px 20px 0px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 20px 0px rgba(0, 0, 0, 0.4);
+  min-height: 100px;
+  padding: 10px;
+}
+.demo-collections #header .sticky-header1 {
+  background-color: #404040;
+  z-index: 1;
+}
+.demo-collections #header .between-headers {
+  background-color: #4d4d4d;
   min-height: 50px;
 }
-.demo-sticky-collections .menu {
+.demo-collections #header .sticky-header2 {
   background-color: #595959;
-  min-height: 100px;
+  z-index: 2;
+  opacity: .95;
 }
-.demo-sticky-collections .between-menu {
-  background-color: #666666;
-  min-height: 50px;
-}
-.demo-sticky-collections .sub-menu {
-  background-color: #737373;
-  min-height: 100px;
-}
-.demo-sticky-collections .sidebar {
-  min-height: 2000px;
-  background-color: #666;
-}
-.demo-sticky-collections .sidebar .sidebar-space {
-  min-height: 50px;
-}
-.demo-sticky-collections .sidebar .sidebar-sticky {
-  min-height: 50px;
+.demo-collections .sticky b {
   color: #fff;
 }
-.demo-sticky-collections .sidebar .sidebar-sticky.sidebar-sticky-first {
-  background-color: #4d4d4d;
-}
-.demo-sticky-collections .sidebar .sidebar-sticky.sidebar-sticky-second {
-  background-color: #333333;
-}
-.demo-sticky-collections .content {
+.demo-collections .content,
+.demo-collections .sidebar {
   min-height: 2000px;
-  background-color: #b3b3b3;
+}
+.demo-collections .sidebar {
+  background-color: #666666;
+}
+.demo-collections .sidebar .sidebar-space {
+  padding: 10px;
+}
+.demo-collections .sidebar .sticky {
+  background-color: #4d4d4d;
+  min-height: 100px;
+  padding: 10px;
+  color: #ccc;
+}
+.demo-collections .content {
+  padding: 10px 0;
+}
+.demo-collections .content .sticky-content-title {
+  background: #f1f1f1;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 20px 0;
+}
+.demo-collections .content .sticky-content-title h3 {
+  margin: 0;
+}
+.navbar {
+  margin-bottom: 0;
+}
+.btn-group-call-to-action .glyphicon {
+  top: .1em;
+  margin-right: 5px;
 }

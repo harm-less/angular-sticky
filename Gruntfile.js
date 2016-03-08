@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 			options: {
 				livereload: true,
 				port: 9000,
-				open: 'http://localhost:<%= connect.options.port %>/index.html'
+				open: 'http://localhost:<%= connect.options.port %>/'
 			},
 			server: {
 			}
@@ -54,19 +54,35 @@ module.exports = function(grunt) {
 				]
 			},
 			tests: {
-				files: ['tests/**/*.js', '{demo,css,images}/*.*'],
+				files: ['tests/**/*.js'],
 				tasks: ['karma:dev:run']
-			},
-			angular3: {
-				files: ['tests/**/*.js', '{demo,css,images}/*.*'],
-				tasks: ['karma:angular3:run']
 			},
 			demoLess: {
 				files: ['demo/less/**/*.less'],
 				tasks: ['less:demo']
+			},
+			bootstrapLess: {
+				files: ['demo/less/bootstrap/**/*.less'],
+				tasks: ['less:bootstrap']
 			}
 		},
+		copy: {
+			bootstrap: {
+				expand: true,
+				cwd: 'bower_components/bootstrap/fonts/',
+				src: '**',
+				dest: 'demo/fonts/'
+			}
+		},
+		clean: {
+			build: [".tmp"]
+		},
 		less: {
+			bootstrap: {
+				files: {
+					'.tmp/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
+				}
+			},
 			demo: {
 				files: {
 					'demo/demo.css': 'demo/less/demo.less'
@@ -84,6 +100,7 @@ module.exports = function(grunt) {
 				src: [
 					'bower_components/jquery/jquery.js',
 					'bower_components/angular/angular.js',
+					'bower_components/angular-ui-router/release/angular-ui-router.js',
 					'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
 					'bower_components/google-code-prettify/src/prettify.js'
 				],
@@ -98,14 +115,23 @@ module.exports = function(grunt) {
 			demo: {
 				files: {
 					'demo/vendor.min.css': [
-						'bower_components/bootstrap/dist/css/bootstrap.css',
 						'bower_components/google-code-prettify/src/prettify.css'
+					]
+				}
+			},
+			bootstrap: {
+				files: {
+					'demo/bootstrap.min.css': [
+						'.tmp/bootstrap.css'
 					]
 				}
 			}
 		},
 		release: {
 			options: {
+				beforeBump: [
+					'build'
+				],
 				additionalFiles: ['bower.json'],
 				indentation: '\t'
 			}
@@ -124,7 +150,22 @@ module.exports = function(grunt) {
 		}
 	});
 
+	grunt.registerTask('build', [
+		'clean:build',
+		'copy:bootstrap',
+		'less:bootstrap',
+		'cssmin:bootstrap',
+		'uglify:demo',
+		'less:demo',
+		'cssmin:demo'
+	]);
+
 	//to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
-	grunt.registerTask('serve', ['karma:dev', 'connect', 'watch']);
+	grunt.registerTask('serve', [
+		'build',
+		'karma:dev',
+		'connect',
+		'watch'
+	]);
 	grunt.registerTask('angular3', ['karma:angular3', 'watch:angular3']);
 };
