@@ -47,9 +47,14 @@ var demo = angular.module('demo', [
 
 	.config(function($stateProvider, $urlRouterProvider){
 
-		$urlRouterProvider.otherwise("/");
+		$urlRouterProvider.otherwise('/');
 
 		$stateProvider
+			.state('home', {
+				url: '/',
+				templateUrl: '/demo/views/home.html',
+				controller: 'HomeController'
+			})
 			.state('demo-container', {
 				abstract: true,
 				templateUrl: '/demo/views/demo.html',
@@ -63,6 +68,11 @@ var demo = angular.module('demo', [
 				controller: function($rootScope, $stateParams) {
 					$rootScope.demoName = $stateParams.name;
 				}
+			})
+			.state('about', {
+				url: '/about',
+				templateUrl: '/demo/views/about.html',
+				controller: 'AboutController'
 			});
 	})
 
@@ -70,7 +80,11 @@ var demo = angular.module('demo', [
 		$controllerProvider.allowGlobals();
 	}])
 
-	.controller('DemoCtrl', function($rootScope, $scope, $stateParams, $savedContent) {
+	.controller('HomeController', function($scope) {
+
+	})
+
+	.controller('DemoCtrl', function($rootScope, $scope, $sce, $stateParams, $savedContent) {
 		$scope.hasContent = function(content) {
 			return $savedContent[content];
 		};
@@ -78,6 +92,18 @@ var demo = angular.module('demo', [
 		$rootScope.$watch('demoName', function(newName) {
 			$scope.demoName = newName;
 		});
+		$scope.$on('$stateChangeSuccess', function() {
+			console.log($savedContent);
+			$scope.content = {};
+			angular.forEach($savedContent, function(content, contentName) {
+				console.log(content, contentName);
+				$scope.content[contentName] = $sce.trustAsHtml(content);
+			});
+		});
+	})
+
+	.controller('AboutController', function($scope) {
+
 	})
 
 	.filter('firstToUpperCase', function(s) {
@@ -88,7 +114,7 @@ var demo = angular.module('demo', [
 
 
 	.factory("$savedContent", function() {
-		return [];
+		return {};
 	})
 	.directive("saveContent", function($savedContent) {
 		return {

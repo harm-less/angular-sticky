@@ -66,6 +66,14 @@ module.exports = function(grunt) {
 				tasks: ['less:bootstrap']
 			}
 		},
+		copy: {
+			bootstrap: {
+				expand: true,
+				cwd: 'bower_components/bootstrap/fonts/',
+				src: '**',
+				dest: 'demo/fonts/'
+			}
+		},
 		clean: {
 			build: [".tmp"]
 		},
@@ -144,6 +152,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('build', [
 		'clean:build',
+		'copy:bootstrap',
 		'less:bootstrap',
 		'cssmin:bootstrap',
 		'uglify:demo',

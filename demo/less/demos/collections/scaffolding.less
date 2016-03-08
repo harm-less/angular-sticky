@@ -1,51 +1,59 @@
 .demo-collections {
 
-	#header {
-		color: #fff;
+	#header, .sidebar {
+		color: #ccc;
 	}
 
-	.menu {
-		background-color: lighten(#000, 25%);
-		min-height: 100px;
-		.box-shadow(0 10px 20px 0px rgba(0,0,0, .4));
-		z-index: 1;
-		padding: 10px;
+	#header {
+		.sticky, .between-headers {
+			.box-shadow(0 10px 20px 0px rgba(0,0,0, .4));
+			min-height: 100px;
+			padding: 10px;
+		}
+
+		.sticky-header1 {
+			background-color: lighten(#000, 25%);
+			z-index: 1;
+		}
+
+		.between-headers {
+			background-color: lighten(#000, 30%);
+			min-height: 50px;
+		}
+
+		.sticky-header2 {
+			background-color: lighten(#000, 35%);
+			z-index: 2;
+			opacity: .95;
+		}
 	}
-	.between-menu {
-		background-color: lighten(#000, 30%);
-		min-height: 50px;
-		padding: 10px;
+
+	.sticky {
+		b {
+			color: #fff;
+		}
 	}
-	.sub-menu {
-		background-color: lighten(#000, 35%);
-		min-height: 100px;
-		.box-shadow(0 10px 20px 0px rgba(0,0,0, .4));
-		z-index: 2;
-		padding: 10px;
-		opacity: .95;
+
+	.content, .sidebar {
+		min-height: 2000px;
 	}
 
 	.sidebar {
-		min-height: 2000px;
 		background-color: lighten(#000, 40%);
 
 		.sidebar-space {
-			min-height: 50px;
+			padding: 10px;
 		}
-		.sidebar-sticky {
-			min-height: 50px;
-			color: #fff;
 
-			&.sidebar-sticky-first {
-				background-color: darken(@color-grey, 10%);
-			}
-			&.sidebar-sticky-second {
-				background-color: darken(@color-grey, 20%);
-			}
+		.sticky {
+			background-color: darken(@color-grey, 10%);
+			min-height: 100px;
+			padding: 10px;
+			color: #ccc;
 		}
 	}
 	.content {
-		min-height: 2000px;
+		padding: 10px 0;
 
 		.sticky-content-title {
 			background: #f1f1f1;
