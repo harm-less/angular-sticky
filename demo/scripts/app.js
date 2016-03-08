@@ -52,18 +52,18 @@ var demo = angular.module('demo', [
 		$stateProvider
 			.state('home', {
 				url: '/',
-				templateUrl: '/demo/views/home.html',
+				templateUrl: 'demo/views/home.html',
 				controller: 'HomeController'
 			})
 			.state('demo-container', {
 				abstract: true,
-				templateUrl: '/demo/views/demo.html',
+				templateUrl: 'demo/views/demo.html',
 				controller: 'DemoCtrl'
 			})
 			.state('demo-container.demo', {
 				url: '/demo/:name',
 				templateUrl: function (stateParams) {
-					return '/demo/demos/' + stateParams.name + '.html';
+					return 'demo/demos/' + stateParams.name + '.html';
 				},
 				controller: function($rootScope, $stateParams) {
 					$rootScope.demoName = $stateParams.name;
@@ -71,7 +71,7 @@ var demo = angular.module('demo', [
 			})
 			.state('about', {
 				url: '/about',
-				templateUrl: '/demo/views/about.html',
+				templateUrl: 'demo/views/about.html',
 				controller: 'AboutController'
 			});
 	})
