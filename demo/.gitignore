@@ -1,5 +1,4 @@
 # files moved and created to make sure the demo works
-!scripts/
 scripts/src/
 fonts/
 *.js
