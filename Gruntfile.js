@@ -26,11 +26,13 @@ module.exports = function(grunt) {
 			}
 		},
 		connect: {
-			options: {
-				livereload: true,
-				port: 9000,
-				open: 'http://localhost:<%= connect.options.port %>/',
-				base: 'demo'
+			serve: {
+				options: {
+					livereload: true,
+					port: 9000,
+					open: 'http://localhost:<%= connect.serve.options.port %>/',
+					base: 'demo'
+				}
 			}
 		},
 		watch: {
