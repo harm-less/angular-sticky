@@ -64,16 +64,16 @@ module.exports = function(grunt) {
 				expand: true,
 				cwd: 'js/',
 				src: '**',
-				dest: 'demo/scripts/'
+				dest: 'demo/scripts/src/'
 			}
 		},
 		clean: {
-			build: [".tmp"]
+			build: [".grunt/assets"]
 		},
 		less: {
 			bootstrap: {
 				files: {
-					'.tmp/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
+					'.grunt/assets/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
 				}
 			},
 			demo: {
@@ -115,7 +115,7 @@ module.exports = function(grunt) {
 			bootstrap: {
 				files: {
 					'demo/bootstrap.min.css': [
-						'.tmp/bootstrap.css'
+						'.grunt/assets/bootstrap.css'
 					]
 				}
 			}
@@ -130,15 +130,17 @@ module.exports = function(grunt) {
 			}
 		},
 		'gh-pages': {
-			options: {
-				base: 'demo'
-			},
-			src: [
-				'*',
-				'scripts/**/*',
-				'fonts/**/*',
-				'views/**/*'
-			]
+			demo: {
+				options: {
+					base: 'demo'
+				},
+				src: [
+					'*',
+					'scripts/**/*',
+					'fonts/**/*',
+					'views/**/*'
+				]
+			}
 		}
 	});
 
@@ -154,6 +156,7 @@ module.exports = function(grunt) {
 		}
 	});
 
+	// builds the demo app
 	grunt.registerTask('build', [
 		'clean:build',
 		'copy:bootstrap',
@@ -165,11 +168,17 @@ module.exports = function(grunt) {
 		'cssmin:demo'
 	]);
 
-	//to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
+	// to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
 	grunt.registerTask('serve', [
 		'build',
 		'karma:dev',
 		'connect',
 		'watch'
+	]);
+
+	// builds and pushes the demo to the gh-pages branch
+	grunt.registerTask('github-pages-update', [
+		'build',
+		'gh-pages:demo'
 	]);
 };
