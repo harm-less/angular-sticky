@@ -11,10 +11,13 @@ lib-cov
 .DS_Store
 .idea
 
+# package managers files
+node_modules/
+bower_components/
+npm-debug.log
+
 # test coverage files
 .coverage/
 
-.tmp
-node_modules
-bower_components
-npm-debug.log
+# grunt temp files created by grunt-gh-pages and the demo assets
+.grunt/

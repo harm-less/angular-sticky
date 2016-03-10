@@ -23,27 +23,14 @@ module.exports = function(grunt) {
 			},
 			dev: {
 				background: true
-			},
-			angular3: {
-				background: true,
-				options: {
-					files: [
-						'bower_components/jquery/jquery.js',
-						'demo/angular.1.3.12.js',
-						'demo/angular-mocks.1.3.12.js',
-						'angular-tree-control.js',
-						'tests/**/*.js'
-					]
-				}
 			}
 		},
 		connect: {
 			options: {
 				livereload: true,
 				port: 9000,
-				open: 'http://localhost:<%= connect.options.port %>/'
-			},
-			server: {
+				open: 'http://localhost:<%= connect.options.port %>/',
+				base: 'demo'
 			}
 		},
 		watch: {
@@ -72,15 +59,21 @@ module.exports = function(grunt) {
 				cwd: 'bower_components/bootstrap/fonts/',
 				src: '**',
 				dest: 'demo/fonts/'
+			},
+			srcToDemo: {
+				expand: true,
+				cwd: 'js/',
+				src: '**',
+				dest: 'demo/scripts/src/'
 			}
 		},
 		clean: {
-			build: [".tmp"]
+			build: [".grunt/assets"]
 		},
 		less: {
 			bootstrap: {
 				files: {
-					'.tmp/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
+					'.grunt/assets/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
 				}
 			},
 			demo: {
@@ -122,7 +115,7 @@ module.exports = function(grunt) {
 			bootstrap: {
 				files: {
 					'demo/bootstrap.min.css': [
-						'.tmp/bootstrap.css'
+						'.grunt/assets/bootstrap.css'
 					]
 				}
 			}
@@ -134,6 +127,19 @@ module.exports = function(grunt) {
 				],
 				additionalFiles: ['bower.json'],
 				indentation: '\t'
+			}
+		},
+		'gh-pages': {
+			demo: {
+				options: {
+					base: 'demo'
+				},
+				src: [
+					'*',
+					'scripts/**/*',
+					'fonts/**/*',
+					'views/**/*'
+				]
 			}
 		}
 	});
@@ -150,22 +156,29 @@ module.exports = function(grunt) {
 		}
 	});
 
+	// builds the demo app
 	grunt.registerTask('build', [
 		'clean:build',
 		'copy:bootstrap',
 		'less:bootstrap',
 		'cssmin:bootstrap',
+		'copy:srcToDemo',
 		'uglify:demo',
 		'less:demo',
 		'cssmin:demo'
 	]);
 
-	//to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
+	// to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
 	grunt.registerTask('serve', [
 		'build',
 		'karma:dev',
 		'connect',
 		'watch'
 	]);
-	grunt.registerTask('angular3', ['karma:angular3', 'watch:angular3']);
+
+	// builds and pushes the demo to the gh-pages branch
+	grunt.registerTask('github-pages-update', [
+		'build',
+		'gh-pages:demo'
+	]);
 };
