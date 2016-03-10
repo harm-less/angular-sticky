@@ -23,27 +23,14 @@ module.exports = function(grunt) {
 			},
 			dev: {
 				background: true
-			},
-			angular3: {
-				background: true,
-				options: {
-					files: [
-						'bower_components/jquery/jquery.js',
-						'demo/angular.1.3.12.js',
-						'demo/angular-mocks.1.3.12.js',
-						'angular-tree-control.js',
-						'tests/**/*.js'
-					]
-				}
 			}
 		},
 		connect: {
 			options: {
 				livereload: true,
 				port: 9000,
-				open: 'http://localhost:<%= connect.options.port %>/'
-			},
-			server: {
+				open: 'http://localhost:<%= connect.options.port %>/',
+				base: 'demo'
 			}
 		},
 		watch: {
@@ -72,6 +59,12 @@ module.exports = function(grunt) {
 				cwd: 'bower_components/bootstrap/fonts/',
 				src: '**',
 				dest: 'demo/fonts/'
+			},
+			srcToDemo: {
+				expand: true,
+				cwd: 'js/',
+				src: '**',
+				dest: 'demo/scripts/'
 			}
 		},
 		clean: {
@@ -135,6 +128,17 @@ module.exports = function(grunt) {
 				additionalFiles: ['bower.json'],
 				indentation: '\t'
 			}
+		},
+		'gh-pages': {
+			demo: {
+				base: 'demo',
+				src: [
+					'*',
+					'scripts/**/*',
+					'fonts/**/*',
+					'views/**/*'
+				]
+			}
 		}
 	});
 
@@ -155,6 +159,7 @@ module.exports = function(grunt) {
 		'copy:bootstrap',
 		'less:bootstrap',
 		'cssmin:bootstrap',
+		'copy:srcToDemo',
 		'uglify:demo',
 		'less:demo',
 		'cssmin:demo'
@@ -167,5 +172,4 @@ module.exports = function(grunt) {
 		'connect',
 		'watch'
 	]);
-	grunt.registerTask('angular3', ['karma:angular3', 'watch:angular3']);
 };
