@@ -22,7 +22,8 @@ module.exports = function(grunt) {
 				browsers: ['Chrome_travis_ci']
 			},
 			dev: {
-				background: true
+				background: true,
+				singleRun: false
 			}
 		},
 		connect: {
@@ -38,12 +39,9 @@ module.exports = function(grunt) {
 		watch: {
 			options: {
 				livereload: true,
-				files: [
-					'js/*.js'
-				]
 			},
 			tests: {
-				files: ['tests/**/*.js'],
+				files: ['tests/**/*.js', 'js/*.js'],
 				tasks: ['karma:dev:run']
 			},
 			demoLess: {
