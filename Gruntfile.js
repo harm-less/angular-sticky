@@ -3,6 +3,17 @@ module.exports = function(grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
+		meta: {
+			banner: [
+				'/*',
+				' * <%= pkg.name %>',
+				' * <%= pkg.homepage %>\n',
+				' * Version: <%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>',
+				' * License: <%= pkg.license %>',
+				' */'
+			].join('\n')
+		},
 		karma: {
 			options: {
 				configFile: 'karma.conf.js',
@@ -39,6 +50,10 @@ module.exports = function(grunt) {
 		watch: {
 			options: {
 				livereload: true,
+				spawn: false,
+				files: [
+					'demo/*.css'
+				]
 			},
 			tests: {
 				files: ['tests/**/*.js', 'js/*.js'],
@@ -65,10 +80,17 @@ module.exports = function(grunt) {
 				cwd: 'js/',
 				src: '**',
 				dest: 'demo/scripts/src/'
+			},
+			dist: {
+				expand: true,
+				cwd: 'js/',
+				src: '**',
+				dest: 'dist/'
 			}
 		},
 		clean: {
-			build: [".grunt/assets"]
+			grunt: [".grunt/assets"],
+			dist: ["dist"]
 		},
 		less: {
 			bootstrap: {
@@ -79,6 +101,17 @@ module.exports = function(grunt) {
 			demo: {
 				files: {
 					'demo/demo.css': 'demo/less/demo.less'
+				}
+			}
+		},
+		usebanner: {
+			dist: {
+				options: {
+					banner: '<%= meta.banner %>',
+					linebreak: true
+				},
+				files: {
+					src: ['dist/angular-sticky.js']
 				}
 			}
 		},
@@ -98,6 +131,18 @@ module.exports = function(grunt) {
 					'bower_components/google-code-prettify/src/prettify.js'
 				],
 				dest: 'demo/vendor.min.js'
+			},
+			dist: {
+				options: {
+					banner: '<%= meta.banner %>'
+				},
+				files: [{
+					expand: true,
+					cwd: 'dist/',
+					src: '**/*.js',
+					dest: 'dist/',
+					ext: '.min.js'
+				}]
 			}
 		},
 		cssmin: {
@@ -157,8 +202,8 @@ module.exports = function(grunt) {
 	});
 
 	// builds the demo app
-	grunt.registerTask('build', [
-		'clean:build',
+	grunt.registerTask('buildDemo', [
+		'clean:grunt',
 		'copy:bootstrap',
 		'less:bootstrap',
 		'cssmin:bootstrap',
@@ -168,9 +213,16 @@ module.exports = function(grunt) {
 		'cssmin:demo'
 	]);
 
+	grunt.registerTask('build', [
+		'clean:dist',
+		'copy:dist',
+		'uglify:dist',
+		'usebanner:dist'
+	]);
+
 	// to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
 	grunt.registerTask('serve', [
-		'build',
+		'buildDemo',
 		'karma:dev',
 		'connect',
 		'watch'
@@ -178,7 +230,7 @@ module.exports = function(grunt) {
 
 	// builds and pushes the demo to the gh-pages branch
 	grunt.registerTask('github-pages-update', [
-		'build',
+		'buildDemo',
 		'gh-pages:demo'
 	]);
 };

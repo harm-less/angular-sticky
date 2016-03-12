@@ -7,7 +7,7 @@
     "sticky"
   ],
   "main": [
-    "js/angular-sticky.js"
+    "dist/angular-sticky.js"
   ],
   "ignore": [
     "/.*",

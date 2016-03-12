@@ -42,7 +42,7 @@ var demo = angular.module('demo', [
 
 	'demo.utils.strings',
 
-	'hl-sticky'
+	'hl.sticky'
 ])
 
 	.config(function($stateProvider, $urlRouterProvider){
@@ -52,7 +52,7 @@ var demo = angular.module('demo', [
 		$stateProvider
 			.state('home', {
 				url: '/',
-				templateUrl: 'views/home.html',
+				templateUrl: 'views/getting-started.html',
 				controller: 'HomeController'
 			})
 			.state('demo-container', {

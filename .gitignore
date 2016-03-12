@@ -21,3 +21,4 @@ npm-debug.log
 
 # grunt temp files created by grunt-gh-pages and the demo assets
 .grunt/
+dist

@@ -13,7 +13,7 @@ describe('angular-sticky', function() {
 
 	var hlStickyElementCollectionProvider;
 
-	beforeEach(module('hl-sticky'));
+	beforeEach(module('hl.sticky'));
 	beforeEach(module(function (_hlStickyElementCollectionProvider_) {
 		hlStickyElementCollectionProvider = _hlStickyElementCollectionProvider_;
 	}));
