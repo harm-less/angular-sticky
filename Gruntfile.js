@@ -238,7 +238,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('release', function() {
 		var releaseType = grunt.option('releaseType') ? grunt.option('releaseType') : 'patch';
 		grunt.task.run('bump-only:' + releaseType);
-		grunt.config('pkg', grunt.file.readJSON('package.json'));
+		grunt.config.set('pkg', grunt.file.readJSON('package.json'));
 		grunt.task.run('build');
 		grunt.task.run('bump-commit');
 	});
