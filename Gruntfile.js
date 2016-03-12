@@ -165,14 +165,13 @@ module.exports = function(grunt) {
 				}
 			}
 		},
-		release: {
+		bump: {
 			options: {
-				afterBump: [
-					'build'
+				files: [
+					'package.json',
+					'bower.json'
 				],
-				npm: false,
-				additionalFiles: ['bower.json'],
-				indentation: '\t'
+				commitFiles: ['-a']
 			}
 		},
 		'gh-pages': {
@@ -234,4 +233,11 @@ module.exports = function(grunt) {
 		'buildDemo',
 		'gh-pages:demo'
 	]);
+
+	grunt.registerTask('release', function() {
+		var releaseType = grunt.option('releaseType') ? grunt.option('releaseType') : 'patch';
+		grunt.task.run('bump-only:' + releaseType);
+		grunt.task.run('build');
+		grunt.task.run('bump-commit');
+	});
 };

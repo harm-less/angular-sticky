@@ -1,7 +1,7 @@
 {
   "author": "https://github.com/harm-less",
   "name": "angular-sticky",
-  "version": "0.0.5",
+  "version": "0.0.2",
   "homepage": "https://github.com/harm-less/angular-sticky",
   "main": "dist/angular-sticky.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "grunt-gh-pages": "~1.0.0",
     "grunt-bower": "~0.21.0",
     "grunt-banner": "~0.6.0",
-    "grunt-release": "~0.13.0",
+    "grunt-bump": "~0.7.0",
     "grunt-karma": "~0.12.1",
     "karma": "~0.13.5",
     "jasmine-core": "^2.2.0",
