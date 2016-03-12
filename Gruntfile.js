@@ -182,10 +182,8 @@ module.exports = function(grunt) {
 					base: 'demo'
 				},
 				src: [
-					'*',
-					'scripts/**/*',
-					'fonts/**/*',
-					'views/**/*'
+					'**/*',
+					'!less/**/*'
 				]
 			}
 		}
