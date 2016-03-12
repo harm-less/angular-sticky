@@ -3,10 +3,7 @@
   "name": "angular-sticky",
   "version": "2.0.0",
   "homepage": "https://github.com/harm-less/angular-sticky",
-  "files": [
-    "js/"
-  ],
-  "main": "js/angular-sticky.js",
+  "main": "dist/angular-sticky.js",
   "scripts": {
     "test": "grunt test"
   },
