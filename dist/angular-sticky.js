@@ -1,0 +1,592 @@
+/*
+ * angular-sticky
+ * https://github.com/harm-less/angular-sticky
+
+ * Version: 2.0.0 - 2016-03-12
+ * License: MIT
+ */
+'use strict';
+
+angular.module('hl.sticky', [])
+
+	.factory('mediaQuery', function () {
+		return {
+			matches: function (query) {
+				return (query && (matchMedia('(' + query + ')').matches || matchMedia(query).matches));
+			}
+		};
+	})
+
+	.factory('hlStickyStack', function ($document, DefaultStickyStackName) {
+
+		var documentEl = $document[0].documentElement;
+
+		var stacks = {};
+
+		function stickyStack(options) {
+
+			options = options || {};
+
+			var stackName = options.name || DefaultStickyStackName;
+
+			// use existing sticky stack
+			if (stacks[stackName]) {
+				return stacks[stackName];
+			}
+
+			// should be above all Bootstrap's z-indexes (but just before the modals)
+			var stickyZIndex = 1039;
+			var stack = [];
+
+			var $stack = {};
+
+			$stack.options = options;
+			$stack.stackName = stackName;
+
+			$stack.add = function (id, values) {
+				if (!angular.isString(id) || id === '') {
+					id = $stack.length();
+				}
+				values.id = id;
+				values.zIndex = stickyZIndex;
+				stack.push(values);
+				
+				stickyZIndex -= 1;
+				return values;
+			};
+			$stack.get = function (id) {
+				for (var i = 0; i < stack.length; i++) {
+					if (id == stack[i].id) { // jshint ignore:line
+						return stack[i];
+					}
+				}
+				return false;
+			};
+			$stack.index = function (id) {
+				for (var i = 0; i < stack.length; i++) {
+					if (id == stack[i].id) { // jshint ignore:line
+						return i;
+					}
+				}
+				return -1;
+			};
+			$stack.range = function (start, end) {
+				return stack.slice(start, end);
+			};
+			$stack.all = function () {
+				return stack;
+			};
+			$stack.keys = function () {
+				var ids = [];
+				for (var i = 0; i < stack.length; i++) {
+					ids.push(stack[i].id);
+				}
+				return ids;
+			};
+			$stack.top = function () {
+				return stack[stack.length - 1];
+			};
+			$stack.remove = function (id) {
+				for (var i = 0; i < stack.length; i++) {
+					if (id == stack[i].id) { // jshint ignore:line
+						stickyZIndex += 1;
+						return stack.splice(i, 1)[0];
+					}
+				}
+				return false;
+			};
+			$stack.removeTop = function () {
+				return stack.splice(stack.length - 1, 1)[0];
+			};
+			$stack.length = function () {
+				return stack.length;
+			};
+
+			$stack.height = function (anchor) {
+				var height = 0;
+				angular.forEach(stack, function(item) {
+					height += item.computedHeight(anchor);
+				});
+				return height;
+			};
+			$stack.totalHeightAt = function (anchor, at) {
+				var atAdjusted = at - 1;
+				var stick;
+				var computedHeight;
+				var height = 0;
+				for (var i = 0; i < stack.length; i++) {
+					stick = stack[i];
+					// check if the sticky element sticks at the queried position minus 1 pixel if the position is at the same place
+					if (stick.sticksAtPosition(anchor, atAdjusted)) {
+						computedHeight = stick.computedHeight(anchor, atAdjusted - height);
+
+						// add the height of the sticky element to the total
+						height += computedHeight;
+
+						// correct for the position by decreasing it with the computed height
+						at -= computedHeight;
+					}
+				}
+				return height;
+			};
+			$stack.totalHeightCurrent = function (anchor) {
+				return $stack.totalHeightAt(anchor, window.pageYOffset || documentEl.scrollTop);
+			};
+
+			stacks[stackName] = $stack;
+
+			return $stack;
+		}
+
+		return stickyStack;
+	})
+
+	.factory('hlStickyElement', function($document, $log, hlStickyStack, throttle, mediaQuery) {
+		return function(element, options) {
+			options = options || {};
+
+			var stickyLineTop;
+			var stickyLineBottom;
+			var placeholder;
+
+			var isSticking = false;
+
+			// elements
+			var bodyEl = angular.element($document[0].body);
+			var nativeEl = element[0];
+			var documentEl = $document[0].documentElement;
+
+			// attributes
+			var stickyMediaQuery = angular.isDefined(options.mediaQuery) ? options.mediaQuery : false;
+			var stickyClass = angular.isString(options.stickyClass) && options.stickyClass !== '' ? options.stickyClass : 'is-sticky';
+			var usePlaceholder = angular.isDefined(options.usePlaceholder) ? options.usePlaceholder : true;
+			var offsetTop = options.offsetTop ? parseInt(options.offsetTop) : 0;
+			var offsetBottom = options.offsetBottom ? parseInt(options.offsetBottom) : 0;
+			var anchor = typeof options.anchor === 'string' ? options.anchor.toLowerCase().trim() : 'top';
+			var container = null;
+			var stack = options.stack || hlStickyStack();
+			var globalOffset = {
+				top: 0,
+				bottom: 0
+			};
+
+			// initial style
+			var initialCSS = {
+				style: element.attr('style') || ''
+			};
+
+			// Methods
+			//
+			function stickyLinePositionTop() {
+				if (isSticking) {
+					return stickyLineTop;
+				}
+				stickyLineTop = _getTopOffset(nativeEl) - offsetTop - _stackOffsetTop();
+				return stickyLineTop;
+			}
+			function stickyLinePositionBottom() {
+				if (isSticking) {
+					return stickyLineBottom;
+				}
+				stickyLineBottom = _getBottomOffset(nativeEl) - offsetBottom - _stackOffsetBottom();
+				return stickyLineBottom;
+			}
+
+			function sticksAtPosition(anchor, scrolledDistance) {
+				if (!matchesMediaQuery()) {
+					return false;
+				}
+				switch (anchor) {
+					case 'top':	{
+						return sticksAtPositionTop(scrolledDistance);
+					}
+					case 'bottom': {
+						return sticksAtPositionBottom(scrolledDistance);
+					}
+					default: {
+						$log.error('Unknown anchor "' + anchor + '"');
+						break;
+					}
+				}
+				return false;
+			}
+			function sticksAtPositionTop(scrolledDistance) {
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
+				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
+				return scrollTop >= stickyLinePositionTop();
+			}
+			function sticksAtPositionBottom(scrolledDistance) {
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
+				var scrollBottom = scrolledDistance + window.innerHeight;
+				return scrollBottom <= stickyLinePositionBottom();
+			}
+			function matchesMediaQuery() {
+				return stickyMediaQuery === false || mediaQuery.matches(stickyMediaQuery);
+			}
+
+			function render() {
+				var shouldStick = sticksAtPosition(anchor);
+
+				// Switch the sticky mode if the element crosses the sticky line
+				// don't make the element sticky when it's already sticky
+				if (shouldStick && !isSticking) {
+					stickElement();
+				}
+				// don't unstick the element sticky when it isn't sticky already
+				else if (!shouldStick && isSticking) {
+					unstickElement();
+				}
+
+				// stick after care
+				if (isSticking) {
+					// update the top offset at an already sticking element
+					if (anchor === 'top') {
+						element.css('top', (offsetTop + _stackOffset(anchor) - containerBoundsBottom()) + 'px');
+						element.css('width', elementWidth() + 'px');
+					}
+				}
+			}
+
+			function stickElement() {
+				isSticking = true;
+
+				element.addClass(stickyClass);
+
+				var rect = nativeEl.getBoundingClientRect();
+				var css = {
+					'width': elementWidth() + 'px',
+					'position': 'fixed',
+					'left': rect.left + 'px',
+					'z-index': stack.get(id).zIndex - (globalOffset.zIndex || 0)
+				};
+
+				css['margin-' + anchor] = 0;
+				element.css(css);
+
+				// create placeholder to avoid jump
+				if (usePlaceholder) {
+					placeholder = placeholder || angular.element('<div>');
+					placeholder.css('height', elementHeight() + 'px');
+					element.after(placeholder);
+				}
+			}
+			function unstickElement() {
+				isSticking = false;
+
+				element.removeClass(stickyClass);
+
+				// reset the original css we might have changed when the object was sticky
+				element.attr('style', initialCSS.style);
+
+				// if a placeholder was used, remove it from the DOM
+				if (placeholder) {
+					placeholder.remove();
+				}
+			}
+
+			function elementWidth() {
+				return nativeEl.offsetWidth;
+			}
+			function elementHeight() {
+				return nativeEl.offsetHeight;
+			}
+
+			function _getTopOffset(element) {
+				var pixels = 0;
+				if (element && element.offsetParent) {
+					do {
+						pixels += element.offsetTop;
+						element = element.offsetParent;
+					} while (element);
+				}
+				return pixels;
+			}
+
+			function _getBottomOffset (element) {
+				return element.offsetTop + element.clientHeight;
+			}
+
+			function _stackOffset(anchor) {
+				var stickIndex = stack.index(id);
+				var extraOffset = 0;
+
+				if (anchor === 'top' && globalOffset.top > 0) {
+					extraOffset += globalOffset.top;
+				}
+				if (stickIndex > 0) {
+					stack.range(0, stickIndex).forEach(function (stick) {
+						extraOffset += stick.computedHeight(anchor);
+					});
+				}
+				return extraOffset;
+			}
+			function _stackOffsetTop() { return _stackOffset('top'); }
+			function _stackOffsetBottom() { return _stackOffset('bottom'); }
+
+			function computedHeight(anchor, scrolledDistance) {
+				return (anchor === 'top' ? Math.max(0, elementHeight() - containerBoundsBottom(scrolledDistance) + offsetTop) : 0);
+			}
+
+			function containerBoundsBottom(scrolledDistance) {
+				if (container === null) {
+					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
+				}
+				if (container) {
+					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
+					var containerRect = container.getBoundingClientRect();
+					var containerBottom = !hasScrollDistance ? containerRect.bottom : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
+					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight()) - containerBottom);
+				}
+				return 0;
+			}
+
+			// add element to the sticky stack and save the id
+			var stackItem = stack.add(options.id, {
+				width: elementWidth,
+				height: elementHeight,
+				computedHeight: computedHeight,
+				sticksAtPosition: sticksAtPosition
+			});
+			var id = stackItem.id;
+
+			var $api = {};
+
+			$api.draw = function(drawOptions) {
+				drawOptions = drawOptions || {};
+				var offset = drawOptions.offset;
+				if (offset) {
+					// setting global offsets added to the local offsets of the sticky element
+					globalOffset.top = offset.top || 0;
+					globalOffset.bottom = offset.bottom || 0;
+					globalOffset.zIndex = offset.zIndex;
+				}
+
+				// for resizing, we simply unstick the element and restick it using the render method
+				if (drawOptions.force === true) {
+					unstickElement();
+				}
+				render();
+			};
+
+			$api.destroy = function() {
+				unstickElement();
+				stack.remove(id);
+			};
+
+			return $api;
+		};
+	})
+
+	.constant('DefaultStickyStackName', 'default-stack')
+
+	.provider('hlStickyElementCollection', function() {
+
+		var $$count = 0;
+
+		var $stickyElement = {
+			collections: {},
+			defaults: {
+				checkDelay: 250
+			},
+			elementsDefaults: {
+
+			},
+			$get: function($rootScope, $window, $document, $log, DefaultStickyStackName, hlStickyElement, hlStickyStack, throttle) {
+
+				var windowEl = angular.element($window);
+
+				var unbindViewContentLoaded;
+				var unbindIncludeContentLoaded;
+				var throttledResize;
+
+				function init() {
+					$$count++;
+
+					// make sure we can initialize it only once
+					if ($$count > 1) {
+						return;
+					}
+
+					// bind events
+					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay, {leading: false});
+					windowEl.on('resize', throttledResize);
+					windowEl.on('scroll', drawEvent);
+
+					unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
+					unbindIncludeContentLoaded = $rootScope.$on('$includeContentLoaded', throttledResize);
+					throttledResize();
+				}
+
+				function destroy() {
+					// check internal references counter
+					$$count--;
+					if ($$count > 0) {
+						return;
+					}
+
+					// unbind events
+					windowEl.off('resize', throttledResize);
+					windowEl.off('scroll', drawEvent);
+					unbindViewContentLoaded();
+					unbindIncludeContentLoaded();
+				}
+
+				function drawEvent() {
+					draw();
+				}
+				function resize() {
+					draw({force: true});
+				}
+				function draw(drawOptions) {
+					angular.forEach($stickyElement.collections, function(collection) {
+						collection.draw(drawOptions);
+					});
+				}
+
+				function stickyElementFactory(options) {
+
+					if (!options || !angular.isObject(options)) {
+						$log.warn('Must supply an options object');
+						options = {};
+					}
+					options = angular.extend({}, $stickyElement.elementsDefaults, options);
+
+					var collectionName = options.name || DefaultStickyStackName;
+
+					// use existing element collection
+					if ($stickyElement.collections[collectionName]) {
+						return $stickyElement.collections[collectionName];
+					}
+
+					var stickyStackFactory = hlStickyStack({
+						name: collectionName
+					});
+
+					var trackedElements = [];
+
+					var $sticky = {};
+
+					$sticky.addElement = function (element, stickyOptions) {
+						stickyOptions = stickyOptions || {};
+						stickyOptions.addScrollEvent = false;
+						stickyOptions.stack = stickyStackFactory;
+						var sticky = hlStickyElement(element, stickyOptions);
+						trackedElements.push({
+							stickyElement: sticky,
+							element: element
+						});
+
+						return sticky;
+					};
+
+					$sticky.removeElement = function(element) {
+
+						var toDelete;
+						for (var i = trackedElements.length; i--;) {
+							if ((angular.isString(element) && '#' + trackedElements[i].element.id === element) || trackedElements[i].element === element) {
+								toDelete = i;
+								break;
+							}
+						}
+						var deletedElement = trackedElements.splice(toDelete, 1)[0];
+						deletedElement.stickyElement.destroy();
+
+						return deletedElement;
+					};
+
+					$sticky.draw = function(drawOptions) {
+						var _drawOptions = {};
+						if (options.parent) {
+							var parentStack = hlStickyStack({
+								name: options.parent
+							});
+							_drawOptions.offset = {
+								top: parentStack.totalHeightCurrent('top'),
+								zIndex: parentStack.length()
+							};
+						}
+						angular.extend(_drawOptions, drawOptions || {});
+						angular.forEach(trackedElements, function(element) {
+							element.stickyElement.draw(_drawOptions);
+						});
+					};
+
+					$sticky.destroy = function(force) {
+						// if the collection is empty or force is set to true, remove it from the service
+						if (force === true || trackedElements.length === 0) {
+							delete $stickyElement.collections[collectionName];
+							destroy();
+						}
+					};
+
+					$sticky.trackedElements = function() {
+						return trackedElements;
+					};
+
+					// use new element collection
+					$stickyElement.collections[collectionName] = $sticky;
+					init();
+
+					return $sticky;
+				}
+				return stickyElementFactory;
+			}
+		};
+		return $stickyElement;
+	})
+
+	.directive('hlSticky', function($log, $window, $document, hlStickyElementCollection) {
+		return {
+			restrict: 'A',
+			transclude: true,
+			replace: true,
+			template: '<div class="hl-sticky" ng-transclude></div>',
+			link: function($scope, $element, $attrs) {
+				var stickyEl = $element;
+
+				var stickyElementFactory = hlStickyElementCollection({
+					name: $attrs.collection,
+					parent: $attrs.collectionParent
+				});
+				stickyElementFactory.addElement(stickyEl, {
+					id: $attrs.hlSticky || $attrs.stickyId,
+					mediaQuery: $attrs.mediaQuery,
+					stickyClass: $attrs.stickyClass,
+					usePlaceholder: $attrs.usePlaceholder,
+					offsetTop: $attrs.offsetTop,
+					offsetBottom: $attrs.offsetBottom,
+					anchor: $attrs.anchor,
+					container: $attrs.container
+				});
+
+				// listeners
+				$scope.$on('$destroy', function onDestroy() {
+					stickyElementFactory.removeElement(stickyEl);
+					stickyElementFactory.destroy();
+				});
+			}
+		};
+	})
+
+	.factory('throttle', function($timeout) {
+		return function(func, wait, options) {
+			var timeout = null;
+			options = options || {};
+			return function() {
+				var that = this;
+				var args = arguments;
+
+				if (!timeout) {
+					if (options.leading !== false) {
+						func.apply(that, args);
+					}
+					timeout = $timeout(function later() {
+						timeout = null;
+						if (options.trailing !== false) {
+							func.apply(that, args);
+						}
+					}, wait, false);
+				}
+			};
+		};
+	});
