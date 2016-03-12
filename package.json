@@ -1,7 +1,7 @@
 {
   "author": "https://github.com/harm-less",
   "name": "angular-sticky",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/harm-less/angular-sticky",
   "main": "dist/angular-sticky.js",
   "scripts": {
