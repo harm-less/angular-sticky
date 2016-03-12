@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hl-sticky', [])
+angular.module('hl.sticky', [])
 
 	.factory('mediaQuery', function () {
 		return {

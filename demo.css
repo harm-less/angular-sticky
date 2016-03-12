@@ -68,8 +68,31 @@
 }
 .navbar {
   margin-bottom: 0;
+  -webkit-box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.5);
+  border: none;
+}
+.footer {
+  text-align: center;
+  padding: 30px 0;
+  border-top: 1px solid #e5e5e5;
+  background: #f5f5f5 url(images/bg-small.png) no-repeat;
 }
 .btn-group-call-to-action .glyphicon {
   top: .1em;
   margin-right: 5px;
+}
+.jumbotron {
+  background-image: url(images/bg.png);
+  background-position: top left;
+  background-repeat: no-repeat;
+}
+@media (max-width: 991px) {
+  .jumbotron {
+    background-position: left -40px;
+  }
+}
+.main-content {
+  background: url(images/bg-small.png) no-repeat top left;
+  padding-bottom: 70px;
 }
