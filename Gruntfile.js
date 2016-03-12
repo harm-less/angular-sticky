@@ -167,9 +167,10 @@ module.exports = function(grunt) {
 		},
 		release: {
 			options: {
-				beforeBump: [
+				afterBump: [
 					'build'
 				],
+				npm: false,
 				additionalFiles: ['bower.json'],
 				indentation: '\t'
 			}
