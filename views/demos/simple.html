@@ -1,0 +1,32 @@
+<div save-content="intro">
+	<p>
+		Simplest usage demo for Angular Sticky.
+		This container will stick to the top only by adding <code>hl-sticky</code> to the DOM element.
+		A little added bonus is the usage of the class<code>.is-sticky</code>, but that is optional. It is being added by the plugin whenever the element becomes sticky.
+	</p>
+</div>
+
+<div save-content="css">
+	.sticks {
+		display: none;
+	}
+	.is-sticky .sticks {
+		display: block;
+	}
+	.is-sticky .not-sticky {
+		display: none;
+	}
+</div>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12" save-content="html">
+				<div hl-sticky class="simple">
+					<span class="not-sticky">Scroll to make me sticky</span>
+					<span class="sticks">Look, I'm sticky!</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
