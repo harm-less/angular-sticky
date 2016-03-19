@@ -1,0 +1,17 @@
+.sticky-element(@min-height: @sticky-element-min-height) {
+	min-height: @min-height;
+	padding: 10px;
+	color: @sticky-element-color;
+
+	b {
+		color: @sticky-element-color-highlighted;
+	}
+}
+
+.sticky-element-divider() {
+	padding: 10px;
+}
+
+.sticky-element-shadow(@color: @gray-base) {
+	.box-shadow(0 10px 20px 0px fade(@color, 40%));
+}

@@ -1,36 +1,30 @@
 .demo-collections {
 
 	#header, .sidebar {
-		color: #ccc;
+		color: @sticky-element-color;
 	}
 
 	#header {
 		.sticky, .between-headers {
-			.box-shadow(0 10px 20px 0px rgba(0,0,0, .4));
-			min-height: 100px;
-			padding: 10px;
+			.sticky-element();
+			.sticky-element-shadow();
 		}
 
 		.sticky-header1 {
-			background-color: lighten(#000, 25%);
+			background-color: lighten(@gray-base, 25%);
 			z-index: 1;
 		}
 
 		.between-headers {
-			background-color: lighten(#000, 30%);
+			.sticky-element-divider();
+			background-color: lighten(@gray-base, 30%);
 			min-height: 50px;
 		}
 
 		.sticky-header2 {
-			background-color: lighten(#000, 35%);
+			background-color: lighten(@gray-base, 35%);
 			z-index: 2;
 			opacity: .95;
-		}
-	}
-
-	.sticky {
-		b {
-			color: #fff;
 		}
 	}
 
@@ -39,17 +33,15 @@
 	}
 
 	.sidebar {
-		background-color: lighten(#000, 40%);
+		background-color: lighten(@gray-base, 40%);
 
 		.sidebar-space {
 			padding: 10px;
 		}
 
 		.sticky {
-			background-color: darken(@color-grey, 10%);
-			min-height: 100px;
-			padding: 10px;
-			color: #ccc;
+			background-color: darken(@gray, 10%);
+			.sticky-element();
 		}
 	}
 	.content {
