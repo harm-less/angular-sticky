@@ -84,20 +84,31 @@ var demo = angular.module('demo', [
 
 	})
 
-	.controller('DemoCtrl', function($rootScope, $scope, $sce, $stateParams, $savedContent) {
+	.controller('DemoCtrl', function($rootScope, $scope, $sce, $timeout, $stateParams, $savedContent) {
+		var demoMarkup = ['intro', 'html', 'js', 'css'];
+
+		$scope.content = {};
+
 		$scope.hasContent = function(content) {
-			return $savedContent[content];
+			return $scope.content[content];
 		};
 
 		$rootScope.$watch('demoName', function(newName) {
 			$scope.demoName = newName;
 		});
+		$scope.$on('$stateChangeStart', function() {
+			// reset the content markup elements used for the demos
+			angular.forEach(demoMarkup, function(markupContent) {
+				$savedContent[markupContent] = null;
+			});
+		});
+
 		$scope.$on('$stateChangeSuccess', function() {
-			console.log($savedContent);
-			$scope.content = {};
-			angular.forEach($savedContent, function(content, contentName) {
-				console.log(content, contentName);
-				$scope.content[contentName] = $sce.trustAsHtml(content);
+			$timeout(function() {
+				// reload content markup for the new demo
+				angular.forEach($savedContent, function(content, contentName) {
+					$scope.content[contentName] = $sce.trustAsHtml(content);
+				});
 			});
 		});
 	})
@@ -129,14 +140,21 @@ var demo = angular.module('demo', [
 			restrict: "EAC",
 			compile: function($element, $attrs) {
 				return function($scope, $element, $attrs) {
-					var content = $savedContent[$attrs.applyContent];
-					var lang = $attrs.highlightLang;
-					if (lang == "html") {
-						content = escapeHtml(content);
-					}
-					content = trimIndent(content);
-					var pre = prettyPrintOne(content, lang);
-					$element.html(pre);
+
+					// make sure a watcher is set up to register if content changes
+					$scope.$watch(function update() {
+						var content = $savedContent[$attrs.applyContent];
+						if (!content) {
+							return;
+						}
+						var lang = $attrs.highlightLang;
+						if (lang == "html") {
+							content = escapeHtml(content);
+						}
+						content = trimIndent(content);
+						var pre = prettyPrintOne(content, lang);
+						$element.html(pre);
+					});
 				}
 			}
 		}

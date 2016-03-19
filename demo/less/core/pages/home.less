@@ -5,6 +5,16 @@
 	}
 }
 
+.sticky-buttons {
+	padding: 10px 0;
+	background-color: @jumbotron-bg;
+	.transition(box-shadow 1s);
+
+	&.is-sticky {
+		border-bottom: 1px solid darken(@jumbotron-bg, 5%);
+	}
+}
+
 .jumbotron {
 	background-image: url(images/bg-big.png);
 	background-position: top left;
