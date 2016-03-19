@@ -15,3 +15,9 @@
 .sticky-element-shadow(@color: @gray-base) {
 	.box-shadow(0 10px 20px 0px fade(@color, 40%));
 }
+
+.sticky-element-default() {
+	.sticky-element();
+	.sticky-element-shadow();
+	background-color: @gray-dark;
+}
