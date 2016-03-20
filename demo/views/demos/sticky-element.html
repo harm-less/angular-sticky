@@ -1,0 +1,52 @@
+<div save-content="intro">
+	<h2>Service: Sticky element</h2>
+	<p>
+		<code>hlStickyElement</code>
+	</p>
+	<p>
+		Directives are nice and all, but sometimes you want some control over the inner workings a bit.
+		Angular Sticky has been build in such a way so you can also initiate a sticky element from the code using a service.
+	</p>
+	<h4><i>Note</i></h4>
+	<p>
+		Because you're making the sticky element with this service rendering is not longer automatically done.
+		If you do want automatic rendering. Use the service "hlStickyElementCollection" along with this service.
+	</p>
+</div>
+
+<script save-content="js">
+	function StickyElementServiceController($scope, $window, hlStickyElement) {
+
+		// get the element from the dom
+		var element = angular.element(document.querySelector('#sticky'));
+
+		// create a new instance with a bit of offset
+		var stickyElement = hlStickyElement(element, {
+			offsetTop: 200
+		});
+
+		angular.element($window).bind('scroll', function() {
+			// draw the sticky element
+			stickyElement.draw();
+		});
+
+		$scope.$on('$destroy', function() {
+			// make sure we clean up after ourselves otherwise the sticky element will stay in the stack and could cause trouble
+			stickyElement.destroy();
+		});
+	}
+</script>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12" ng-controller="StickyElementServiceController">
+				<div save-content="html">
+					<div id="sticky" class="becomes-sticky">
+						You can have influence over me by code, awesome!
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

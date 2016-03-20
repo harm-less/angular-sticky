@@ -29,9 +29,15 @@
 				<li class="dropdown" uib-dropdown>
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" uib-dropdown-toggle>Demos<span class="caret"></span></a>
 					<ul class="dropdown-menu" uib-dropdown-menu>
+						<li class="dropdown-header">Basics</li>
 						<li><a ui-sref="demo-container.demo({name: 'simple'})">Simple</a></li>
-						<li><a ui-sref="demo-container.demo({name: 'stack'})">Stack</a></li>
-						<li><a ui-sref="demo-container.demo({name: 'collections'})">Collections (advanced)</a></li>
+						<li role="separator" class="divider"></li>
+						<li class="dropdown-header">Services</li>
+						<li><a ui-sref="demo-container.demo({name: 'sticky-stack'})">Sticky stack</a></li>
+						<li><a ui-sref="demo-container.demo({name: 'sticky-element'})">Sticky element</a></li>
+						<li role="separator" class="divider"></li>
+						<li class="dropdown-header">Advanced</li>
+						<li><a ui-sref="demo-container.demo({name: 'collections'})">Collections</a></li>
 					</ul>
 				</li>
 				<li ui-sref-active="active"><a ui-sref="about()">About</a></li>
