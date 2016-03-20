@@ -541,16 +541,13 @@ angular.module('hl.sticky', [])
 					name: $attrs.collection,
 					parent: $attrs.collectionParent
 				});
-				stickyElementFactory.addElement(stickyEl, {
-					id: $attrs.hlSticky || $attrs.stickyId,
-					mediaQuery: $attrs.mediaQuery,
-					stickyClass: $attrs.stickyClass,
-					usePlaceholder: $attrs.usePlaceholder,
-					offsetTop: $attrs.offsetTop,
-					offsetBottom: $attrs.offsetBottom,
-					anchor: $attrs.anchor,
-					container: $attrs.container
+				var options = {
+					id: $attrs.hlSticky || $attrs.stickyId
+				};
+				angular.forEach(['mediaQuery', 'stickyClass', 'usePlaceholder', 'offsetTop', 'offsetBottom', 'anchor', 'container'], function(option) {
+					options[option] = $attrs[option];
 				});
+				stickyElementFactory.addElement(stickyEl, options);
 
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
