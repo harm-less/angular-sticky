@@ -1,0 +1,66 @@
+<div save-content="intro">
+	<h2>Service: Sticky element collection</h2>
+	<p>
+		<code>hlStickyElementCollection</code>
+	</p>
+	<p>
+		Use a sticky element collection if you're in need for automation.
+		The demo for the "Sticky element" service gave a bit more control over each individual sticky element.
+		This service however takes away some coding freedom but replaces it with certain functionalities you might just need.
+		For example automatic drawing and being able to specify a sticky stack all of the added sticky elements listen to.
+	</p>
+</div>
+
+<script save-content="js">
+	function StickyCollectionServiceController($scope, hlStickyStack, hlStickyElementCollection) {
+
+		// get the elements from the dom
+		var sticky1 = angular.element(document.querySelector('#sticky1'));
+		var sticky2 = angular.element(document.querySelector('#sticky2'));
+
+		// create a new collection instance and name it. This name will be the name of the sticky stack instance
+		var stickyCollection = hlStickyElementCollection({
+			name: 'demo-collection'
+		});
+
+		// add the elements and specify the options if needed to
+		stickyCollection.addElement(sticky1);
+		stickyCollection.addElement(sticky2, {
+			offsetTop: 100
+		});
+
+		// get the corresponding stack by its name and save the total stack items in the scope so we can view it
+		var collectionStack = hlStickyStack({
+			name: 'demo-collection'
+		});
+		$scope.totalStackItems = collectionStack.length();
+
+		$scope.$on('$destroy', function() {
+			// make sure we clean up after ourselves otherwise the sticky collection will not clean the stack and that could cause trouble
+			stickyCollection.removeElement(sticky1);
+			stickyCollection.removeElement(sticky2);
+			stickyCollection.destroy();
+		});
+	}
+</script>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12" ng-controller="StickyCollectionServiceController">
+				<div save-content="html">
+					<div class="stack-info">
+						Total stack items: <b>{{totalStackItems}}</b>
+					</div>
+					<div id="sticky1" class="becomes-sticky">
+						I'm a sticky element because the code says so
+					</div>
+					<div class="divider">I'm just here to give the sticky elements some space</div>
+					<div id="sticky2" class="becomes-sticky">
+						Make that two
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
