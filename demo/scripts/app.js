@@ -41,6 +41,7 @@ var demo = angular.module('demo', [
 	'ui.bootstrap',
 
 	'demo.utils.strings',
+	'demo.directive.scroll-along',
 
 	'hl.sticky'
 ])

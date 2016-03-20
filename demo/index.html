@@ -8,6 +8,7 @@
 
 	<script src="scripts/app.js"></script>
 	<script src="scripts/utils/strings.js"></script>
+	<script src="scripts/directives/scroll-along.js"></script>
 
 	<script src="scripts/src/angular-sticky.js"></script>
 
@@ -29,7 +30,8 @@
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" uib-dropdown-toggle>Demos<span class="caret"></span></a>
 					<ul class="dropdown-menu" uib-dropdown-menu>
 						<li><a ui-sref="demo-container.demo({name: 'simple'})">Simple</a></li>
-						<li><a ui-sref="demo-container.demo({name: 'collections'})">Collections</a></li>
+						<li><a ui-sref="demo-container.demo({name: 'stack'})">Stack</a></li>
+						<li><a ui-sref="demo-container.demo({name: 'collections'})">Collections (advanced)</a></li>
 					</ul>
 				</li>
 				<li ui-sref-active="active"><a ui-sref="about()">About</a></li>
