@@ -1,4 +1,5 @@
 .demo-collections {
+	min-height: auto;
 
 	#header, .sidebar {
 		color: @sticky-element-color;
@@ -28,8 +29,10 @@
 		}
 	}
 
-	.content, .sidebar {
-		min-height: 2000px;
+	@media (min-width: @screen-sm-min) {
+		.content, .sidebar {
+			min-height: 1500px;
+		}
 	}
 
 	.sidebar {

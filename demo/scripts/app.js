@@ -78,6 +78,7 @@ var demo = angular.module('demo', [
 	})
 
 	.config(['$controllerProvider', function($controllerProvider) {
+		// for the demo, I need to be able to create global methods
 		$controllerProvider.allowGlobals();
 	}])
 
