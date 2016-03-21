@@ -4,6 +4,15 @@
 		Using collections you can create columns each with sticky elements.
 		Due to the <code>collection-parent</code> attribute you can tell the plugin to calculate the stack height of that parent collection and use it as extra offset for itself.
 	</p>
+	<h4><i>Note</i></h4>
+	<ul>
+		<li>
+			This demo also includes a <code>container</code> attribute on the first sticky element. Check out how the header is acting on this.
+		</li>
+		<li>
+			This demo is fully responsive. Perhaps it can inspire you for your own implementation.
+		</li>
+	</ul>
 </div>
 
 <div save-content="html">
@@ -26,7 +35,7 @@
 	<section>
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-lg-4">
+				<div class="col-lg-4 col-md-3 col-sm-4 hidden-xs">
 					<div class="sidebar">
 						<div class="sidebar-space">
 							<p>
@@ -43,7 +52,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-8">
+				<div class="col-lg-8 col-md-9 col-sm-8">
 					<div class="content">
 						<p>
 							Mauris a magna sem. Nunc iaculis, arcu id varius fermentum, nisi ipsum sagittis urna, in finibus massa turpis eget elit. Sed posuere est sed ipsum consequat gravida. Suspendisse sed enim velit. Vivamus non justo mi. Duis vel ligula eu orci luctus mattis non vitae est. Pellentesque a tincidunt nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas suscipit vitae urna quis scelerisque. Proin congue auctor erat.
@@ -54,7 +63,7 @@
 						<div hl-sticky="content-heading" collection="content" collection-parent="header" class="sticky-content-title">
 							<div>
 								<h3>Sticky content heading</h3>
-								<b>Should appear at the top of the content section</b>
+								<b>Should stick at the top of the content section</b>
 							</div>
 						</div>
 						<p>

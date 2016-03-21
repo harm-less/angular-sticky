@@ -47,4 +47,97 @@
 		As soon as you've got all the files downloaded and included in your page you just need to declare a dependency on the module:
 	</p>
 	<pre>angular.module('myModule', ['hl.sticky']);</pre>
+
+	<h3>Basic example</h3>
+	<p>
+		This will make an element sticky using the directive <code>hl-sticky</code>:
+	</p>
+	<pre class="code" apply-content highlight-lang="html">
+		<div hl-sticky>I'll become sticky</div>
+	</pre>
+	<p>
+		To see this in action, check out out the <a ui-sref="demo-container.demo({name: 'simple'})">demo</a>. What more do you want? Right, more features. Well, that can be arranged.
+	</p>
+
+	<hr>
+
+	<h2>Features</h2>
+	<p>
+		Angular Sticky has been set up in such a way so it uses a lot of the handy features you're used to in Angular.
+		A combination between between directives and services make the difference between all the other (native) sticky plugins.
+		It allows you to have more control over the the look and feel of your sticky elements from both HTML and from code.
+	</p>
+	<ul>
+		<li scroll-to="hlSticky">Directive: hlSticky</li>
+	</ul>
+
+	<h3>Directives</h3>
+	<h3 id="hlSticky"><code>hlSticky</code></h3>
+	<p>
+		The magical sticky directive.
+	</p>
+
+	<h4>Attributes</h4>
+	<ul class="list-attributes">
+		<li>
+			<code>hl-sticky</code>/<code>sticky-id</code>
+			(Default: none) - Determines the identifier of the sticky element.
+			<p>
+				Most of the time you won't need this, but sometimes it's handy to set it. For example if you want to retrieve a sticky element from a stack.
+				If this is not set, the identifier will default to the index it has in the stack.
+			</p>
+		</li>
+		<li>
+			<code>media-query</code>
+			(Default: none) - Enables/disables the sticky element based on a media query.<br>
+			<p>
+				Check out the <a ui-sref="demo-container.demo({name: 'media-queries'})">media query demo</a>.<br>
+				<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries" target="_blank">Learn more</a> about media queries.
+			</p>
+		</li>
+		<li>
+			<code>sticky-class</code>
+			(Default: 'is-sticky') - Adds custom classes to the sticky element when it becomes sticky.
+		</li>
+		<li>
+			<code>use-placeholder</code>
+			(Default: true) - Prevent the dom from collapsing on itself.<br>
+			<p>
+				When a sticky element becomes sticky its position becomes <code>fixed</code>.
+				It is no longer part of the DOM in terms of other DOM element respecting it's dimensions and the elements underneath the sticky will suddenly jump a little.
+				To compensate for this an invisible placeholder is created with the height of the sticky element.
+			</p>
+		</li>
+		<li>
+			<code>anchor</code>
+			(Default: 'top') - Determines to what edge the sticky element should stick.
+			<ul class="list-unstyled">
+				<li class="text-danger"><b><i>Note:</i> This feature is under construction and only <code>top</code> can be used at this moment.</b></li>
+			</ul>
+		</li>
+		<li>
+			<code>offset-top</code>
+			(Default: 0) - Adds offset to the top of the sticky element to act as margin.<br>
+			<ul class="list-unstyled">
+				<li><i>Note:</i> <code>anchor</code> must be set to <code>top</code> to make it work.</li>
+				<li><i>Note:</i> This value can also be negative</li>
+			</ul>
+		</li>
+		<li>
+			<code><strike>offset-bottom</strike></code>
+			(Default: 0) - Adds offset to the bottom of the sticky element to act as margin.<br>
+			<ul class="list-unstyled">
+				<li class="text-danger"><b><i>Note:</i> This feature is under construction and cannot be used at this moment.</b></li>
+				<li><i>Note:</i> <code>anchor</code> must be set to <code>bottom</code> to make it work.</li>
+				<li><i>Note:</i> This value can also be negative</li>
+			</ul>
+		</li>
+		<li>
+			<code>container</code>
+			(Default: None) - Id of a DOM element that you want the sticky element to be constrained to.<br>
+			<p>
+				Check out the <a ui-sref="demo-container.demo({name: 'container'})">container demo</a>.
+			</p>
+		</li>
+	</ul>
 </div>

@@ -8,6 +8,7 @@
 
 	<script src="scripts/app.js"></script>
 	<script src="scripts/utils/strings.js"></script>
+	<script src="scripts/utils/dom.js"></script>
 	<script src="scripts/directives/scroll-along.js"></script>
 
 	<script src="scripts/src/angular-sticky.js"></script>
@@ -31,6 +32,8 @@
 					<ul class="dropdown-menu" uib-dropdown-menu>
 						<li class="dropdown-header">Basics</li>
 						<li><a ui-sref="demo-container.demo({name: 'simple'})">Simple</a></li>
+						<li><a ui-sref="demo-container.demo({name: 'media-queries'})">Media queries</a></li>
+						<li><a ui-sref="demo-container.demo({name: 'container'})">Container</a></li>
 						<li role="separator" class="divider"></li>
 						<li class="dropdown-header">Services</li>
 						<li><a ui-sref="demo-container.demo({name: 'sticky-stack'})">Sticky stack</a></li>
@@ -47,7 +50,7 @@
 	</div><!-- /.container -->
 </nav>
 
-<div ui-view class="main-content"></div>
+<div ui-view autoscroll="true" class="main-content"></div>
 
 <footer class="footer">
 	<div class="container">
