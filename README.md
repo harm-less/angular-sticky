@@ -35,4 +35,5 @@ We are always looking for quality contributions!
 * Configurable z-index (preferably in each stack)
 * Anchor "bottom". There is already a bit of groundwork done for this
 * Media queries based on predefined breakpoints (e.g. min-width: lg-max) so the code is DRYer in combination with Bootstrap or other grid frameworks
-* There seems to be a weird bug were an element becoming sticky starts shaking a little 
+* There seems to be a weird bug were an element becoming sticky starts shaking a little
+* I strongly suspect that performance can be improved at various parts in the code. For example by caching more.

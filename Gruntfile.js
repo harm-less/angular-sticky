@@ -128,7 +128,8 @@ module.exports = function(grunt) {
 					'bower_components/angular/angular.js',
 					'bower_components/angular-ui-router/release/angular-ui-router.js',
 					'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-					'bower_components/google-code-prettify/src/prettify.js'
+					'bower_components/google-code-prettify/src/prettify.js',
+					'bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js'
 				],
 				dest: 'demo/vendor.min.js'
 			},

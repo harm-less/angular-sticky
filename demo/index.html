@@ -8,6 +8,7 @@
 
 	<script src="scripts/app.js"></script>
 	<script src="scripts/utils/strings.js"></script>
+	<script src="scripts/utils/dom.js"></script>
 	<script src="scripts/directives/scroll-along.js"></script>
 
 	<script src="scripts/src/angular-sticky.js"></script>
@@ -49,7 +50,7 @@
 	</div><!-- /.container -->
 </nav>
 
-<div ui-view class="main-content"></div>
+<div ui-view autoscroll="true" class="main-content"></div>
 
 <footer class="footer">
 	<div class="container">

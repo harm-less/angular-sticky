@@ -41,6 +41,7 @@ var demo = angular.module('demo', [
 	'ui.bootstrap',
 
 	'demo.utils.strings',
+	'demo.utils.dom',
 	'demo.directive.scroll-along',
 
 	'hl.sticky'
@@ -141,23 +142,54 @@ var demo = angular.module('demo', [
 		return {
 			restrict: "EAC",
 			compile: function($element, $attrs) {
+				var beforeCompile = $element.html();
+
 				return function($scope, $element, $attrs) {
 
-					// make sure a watcher is set up to register if content changes
-					$scope.$watch(function update() {
-						var content = $savedContent[$attrs.applyContent];
-						if (!content) {
-							return;
-						}
-						var lang = $attrs.highlightLang;
-						if (lang == "html") {
-							content = escapeHtml(content);
-						}
-						content = trimIndent(content);
-						var pre = prettyPrintOne(content, lang);
-						$element.html(pre);
-					});
+					var content = $savedContent[$attrs.applyContent];
+					if (!content) {
+						// use the un-compiled content of the element itself
+						content = beforeCompile;
+					}
+					var lang = $attrs.highlightLang;
+					if (lang == "html") {
+						content = escapeHtml(content);
+					}
+					content = trimIndent(content);
+					var pre = prettyPrintOne(content, lang);
+					$element.html(pre);
 				}
 			}
 		}
+	})
+
+	.directive('scrollTo', function ($log, offset) {
+		return {
+			restrict: 'A',
+			priority: 100,
+			link: function (scope, element, attrs) {
+
+				if (!angular.isDefined(attrs.scrollTo) && attrs.scrollTo !== '') {
+					$log.error('Directive "scroll-to" must have a value. E.g.: scroll-to="element-id"');
+				}
+				var gotoElement = null;
+
+				$(element).mousedown(function () {
+					scope.$apply(function () {
+						if (!gotoElement) {
+							gotoElement = document.getElementById(attrs.scrollTo);
+
+							if (gotoElement === null) {
+								$log.warn('Element with id "' + attrs.scrollTo + '" does not exist');
+							}
+						}
+						offset.scrollToElement(gotoElement);
+					});
+				});
+
+				scope.$on('$destroy', function() {
+					gotoElement = null;
+				});
+			}
+		};
 	});
