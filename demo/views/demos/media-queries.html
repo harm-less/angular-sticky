@@ -1,0 +1,42 @@
+<div save-content="intro">
+	<h2>Media queries</h2>
+	<p>
+		In today's responsive landscape who can do without media queries? Exactly, not you!
+		Angular Sticky has a few tricks that could prove useful when you're building a responsive application.
+	</p>
+	<p>
+		Adding a <code>media-query</code> attribute will allow you to supply a media query.
+		It will cause the sticky element to be only sticky if the media query matches the current viewport dimensions.
+	</p>
+	<p>
+		<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries" target="_blank">Learn more</a> about media queries.
+	</p>
+</div>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12" save-content="html">
+				<div hl-sticky media-query="min-width: 1501px">
+					I'm sticky when the viewport has a bigger width than 1501 pixels
+				</div>
+				<div hl-sticky media-query="(min-width: 1001px) AND (max-width: 1500px)">
+					I'm sticky when the viewport width is between 1001 and 1500 pixels
+				</div>
+				<div hl-sticky media-query="(min-width: 501px) AND (max-width: 1000px)">
+					I'm sticky when the viewport width is between 501 and 1000 pixels
+				</div>
+				<div hl-sticky media-query="max-width: 500px">
+					I'm sticky when the viewport has a smaller width than 500 pixels
+				</div>
+
+				<div hl-sticky media-query="max-height: 500px">
+					I'm sticky when the viewport is lower than 500 pixels
+				</div>
+				<div hl-sticky media-query="min-height: 501px">
+					I'm sticky when the viewport is higher than 501 pixels
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
