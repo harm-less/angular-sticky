@@ -142,7 +142,7 @@ angular.module('hl.sticky', [])
 			var stickyLineBottom;
 			var placeholder;
 
-			var isSticking = false;
+			var _isSticking = false;
 
 			// elements
 			var bodyEl = angular.element($document[0].body);
@@ -171,20 +171,23 @@ angular.module('hl.sticky', [])
 			// Methods
 			//
 			function stickyLinePositionTop() {
-				if (isSticking) {
+				if (_isSticking) {
 					return stickyLineTop;
 				}
 				stickyLineTop = _getTopOffset(nativeEl) - offsetTop - _stackOffsetTop();
 				return stickyLineTop;
 			}
 			function stickyLinePositionBottom() {
-				if (isSticking) {
+				if (_isSticking) {
 					return stickyLineBottom;
 				}
 				stickyLineBottom = _getBottomOffset(nativeEl) - offsetBottom - _stackOffsetBottom();
 				return stickyLineBottom;
 			}
 
+			function isSticky() {
+				return _isSticking;
+			}
 			function sticksAtPosition(anchor, scrolledDistance) {
 				if (!matchesMediaQuery()) {
 					return false;
@@ -222,16 +225,16 @@ angular.module('hl.sticky', [])
 
 				// Switch the sticky mode if the element crosses the sticky line
 				// don't make the element sticky when it's already sticky
-				if (shouldStick && !isSticking) {
+				if (shouldStick && !_isSticking) {
 					stickElement();
 				}
 				// don't unstick the element sticky when it isn't sticky already
-				else if (!shouldStick && isSticking) {
+				else if (!shouldStick && _isSticking) {
 					unstickElement();
 				}
 
 				// stick after care
-				if (isSticking) {
+				if (_isSticking) {
 					// update the top offset at an already sticking element
 					if (anchor === 'top') {
 						element.css('top', (offsetTop + _stackOffset(anchor) - containerBoundsBottom()) + 'px');
@@ -241,7 +244,7 @@ angular.module('hl.sticky', [])
 			}
 
 			function stickElement() {
-				isSticking = true;
+				_isSticking = true;
 
 				element.addClass(stickyClass);
 
@@ -264,7 +267,7 @@ angular.module('hl.sticky', [])
 				}
 			}
 			function unstickElement() {
-				isSticking = false;
+				_isSticking = false;
 
 				element.removeClass(stickyClass);
 
@@ -307,8 +310,11 @@ angular.module('hl.sticky', [])
 					extraOffset += globalOffset.top;
 				}
 				if (stickIndex > 0) {
+					// @todo the stack range calculation should be diverted to the stack
 					stack.range(0, stickIndex).forEach(function (stick) {
-						extraOffset += stick.computedHeight(anchor);
+						if (stick.isSticky()) {
+							extraOffset += stick.computedHeight(anchor);
+						}
 					});
 				}
 				return extraOffset;
@@ -335,8 +341,7 @@ angular.module('hl.sticky', [])
 
 			// add element to the sticky stack and save the id
 			var stackItem = stack.add(options.id, {
-				width: elementWidth,
-				height: elementHeight,
+				isSticky: isSticky,
 				computedHeight: computedHeight,
 				sticksAtPosition: sticksAtPosition
 			});

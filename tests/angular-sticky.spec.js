@@ -280,8 +280,8 @@ describe('angular-sticky', function() {
 				expect(stack.totalHeightAt('top', 0)).toBe(0);
 				expect(stack.totalHeightAt('top', 20)).toBe(0);
 				expect(stack.totalHeightAt('top', 21)).toBe(50);
-				expect(stack.totalHeightAt('top', 40)).toBe(50);
-				expect(stack.totalHeightAt('top', 41)).toBe(110);
+				expect(stack.totalHeightAt('top', 90)).toBe(50);
+				expect(stack.totalHeightAt('top', 91)).toBe(110);
 			});
 
 			it('calculate stack height at current position', function() {
