@@ -33,6 +33,7 @@ We are always looking for quality contributions!
 ### Todo
 * Finish documentation (mostly demo section)
 * Configurable z-index (preferably in each stack)
+* Expand the API of the hlStickyElement so it can also be used by the stack
 * Anchor "bottom". There is already a bit of groundwork done for this
 * Media queries based on predefined breakpoints (e.g. min-width: lg-max) so the code is DRYer in combination with Bootstrap or other grid frameworks
 * There seems to be a weird bug were an element becoming sticky starts shaking a little

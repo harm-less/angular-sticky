@@ -1,0 +1,179 @@
+<h1><code>hlStickyElement</code></h1>
+<p>
+	Makes an element sticky programmatically. The service is a function and you need to make an instance to use it.
+</p>
+<p>
+	This service is heavily used by the <code><a ui-sref="root.api.directive({name: 'hl-sticky'})">hlSticky</a></code> directive. So if you simple want to use a directive, that might be easier for you.
+	One reason is because you'll need to manually draw the sticky object as can be seen from this <a ui-sref="root.demo-container.demo({name: 'sticky-element'})">demo</a>. In most cases you'll not need that.
+</p>
+
+<h3>Summary</h3>
+<pre class="code" apply-content highlight-lang="js">
+	var stickyElementInstance = hlStickyElement(element:DOMElement, options:object);
+	stickyElementInstance.draw(drawOptions:object);
+	stickyElementInstance.destroy();
+</pre>
+
+<h3>Demos</h3>
+<ul>
+	<li><a ui-sref="root.demo-container.demo({name: 'sticky-element'})">Sticky element demo</a></li>
+	<li><a ui-sref="root.demo-container.demo({name: 'simple'})">Simple usage demo (directive)</a></li>
+	<li><a ui-sref="root.demo-container.demo({name: 'media-queries'})">Media queries demo (directive)</a></li>
+	<li><a ui-sref="root.demo-container.demo({name: 'container'})">Container demo (directive)</a></li>
+</ul>
+
+<h3>API</h3>
+<pre class="code" apply-content highlight-lang="js">
+	hlStickyElement(element:DOMElement, options:object)
+</pre>
+<ul class="list-unstyled">
+	<li>
+		<h4><code>element</code></h4>
+		<p>
+			A DOM element object. This should either be a <a href="https://learn.jquery.com/using-jquery-core/jquery-object/" target="_blank">jQuery/jqLite object</a> or an <a href="https://docs.angularjs.org/api/ng/function/angular.element" target="_blank">Angular element</a>.
+		</p>
+	</li>
+	<li>
+		<h4><code>options</code></h4>
+		<p>
+			An object with a bunch of options that determine the behavior of the sticky element:
+		</p>
+		<ul class="list-attributes">
+			<li>
+				<code>id</code>
+				(Default: none) - Determines the identifier of the sticky element.
+				<p>
+					Most of the time you won't need this, but sometimes it's handy to set it. For example if you want to retrieve a sticky element from a stack.
+					If this is not set, the identifier will default to the index it has in the stack.
+				</p>
+			</li>
+			<li>
+				<code>stack</code>
+				(Default: none) - Supplies a <code>hlStickyStack</code> instance the element will be added to.
+				<p>
+					This will allow you to make use of the lower-level methods in the <code>hlStickyStack</code>. Or you can give a stack if you simply don't want to use the default <code>hlStickyStack</code>.
+				</p>
+			</li>
+			<li>
+				<code>mediaQuery</code>
+				(Default: none) - Enables/disables the sticky element based on a media query.<br>
+				<p>
+					Check out the <a ui-sref="root.demo-container.demo({name: 'media-queries'})">media query demo</a>.<br>
+					Or <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries" target="_blank">learn more</a> about media queries in general.
+				</p>
+			</li>
+			<li>
+				<code>stickyClass</code>
+				(Default: 'is-sticky') - Adds custom classes to the sticky element when it becomes sticky.
+			</li>
+			<li>
+				<code>usePlaceholder</code>
+				(Default: true) - Prevent the dom from collapsing on itself.<br>
+				<p>
+					When a sticky element becomes sticky its position becomes <code>fixed</code>.
+					It is no longer part of the DOM in terms of other DOM element respecting it's dimensions and the elements underneath the sticky will suddenly jump a little.
+					To compensate for this an invisible placeholder is created with the height of the sticky element.
+				</p>
+			</li>
+			<li>
+				<code>anchor</code>
+				(Default: 'top') - Determines to what edge the sticky element should stick.
+				<ul class="list-unstyled">
+					<li class="text-danger"><b><i>Note:</i> This feature is under construction and only <code>top</code> can be used at this moment.</b></li>
+				</ul>
+			</li>
+			<li>
+				<code>offsetTop</code>
+				(Default: 0) - Adds offset to the top of the sticky element to act as margin.<br>
+				<ul class="list-unstyled">
+					<li><i>Note:</i> <code>anchor</code> must be set to <code>top</code> to make it work.</li>
+					<li><i>Note:</i> This value can also be negative</li>
+				</ul>
+			</li>
+			<li>
+				<code><strike>offsetBottom</strike></code>
+				(Default: 0) - Adds offset to the bottom of the sticky element to act as margin.<br>
+				<ul class="list-unstyled">
+					<li class="text-danger"><b><i>Note:</i> This feature is under construction and cannot be used at this moment.</b></li>
+					<li><i>Note:</i> <code>anchor</code> must be set to <code>bottom</code> to make it work.</li>
+					<li><i>Note:</i> This value can also be negative</li>
+				</ul>
+			</li>
+			<li>
+				<code>container</code>
+				(Default: None) - Id of a DOM element that you want the sticky element to be constrained to.<br>
+				<p>
+					Check out the <a ui-sref="root.demo-container.demo({name: 'container'})">container demo</a>.
+				</p>
+			</li>
+		</ul>
+	</li>
+</ul>
+
+<h4>Public methods</h4>
+<p>
+	Once you have an instance a few methods are made available to you.
+</p>
+<ul class="list-methods">
+	<li>
+		<h4><code>draw(drawOptions:object)</code></h4>
+		<p>
+			A DOM element object. This should either be a <a href="https://learn.jquery.com/using-jquery-core/jquery-object/" target="_blank">jQuery/jqLite object</a> or an <a href="https://docs.angularjs.org/api/ng/function/angular.element" target="_blank">Angular element</a>.
+		</p>
+		<h5><code>drawOptions</code></h5>
+		<pre class="code" apply-content highlight-lang="js">
+			{
+				offset: {
+					top:int,
+					bottom:int,
+					zIndex:int
+				},
+				force:boolean
+			}
+		</pre>
+		<ul class="list-attributes">
+			<li>
+				<code>offset.top</code>
+				(Default: 0) - Gives the sticky element additional offset from the top.
+				<p>
+					Perhaps not extremely useful when using single sticky elements, but the <code><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></code> service is using this for parent collections to accommodate for the stack height.
+				</p>
+			</li>
+			<li>
+				<code><strike>offset.bottom</strike></code>
+				(Default: 0) - Gives the sticky element additional offset from the bottom.
+				<p>
+					Perhaps not extremely useful when using single sticky elements, but the <code><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></code> service is using this for parent collections to accommodate for the stack height.
+				</p>
+				<ul class="list-unstyled">
+					<li class="text-danger"><b><i>Note:</i> This feature is under construction and cannot be used at this moment.</b></li>
+				</ul>
+			</li>
+			<li>
+				<code>offset.zIndex</code>
+				(Default: none) - Allows for altered z-indexes.
+				<p>
+					Read more about the z-indexes at the <code><a ui-sref="root.api.service({name: 'hl-sticky-stack'})">hlStickyStack</a></code> service
+				</p>
+			</li>
+			<li>
+				<code>force</code>
+				(Default: false) - Forces a complete re-draw.
+				<p>
+					Sometimes calling draw is not enough, for example during a resize of the viewport in the width dimension only, the element will not get re-drawn as expected.
+					Setting this options to true will simply un-stick the element and re-stick it. You should try to limit using this option because it uses a bit more resources.
+				</p>
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>destroy()</code></h4>
+		<p>
+			Destroys the sticky element from the stack it was attached to and it makes sure it un-sticks itself.
+			It is vital you call this method after you for example switch pages in your Angular application, otherwise it might cause weird artifacts on follow up pages.
+		</p>
+		<pre class="code" apply-content highlight-lang="js">
+			stickyElementInstance.destroy();
+		</pre>
+	</li>
+</ul>

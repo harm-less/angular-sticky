@@ -537,11 +537,15 @@ describe('angular-sticky', function() {
 		var hlStickyElementCollection;
 		var DefaultStickyStackName;
 
-		beforeEach(inject(function (_$timeout_, _hlStickyElementCollection_, _DefaultStickyStackName_) {
+		var hlStickyStack;
+
+		beforeEach(inject(function (_$timeout_, _hlStickyElementCollection_, _DefaultStickyStackName_, _hlStickyStack_) {
 			$timeout = _$timeout_;
 
 			hlStickyElementCollection = _hlStickyElementCollection_;
 			DefaultStickyStackName = _DefaultStickyStackName_;
+
+			hlStickyStack = _hlStickyStack_;
 		}));
 
 		it('creates a new instance of hlStickyElementCollection()', function() {
@@ -595,24 +599,15 @@ describe('angular-sticky', function() {
 		it('destroys an instance of hlStickyElementCollection()', function() {
 			var element = compile(templateStickyElementOffsetSmall);
 
+			var stack = hlStickyStack();
 			var collection = hlStickyElementCollection();
 			collection.addElement(element);
 			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements().length).toBe(1);
+			expect(stack.length()).toBe(1);
 
 			collection.destroy();
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements().length).toBe(1);
-
-			collection.removeElement(element);
-			collection.destroy();
 			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
-
-			// force the destruction
-			collection = hlStickyElementCollection();
-			collection.addElement(element);
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements().length).toBe(1);
-
-			collection.destroy(true);
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
+			expect(stack.length()).toBe(0);
 		});
 
 		it('triggers a resize event so the collection gets rendered', function() {

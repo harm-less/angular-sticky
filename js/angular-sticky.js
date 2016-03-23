@@ -43,7 +43,7 @@ angular.module('hl.sticky', [])
 				values.id = id;
 				values.zIndex = stickyZIndex;
 				stack.push(values);
-				
+
 				stickyZIndex -= 1;
 				return values;
 			};
@@ -89,6 +89,7 @@ angular.module('hl.sticky', [])
 				return false;
 			};
 			$stack.removeTop = function () {
+				stickyZIndex += 1;
 				return stack.splice(stack.length - 1, 1)[0];
 			};
 			$stack.length = function () {
@@ -359,7 +360,7 @@ angular.module('hl.sticky', [])
 					globalOffset.zIndex = offset.zIndex;
 				}
 
-				// for resizing, we simply unstick the element and restick it using the render method
+				// for resizing or other purposes that require a forced re-draw, we simply unstick the element and restick it using the render method
 				if (drawOptions.force === true) {
 					unstickElement();
 				}
@@ -466,7 +467,6 @@ angular.module('hl.sticky', [])
 
 					$sticky.addElement = function (element, stickyOptions) {
 						stickyOptions = stickyOptions || {};
-						stickyOptions.addScrollEvent = false;
 						stickyOptions.stack = stickyStackFactory;
 						var sticky = hlStickyElement(element, stickyOptions);
 						trackedElements.push({
@@ -509,12 +509,12 @@ angular.module('hl.sticky', [])
 						});
 					};
 
-					$sticky.destroy = function(force) {
-						// if the collection is empty or force is set to true, remove it from the service
-						if (force === true || trackedElements.length === 0) {
-							delete $stickyElement.collections[collectionName];
-							destroy();
-						}
+					$sticky.destroy = function() {
+						angular.forEach(angular.copy(trackedElements), function(element) {
+							$sticky.removeElement(element.element);
+						});
+						delete $stickyElement.collections[collectionName];
+						destroy();
 					};
 
 					$sticky.trackedElements = function() {
@@ -547,7 +547,7 @@ angular.module('hl.sticky', [])
 					parent: $attrs.collectionParent
 				});
 				var options = {
-					id: $attrs.hlSticky || $attrs.stickyId
+					id: $attrs.hlSticky
 				};
 				angular.forEach(['mediaQuery', 'stickyClass', 'usePlaceholder', 'offsetTop', 'offsetBottom', 'anchor', 'container'], function(option) {
 					options[option] = $attrs[option];

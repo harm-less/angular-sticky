@@ -77,6 +77,27 @@ var demo = angular.module('demo', [
 					}
 				}
 			})
+			.state('root.api', {
+				abstract: true,
+				url: '/api',
+				views: {
+					'content@root': {
+						templateUrl: 'views/api/page.html'
+					}
+				}
+			})
+			.state('root.api.directive', {
+				url: '/directive/:name',
+				templateUrl: function (stateParams) {
+					return 'views/api/directives/' + stateParams.name + '.html';
+				}
+			})
+			.state('root.api.service', {
+				url: '/service/:name',
+				templateUrl: function (stateParams) {
+					return 'views/api/services/' + stateParams.name + '.html';
+				}
+			})
 			.state('root.demo-container', {
 				abstract: true,
 				views: {
