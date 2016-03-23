@@ -1,0 +1,77 @@
+<h1><code>hl-sticky</code></h1>
+<p>
+	The magical sticky directive.
+</p>
+<p>
+	The directive makes use of the <code><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></code> service to take care of stacking, so a lot of the documentation can be found there.
+	It also makes use of the <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> service to become sticky and so a lot of the documentation can be found there as well.
+</p>
+<p>
+	By default a class called <code>hl-sticky</code> is being added to the element the directive has been applied to.
+</p>
+
+<h3>Full example</h3>
+<pre class="code" apply-content highlight-lang="html">
+	<div hl-sticky="uniqueId"
+	     media-query="min-width: 768px"
+	     sticky-class="custom-sticky-class"
+	     use-placeholder="true"
+	     anchor="top"
+	     offset-top="100"
+	     container="id-of-container"
+	     collection="name-of-collection"
+	     collectionParent="name-of-collection">
+		I'll become sticky
+	</div>
+</pre>
+
+<h3>Demos</h3>
+<ul>
+	<li><a ui-sref="root.demo-container.demo({name: 'simple'})">Simple usage demo</a></li>
+	<li><a ui-sref="root.demo-container.demo({name: 'media-queries'})">Media queries demo</a></li>
+	<li><a ui-sref="root.demo-container.demo({name: 'container'})">Container demo</a></li>
+</ul>
+
+<h3>Attributes</h3>
+<ul class="list-attributes">
+	<li>
+		<code>hl-sticky</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>id</code>
+	</li>
+	<li>
+		<code>media-query</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>mediaQuery</code>
+	</li>
+	<li>
+		<code>sticky-class</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>stickyClass</code>
+	</li>
+	<li>
+		<code>use-placeholder</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>usePlaceholder</code>
+	</li>
+	<li>
+		<code>anchor</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>anchor</code>
+	</li>
+	<li>
+		<code>offset-top</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>offsetTop</code>
+	</li>
+	<li>
+		<code>offset-bottom</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>offsetBottom</code>
+	</li>
+	<li>
+		<code>container</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>container</code>
+	</li>
+	<li>
+		<code>collection</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></code> at <code>collection</code>
+	</li>
+	<li>
+		<code>collection-parent</code><br>
+		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></code> at <code>parent</code>
+	</li>
+</ul>

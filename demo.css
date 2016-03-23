@@ -68,6 +68,9 @@
   background: url(images/bg-small.png) no-repeat top left;
   padding-bottom: 70px;
 }
+.api-wrapper {
+  padding-top: 40px;
+}
 .demo-wrapper {
   padding-top: 40px;
 }

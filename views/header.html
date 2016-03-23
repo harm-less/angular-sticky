@@ -1,0 +1,42 @@
+<nav class="navbar navbar-static-top navbar-inverse">
+	<div class="container">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Angular Sticky</a>
+		</div>
+		<div id="navbar" class="navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li ui-sref-active="active"><a ui-sref="root.home()">Getting started</a></li>
+				<li class="dropdown" uib-dropdown>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" uib-dropdown-toggle>API<span class="caret"></span></a>
+					<ul class="dropdown-menu" uib-dropdown-menu>
+						<li class="dropdown-header">Directives</li>
+						<li><a ui-sref="root.api.directive({name: 'hl-sticky'})">hl-sticky</a></li>
+						<li role="separator" class="divider"></li>
+						<li class="dropdown-header">Services</li>
+						<li><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></li>
+						<li><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></li>
+						<li><a ui-sref="root.api.service({name: 'hl-sticky-stack'})">hlStickyStack</a></li>
+					</ul>
+				</li>
+				<li class="dropdown" uib-dropdown>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" uib-dropdown-toggle>Demos<span class="caret"></span></a>
+					<ul class="dropdown-menu" uib-dropdown-menu>
+						<li class="dropdown-header">Basics</li>
+						<li><a ui-sref="root.demo-container.demo({name: 'simple'})">Simple</a></li>
+						<li><a ui-sref="root.demo-container.demo({name: 'media-queries'})">Media queries</a></li>
+						<li><a ui-sref="root.demo-container.demo({name: 'container'})">Container</a></li>
+						<li role="separator" class="divider"></li>
+						<li class="dropdown-header">Services</li>
+						<li><a ui-sref="root.demo-container.demo({name: 'sticky-stack'})">Sticky stack</a></li>
+						<li><a ui-sref="root.demo-container.demo({name: 'sticky-element'})">Sticky element</a></li>
+						<li><a ui-sref="root.demo-container.demo({name: 'sticky-element-collection'})">Sticky element collection</a></li>
+						<li role="separator" class="divider"></li>
+						<li class="dropdown-header">Advanced</li>
+						<li><a ui-sref="root.demo-container.demo({name: 'collections'})">Collections</a></li>
+					</ul>
+				</li>
+				<li ui-sref-active="active"><a ui-sref="root.about()">About</a></li>
+			</ul>
+		</div><!-- /.nav-collapse -->
+	</div><!-- /.container -->
+</nav>

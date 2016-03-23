@@ -1,0 +1,190 @@
+<h1><code>hlStickyStack</code></h1>
+<p>
+	Service to keep track of a multiple sticky element in a row.
+</p>
+
+<h3>Summary</h3>
+<pre class="code" apply-content highlight-lang="js">
+	var stickyStackInstance = hlStickyStack(options:object);
+	stickyStackInstance.add(id:int, values:object);
+	stickyStackInstance.remove(id:int,string);
+	stickyStackInstance.removeTop(id:int,string);
+	stickyStackInstance.get(id:int,string);
+	stickyStackInstance.top();
+	stickyStackInstance.index(id:int,string);
+	stickyStackInstance.range(start:int, end:int);
+	stickyStackInstance.all();
+	stickyStackInstance.length();
+	stickyStackInstance.keys();
+	stickyStackInstance.height(anchor:string);
+	stickyStackInstance.totalHeightCurrent(anchor:string);
+	stickyStackInstance.totalHeightAt(anchor:string, at:int);
+</pre>
+
+<h3>Demos</h3>
+<ul>
+	<li><a ui-sref="root.demo-container.demo({name: 'sticky-stack'})">Sticky stack demo</a></li>
+</ul>
+
+<h3>API</h3>
+<pre class="code" apply-content highlight-lang="js">
+	hlStickyStack(options:object)
+</pre>
+<ul class="list-unstyled">
+	<li>
+		<h4><code>options</code></h4>
+		<ul class="list-attributes">
+			<li>
+				<code>name</code>
+				(Default: 'default-stack') - The name of the stack.
+				<p>
+					The name of a stack is unique. So if you supply a name, you either create a new stack or return an existing one.
+				</p>
+			</li>
+		</ul>
+	</li>
+</ul>
+
+<h4>Public methods</h4>
+<p>
+	Once you have an instance a few methods are made available to you.
+</p>
+<ul class="list-methods">
+	<li>
+		<h4><code>add(id:string, values:object)</code></h4>
+		<p>
+			Adds a sticky element to the stack.
+		</p>
+		<p>
+			<i>Returns the compiled <code>values</code> object.</i>
+		</p>
+		<ul>
+			<li>
+				<code>id</code>
+				Id of the sticky element you want to add.
+				<p>
+					If it's not a string the id will become the index from the latest position it will be added to in the stack.
+				</p>
+			</li>
+			<li>
+				<code>values</code>
+				Simple object which sticky element information.
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>remove(id:string|int)</code></h4>
+		<p>
+			Removes a sticky element from the stack.
+		</p>
+		<p>
+			<i>Returns the removed item object.</i>
+		</p>
+		<ul>
+			<li>
+				<code>id</code>
+				Id of the sticky element you want to remove.
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>removeTop(id:string|int)</code></h4>
+		<p>
+			Removes a latest added sticky element from the stack.
+		</p>
+		<p>
+			<i>Returns the removed item object.</i>
+		</p>
+		<ul>
+			<li>
+				<code>id</code>
+				Id of the sticky element you want to remove.
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>get(id:string|int)</code></h4>
+		<p>
+			Gets a sticky element from the stack based on an id.
+		</p>
+		<p>
+			<i>Returns the requested object.</i>
+		</p>
+		<ul>
+			<li>
+				<code>id</code>
+				Id of the sticky element you want to get.
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>top()</code></h4>
+		<p>
+			Get the latest added sticky element from the stack.
+		</p>
+		<p>
+			<i>Returns the latest added sticky element object.</i>
+		</p>
+	</li>
+	<li>
+		<h4><code>index(id:string|int)</code></h4>
+		<p>
+			Gets the index from a sticky element it has in the stack.
+		</p>
+		<p>
+			<i>Returns the requested sticky element index.</i>
+		</p>
+		<ul>
+			<li>
+				<code>id</code>
+				Id of the sticky element you want to get the index from.
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>range(id:string|int)</code></h4>
+		<p>
+			Gets a range of sticky elements from the stack based on a begin and end index.
+		</p>
+		<p>
+			<i>Returns the requested sticky element objects in an array.</i>
+		</p>
+		<ul>
+			<li>
+				<code>start</code>
+				Start index
+			</li>
+			<li>
+				<code>end</code>
+				End index
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>all()</code></h4>
+		<p>
+			Gets all the sticky elements from a the stack.
+		</p>
+		<p>
+			<i>Returns all the sticky element object in an array (It's the raw object, so it's not a copy. Use it wisely).</i>
+		</p>
+	</li>
+	<li>
+		<h4><code>length()</code></h4>
+		<p>
+			Get the amount of sticky elements from the stack.
+		</p>
+		<p>
+			<i>Returns integer indicating the total amount of sticky elements.</i>
+		</p>
+	</li>
+	<li>
+		<h4><code>keys()</code></h4>
+		<p>
+			Gets all the sticky element ids from the stack.
+		</p>
+		<p>
+			<i>Returns all the sticky element ids in an array in the order they have been added.</i>
+		</p>
+	</li>
+</ul>

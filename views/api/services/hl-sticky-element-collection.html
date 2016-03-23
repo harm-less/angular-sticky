@@ -1,0 +1,104 @@
+<h1><code>hlStickyElementCollection</code></h1>
+<p>
+	Container for <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> instances. The service is a function and you need to make an instance to use it.
+</p>
+<p>
+	To-write:
+	- uses 1 stack
+	- provider
+	- same name returns same object
+</p>
+
+<h3>Summary</h3>
+<pre class="code" apply-content highlight-lang="js">
+	var stickyElementCollectionInstance = hlStickyElementCollection(options:object);
+	stickyElementCollectionInstance.addElement(element:DOMElement, options:object);
+	stickyElementCollectionInstance.removeElement(element:DOMElement,string);
+	stickyElementCollectionInstance.draw(drawOptions:object);
+	stickyElementCollectionInstance.trackedElements();
+	stickyElementCollectionInstance.destroy(force);
+</pre>
+
+<h3>Demos</h3>
+<ul>
+	<li><a ui-sref="root.demo-container.demo({name: 'sticky-element-collection'})">Sticky element collection demo</a></li>
+	<li><a ui-sref="root.demo-container.demo({name: 'collections'})">Advanced collection demo (directive)</a></li>
+</ul>
+
+<h3>API</h3>
+<pre class="code" apply-content highlight-lang="js">
+	hlStickyElementCollection(options:object)
+</pre>
+<ul class="list-unstyled">
+	<li>
+		<h4><code>options</code></h4>
+		<p>
+			An object with a bunch of options that determine the behavior of the sticky element collection:
+		</p>
+		<ul class="list-attributes">
+			<li>
+				<code>name</code>
+				(Default: 'default-stack') - The name of the collection.
+				<p>
+					This is required if you want more than one collection on a page because you'll be using this name at the <code>parent</code> option.
+				</p>
+			</li>
+			<li>
+				<code>parent</code>
+				(Default: none) - Parent collection name.
+				<p>
+					If you're using more than one collection on a single page and those collection need to stacked on top of each other.
+				</p>
+			</li>
+		</ul>
+	</li>
+</ul>
+
+<h4>Public methods</h4>
+<p>
+	Once you have an instance a few methods are made available to you.
+</p>
+<ul class="list-methods">
+	<li>
+		<h4><code>addElement(element:DOMElement, options:object)</code></h4>
+		<p>
+			Adds a DOM element object that will become sticky and part of the collection.
+			The documentation for both the <code>element</code> and the <code>options</code> parameters can be found at the <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> service documentation.
+		</p>
+	</li>
+	<li>
+		<h4><code>removeElement(element:DOMElement|string)</code></h4>
+		<ul class="list-attributes">
+			<li>
+				<code>element</code>
+				The DOMElement of the sticky element you want to remove.
+				<p>
+					It can either be an DOMElement or a string which looks for an element's id.
+				</p>
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>draw(drawOptions:object)</code></h4>
+		<p>
+			Draws all the sticky elements in the collection at once.
+		</p>
+		<p>
+			For documentation for the <code>drawOptions</code> read the documentation from the <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> service.
+			But because this collection does some work for you, the offset parameters <code>top</code>, <code>bottom</code> and <code>zIndex</code> will be taken care of if a collection parent has been set.
+		</p>
+	</li>
+	<li>
+		<h4><code>trackedElements()</code></h4>
+		<p>
+			Returns the raw sticky elements array used in the collection. You probably should leave this alone if you're not sure what to do with this.
+		</p>
+	</li>
+	<li>
+		<h4><code>destroy()</code></h4>
+		<p>
+			Destroys all sticky elements from the collection and from the stack and it makes sure all sticky element un-stick themselves.
+			It is vital you call this method after you for example switch pages in your Angular application, otherwise it might cause weird artifacts on follow up pages.
+		</p>
+	</li>
+</ul>
