@@ -215,8 +215,8 @@ var demo = angular.module('demo', [
 						var pre = prettyPrintOne(content, lang);
 						$element.html(pre);
 					}
-
-					if ($attrs.contentWatch) {
+					
+					if (angular.isDefined($attrs.contentWatch)) {
 						$scope.$watch(apply);
 					}
 					else {
