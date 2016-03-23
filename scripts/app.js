@@ -200,18 +200,28 @@ var demo = angular.module('demo', [
 
 				return function($scope, $element, $attrs) {
 
-					var content = $savedContent[$attrs.applyContent];
-					if (!content) {
-						// use the un-compiled content of the element itself
-						content = beforeCompile;
+					function apply() {
+
+						var content = $savedContent[$attrs.applyContent];
+						if (!content) {
+							// use the un-compiled content of the element itself
+							content = beforeCompile;
+						}
+						var lang = $attrs.highlightLang;
+						if (lang == "html") {
+							content = escapeHtml(content);
+						}
+						content = trimIndent(content);
+						var pre = prettyPrintOne(content, lang);
+						$element.html(pre);
 					}
-					var lang = $attrs.highlightLang;
-					if (lang == "html") {
-						content = escapeHtml(content);
+
+					if ($attrs.contentWatch) {
+						$scope.$watch(apply);
 					}
-					content = trimIndent(content);
-					var pre = prettyPrintOne(content, lang);
-					$element.html(pre);
+					else {
+						apply();
+					}
 				}
 			}
 		}

@@ -511,7 +511,7 @@ angular.module('hl.sticky', [])
 
 					$sticky.destroy = function() {
 						angular.forEach(angular.copy(trackedElements), function(element) {
-							$sticky.removeElement(element.element);
+							$sticky.removeElement(element);
 						});
 						delete $stickyElement.collections[collectionName];
 						destroy();
@@ -540,9 +540,7 @@ angular.module('hl.sticky', [])
 			replace: true,
 			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
-				var stickyEl = $element;
-
-				var stickyElementFactory = hlStickyElementCollection({
+				var stickyElementCollection = hlStickyElementCollection({
 					name: $attrs.collection,
 					parent: $attrs.collectionParent
 				});
@@ -552,12 +550,11 @@ angular.module('hl.sticky', [])
 				angular.forEach(['mediaQuery', 'stickyClass', 'usePlaceholder', 'offsetTop', 'offsetBottom', 'anchor', 'container'], function(option) {
 					options[option] = $attrs[option];
 				});
-				stickyElementFactory.addElement(stickyEl, options);
+				stickyElementCollection.addElement($element, options);
 
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
-					stickyElementFactory.removeElement(stickyEl);
-					stickyElementFactory.destroy();
+					stickyElementCollection.destroy();
 				});
 			}
 		};
