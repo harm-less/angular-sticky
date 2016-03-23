@@ -49,20 +49,44 @@ var demo = angular.module('demo', [
 
 	.config(function($stateProvider, $urlRouterProvider){
 
-		$urlRouterProvider.otherwise('/');
+		$urlRouterProvider.otherwise('/home');
 
 		$stateProvider
-			.state('home', {
-				url: '/',
-				templateUrl: 'views/getting-started.html',
-				controller: 'HomeController'
-			})
-			.state('demo-container', {
+			.state('root',{
 				abstract: true,
-				templateUrl: 'views/demo.html',
-				controller: 'DemoCtrl'
+				url: '',
+				views: {
+					'@': {
+						templateUrl: 'views/layout.html',
+						controller: 'RootController'
+					},
+					'header@root': {
+						templateUrl: 'views/header.html'
+					},
+					'footer@root':{
+						templateUrl: 'views/footer.html'
+					}
+				}
 			})
-			.state('demo-container.demo', {
+			.state('root.home', {
+				url: '/home',
+				views: {
+					'content@root': {
+						templateUrl: 'views/getting-started.html',
+						controller: 'HomeController'
+					}
+				}
+			})
+			.state('root.demo-container', {
+				abstract: true,
+				views: {
+					'content@root': {
+						templateUrl: 'views/demo.html',
+						controller: 'DemoCtrl'
+					}
+				}
+			})
+			.state('root.demo-container.demo', {
 				url: '/demo/:name',
 				templateUrl: function (stateParams) {
 					return 'views/demos/' + stateParams.name + '.html';
@@ -71,10 +95,14 @@ var demo = angular.module('demo', [
 					$rootScope.demoName = $stateParams.name;
 				}
 			})
-			.state('about', {
+			.state('root.about', {
 				url: '/about',
-				templateUrl: 'views/about.html',
-				controller: 'AboutController'
+				views: {
+					'content@root': {
+						templateUrl: 'views/about.html',
+						controller: 'AboutController'
+					}
+				}
 			});
 	})
 
@@ -83,8 +111,13 @@ var demo = angular.module('demo', [
 		$controllerProvider.allowGlobals();
 	}])
 
-	.controller('HomeController', function($scope) {
+	.controller('RootController', function($rootScope, $document) {
+		$rootScope.$on('$stateChangeSuccess', function() {
+			$document[0].body.scrollTop = $document[0].documentElement.scrollTop = 0;
+		});
+	})
 
+	.controller('HomeController', function($scope) {
 	})
 
 	.controller('DemoCtrl', function($rootScope, $scope, $sce, $timeout, $stateParams, $savedContent) {
