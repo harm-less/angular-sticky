@@ -31,8 +31,8 @@ angular.module('myModule', ['hl.sticky']);
 We are always looking for quality contributions!
 
 ### Todo
-* Finish documentation (mostly demo section)
 * Configurable z-index (preferably in each stack)
+* Make sure the source of the sticky element is being loaded in demo instead of a copy
 * Expand the API of the hlStickyElement so it can also be used by the stack
 * Anchor "bottom". There is already a bit of groundwork done for this
 * Media queries based on predefined breakpoints (e.g. min-width: lg-max) so the code is DRYer in combination with Bootstrap or other grid frameworks

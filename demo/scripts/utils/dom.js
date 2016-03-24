@@ -27,7 +27,7 @@ angular.module('demo.utils.dom', ['hl.sticky', 'smoothScroll'])
 		};
 
 		this.totalStickyStackHeightAtElement = function (element) {
-			return hlStickyStack().totalHeightAt('top', this.top(element));
+			return hlStickyStack().heightAt('top', this.top(element));
 		};
 
 		this.scrollToElement = function(element) {

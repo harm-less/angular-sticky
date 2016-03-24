@@ -17,8 +17,8 @@
 	stickyStackInstance.length();
 	stickyStackInstance.keys();
 	stickyStackInstance.height(anchor:string);
-	stickyStackInstance.totalHeightCurrent(anchor:string);
-	stickyStackInstance.totalHeightAt(anchor:string, at:int);
+	stickyStackInstance.heightCurrent(anchor:string);
+	stickyStackInstance.heightAt(anchor:string, at:int);
 </pre>
 
 <h3>Demos</h3>
@@ -203,7 +203,7 @@
 		</ul>
 	</li>
 	<li>
-		<h4><code>totalHeightCurrent(anchor:string)</code></h4>
+		<h4><code>heightCurrent(anchor:string)</code></h4>
 		<p>
 			Calculates the height of all the sticky elements in the stack that are sticky when the method is called.
 		</p>
@@ -218,7 +218,7 @@
 		</ul>
 	</li>
 	<li>
-		<h4><code>totalHeightAt(anchor:string, at:int)</code></h4>
+		<h4><code>heightAt(anchor:string, at:int)</code></h4>
 		<p>
 			Calculates the height of all the sticky elements in the stack that would be sticky at a certain scroll position in pixels.
 		</p>

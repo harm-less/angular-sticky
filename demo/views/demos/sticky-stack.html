@@ -25,10 +25,10 @@
 			var mousePosition = event.clientY + window.pageYOffset;
 
 			// get the current total height of the stack
-			$scope.stackHeightCurrent = stack.totalHeightCurrent('top');
+			$scope.stackHeightCurrent = stack.heightCurrent('top');
 
 			// get the total height of the stack at the position of the mouse
-			$scope.stackHeightAtPosition = stack.totalHeightAt('top', mousePosition);
+			$scope.stackHeightAtPosition = stack.heightAt('top', mousePosition);
 			$scope.$apply();
 		});
 

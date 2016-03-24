@@ -277,25 +277,25 @@ describe('angular-sticky', function() {
 			it('calculate stack height at a certain position', function() {
 				var stack = hlStickyStack();
 				expect(stack.length()).toBe(2);
-				expect(stack.totalHeightAt('top', 0)).toBe(0);
-				expect(stack.totalHeightAt('top', 20)).toBe(0);
-				expect(stack.totalHeightAt('top', 21)).toBe(50);
-				expect(stack.totalHeightAt('top', 90)).toBe(50);
-				expect(stack.totalHeightAt('top', 91)).toBe(110);
+				expect(stack.heightAt('top', 0)).toBe(0);
+				expect(stack.heightAt('top', 20)).toBe(0);
+				expect(stack.heightAt('top', 21)).toBe(50);
+				expect(stack.heightAt('top', 90)).toBe(50);
+				expect(stack.heightAt('top', 91)).toBe(110);
 			});
 
 			it('calculate stack height at current position', function() {
 				var stack = hlStickyStack();
 				expect(stack.length()).toBe(2);
-				expect(stack.totalHeightCurrent('top')).toBe(0);
+				expect(stack.heightCurrent('top')).toBe(0);
 				scrollTo(20);
-				expect(stack.totalHeightCurrent('top')).toBe(0);
+				expect(stack.heightCurrent('top')).toBe(0);
 				scrollTo(21);
-				expect(stack.totalHeightCurrent('top')).toBe(50);
+				expect(stack.heightCurrent('top')).toBe(50);
 				scrollTo(40);
-				expect(stack.totalHeightCurrent('top')).toBe(50);
+				expect(stack.heightCurrent('top')).toBe(50);
 				scrollTo(41);
-				expect(stack.totalHeightCurrent('top')).toBe(110);
+				expect(stack.heightCurrent('top')).toBe(110);
 			});
 		});
 	});

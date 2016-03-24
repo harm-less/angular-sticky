@@ -103,7 +103,7 @@ angular.module('hl.sticky', [])
 				});
 				return height;
 			};
-			$stack.totalHeightAt = function (anchor, at) {
+			$stack.heightAt = function (anchor, at) {
 				var atAdjusted = at - 1;
 				var stick;
 				var computedHeight;
@@ -123,8 +123,8 @@ angular.module('hl.sticky', [])
 				}
 				return height;
 			};
-			$stack.totalHeightCurrent = function (anchor) {
-				return $stack.totalHeightAt(anchor, window.pageYOffset || documentEl.scrollTop);
+			$stack.heightCurrent = function (anchor) {
+				return $stack.heightAt(anchor, window.pageYOffset || documentEl.scrollTop);
 			};
 
 			stacks[stackName] = $stack;
@@ -499,7 +499,7 @@ angular.module('hl.sticky', [])
 								name: options.parent
 							});
 							_drawOptions.offset = {
-								top: parentStack.totalHeightCurrent('top'),
+								top: parentStack.heightCurrent('top'),
 								zIndex: parentStack.length()
 							};
 						}
