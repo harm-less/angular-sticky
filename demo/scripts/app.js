@@ -49,7 +49,7 @@ var demo = angular.module('demo', [
 
 	.config(function($stateProvider, $urlRouterProvider){
 
-		$urlRouterProvider.otherwise('/home');
+		$urlRouterProvider.otherwise('/');
 
 		$stateProvider
 			.state('root',{
@@ -69,7 +69,7 @@ var demo = angular.module('demo', [
 				}
 			})
 			.state('root.home', {
-				url: '/home',
+				url: '/',
 				views: {
 					'content@root': {
 						templateUrl: 'views/getting-started.html',

@@ -187,4 +187,53 @@
 			<i>Returns all the sticky element ids in an array in the order they have been added.</i>
 		</p>
 	</li>
+	<li>
+		<h4><code>height(anchor:string)</code></h4>
+		<p>
+			Calculates the height of all the sticky elements in the stack regardless if they are sticky or not.
+		</p>
+		<ul>
+			<li>
+				<code>anchor</code>
+				Filter only on a certain anchor position.
+				<p>
+					Read more about <a ui-sref="root.api.service({name: 'hl-sticky-element'})">anchors</a>.
+				</p>
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>totalHeightCurrent(anchor:string)</code></h4>
+		<p>
+			Calculates the height of all the sticky elements in the stack that are sticky when the method is called.
+		</p>
+		<ul>
+			<li>
+				<code>anchor</code>
+				Filter only on a certain anchor position.
+				<p>
+					Read more about <a ui-sref="root.api.service({name: 'hl-sticky-element'})">anchors</a>.
+				</p>
+			</li>
+		</ul>
+	</li>
+	<li>
+		<h4><code>totalHeightAt(anchor:string, at:int)</code></h4>
+		<p>
+			Calculates the height of all the sticky elements in the stack that would be sticky at a certain scroll position in pixels.
+		</p>
+		<ul>
+			<li>
+				<code>anchor</code>
+				Filter only on a certain anchor position.
+				<p>
+					Read more about <a ui-sref="root.api.service({name: 'hl-sticky-element'})">anchors</a>.
+				</p>
+			</li>
+			<li>
+				<code>at</code>
+				Number of scrolled pixels
+			</li>
+		</ul>
+	</li>
 </ul>
