@@ -2,6 +2,8 @@ module.exports = function(grunt) {
 
 	require('load-grunt-tasks')(grunt);
 
+	var modRewrite = require('connect-modrewrite');
+
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		meta: {
@@ -38,12 +40,27 @@ module.exports = function(grunt) {
 			}
 		},
 		connect: {
-			serve: {
+			options: {
+				port: 9000,
+				// Change this to '0.0.0.0' to access the server from outside.
+				hostname: 'localhost',
+				livereload: 35729
+			},
+			livereload: {
 				options: {
-					livereload: true,
-					port: 9000,
-					open: 'http://localhost:<%= connect.serve.options.port %>/',
-					base: 'demo'
+					debug: false,
+					open: true,
+					middleware: function (connect) {
+						return [
+							modRewrite(['^[^\\.]*$ /index.html [L]']),
+							connect.static('.tmp'),
+							connect().use(
+								'/bower_components',
+								connect.static('./bower_components')
+							),
+							connect.static('demo')
+						];
+					}
 				}
 			}
 		},
@@ -52,7 +69,8 @@ module.exports = function(grunt) {
 				livereload: true,
 				spawn: false,
 				files: [
-					'demo/*.css'
+					'.tmp/styles/*.css',
+
 				]
 			},
 			tests: {
@@ -73,34 +91,45 @@ module.exports = function(grunt) {
 				expand: true,
 				cwd: 'bower_components/bootstrap/fonts/',
 				src: '**',
-				dest: 'demo/fonts/'
-			},
-			srcToDemo: {
-				expand: true,
-				cwd: 'js/',
-				src: '**',
-				dest: 'demo/scripts/src/'
+				dest: '.tmp/fonts/'
 			},
 			dist: {
 				expand: true,
 				cwd: 'js/',
 				src: '**',
 				dest: 'dist/'
+			},
+			demo: {
+				expand: true,
+				cwd: 'demo/',
+				src: [
+					'*.html',
+					'views/**/*.html',
+					'images/**/*'
+				],
+				dest: '.tmp/demo/'
+			},
+			demoBootstrap: {
+				expand: true,
+				cwd: '.tmp/',
+				src: 'fonts/*',
+				dest: '.tmp/demo/'
 			}
 		},
 		clean: {
-			grunt: [".grunt/assets"],
-			dist: ["dist"]
+			tmp: ['.tmp/**/*'],
+			grunt: ['.grunt/**/*'],
+			dist: ['dist']
 		},
 		less: {
 			bootstrap: {
 				files: {
-					'.grunt/assets/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
+					'.tmp/styles/bootstrap.css': 'demo/less/bootstrap/bootstrap.less'
 				}
 			},
 			demo: {
 				files: {
-					'demo/demo.css': 'demo/less/demo.less'
+					'.tmp/styles/demo.css': 'demo/less/demo.less'
 				}
 			}
 		},
@@ -122,17 +151,6 @@ module.exports = function(grunt) {
 				},
 				mangle: true
 			},
-			demo: {
-				src: [
-					'bower_components/jquery/jquery.js',
-					'bower_components/angular/angular.js',
-					'bower_components/angular-ui-router/release/angular-ui-router.js',
-					'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-					'bower_components/google-code-prettify/src/prettify.js',
-					'bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js'
-				],
-				dest: 'demo/vendor.min.js'
-			},
 			dist: {
 				options: {
 					banner: '<%= meta.banner %>'
@@ -146,24 +164,61 @@ module.exports = function(grunt) {
 				}]
 			}
 		},
+		ngAnnotate: {
+			demo: {
+				files: [{
+					expand: true,
+					cwd: '.tmp/concat/scripts/',
+					src: '*.js',
+					dest: '.tmp/concat/scripts/'
+				}]
+			},
+			dist: {
+				files: [{
+					expand: true,
+					cwd: 'dist/',
+					src: '*.js',
+					dest: 'dist/'
+				}]
+			}
+		},
+		useminPrepare: {
+			demo: {
+				options: {
+					flow: {
+						html: {
+							steps: {
+								js: ['concat', 'uglify'],
+								css: []
+							}
+						}
+					},
+					dest: '.tmp/demo'
+				},
+				src: ['demo/index.html']
+			}
+		},
+		filerev: {
+			demo: {
+				src: [
+					'.tmp/demo/scripts/*.js',
+					'.tmp/demo/styles/*.css'
+				]
+			}
+		},
+		usemin: {
+			html: '.tmp/demo/index.html',
+			css: ['.tmp/demo/styles/*.css'],
+			options: {
+				assetsDirs: [
+					'.tmp/demo'
+				]
+			}
+		},
 		cssmin: {
 			options: {
 				shorthandCompacting: false,
 				roundingPrecision: -1
-			},
-			demo: {
-				files: {
-					'demo/vendor.min.css': [
-						'bower_components/google-code-prettify/src/prettify.css'
-					]
-				}
-			},
-			bootstrap: {
-				files: {
-					'demo/bootstrap.min.css': [
-						'.grunt/assets/bootstrap.css'
-					]
-				}
 			}
 		},
 		bump: {
@@ -180,11 +235,10 @@ module.exports = function(grunt) {
 		'gh-pages': {
 			demo: {
 				options: {
-					base: 'demo'
+					base: '.tmp/demo'
 				},
 				src: [
-					'**/*',
-					'!less/**/*'
+					'**/*'
 				]
 			}
 		}
@@ -203,36 +257,48 @@ module.exports = function(grunt) {
 	});
 
 	// builds the demo app
-	grunt.registerTask('buildDemo', [
+	grunt.registerTask('prepareDemo', [
+		'clean:tmp',
 		'clean:grunt',
 		'copy:bootstrap',
 		'less:bootstrap',
-		'cssmin:bootstrap',
-		'copy:srcToDemo',
-		'uglify:demo',
-		'less:demo',
-		'cssmin:demo'
+		'less:demo'
+	]);
+
+	// builds the demo app
+	grunt.registerTask('buildDemo', [
+		'prepareDemo',
+		'copy:demo',
+		'copy:demoBootstrap',
+		'useminPrepare:demo',
+		'concat:generated',
+		'ngAnnotate:demo',
+		'cssmin:generated',
+		'uglify:generated',
+		'filerev:demo',
+		'usemin'
 	]);
 
 	grunt.registerTask('build', [
 		'clean:dist',
 		'copy:dist',
+		'ngAnnotate:dist',
 		'uglify:dist',
 		'usebanner:dist'
 	]);
 
 	// to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
 	grunt.registerTask('serve', [
-		'buildDemo',
+		'prepareDemo',
 		'karma:dev',
-		'connect',
+		'connect:livereload',
 		'watch'
 	]);
 
 	// builds and pushes the demo to the gh-pages branch
 	grunt.registerTask('github-pages-update', [
 		'buildDemo',
-		'gh-pages:demo'
+		//'gh-pages:demo'
 	]);
 
 	grunt.registerTask('release', function() {
