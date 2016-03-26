@@ -303,6 +303,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('release', function() {
 		var releaseType = grunt.option('releaseType') ? grunt.option('releaseType') : 'patch';
+
 		grunt.task.run('bump-only:' + releaseType);
 		grunt.task.run('build');
 		grunt.task.run('bump-commit');

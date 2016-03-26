@@ -2,7 +2,7 @@
  * angular-sticky
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.0.6 - 2016-03-12
+ * Version: 0.1.0 - 2016-03-26
  * License: MIT
  */
 'use strict';
@@ -17,7 +17,7 @@ angular.module('hl.sticky', [])
 		};
 	})
 
-	.factory('hlStickyStack', function ($document, DefaultStickyStackName) {
+	.factory('hlStickyStack', ["$document", "DefaultStickyStackName", function ($document, DefaultStickyStackName) {
 
 		var documentEl = $document[0].documentElement;
 
@@ -50,7 +50,7 @@ angular.module('hl.sticky', [])
 				values.id = id;
 				values.zIndex = stickyZIndex;
 				stack.push(values);
-				
+
 				stickyZIndex -= 1;
 				return values;
 			};
@@ -96,6 +96,7 @@ angular.module('hl.sticky', [])
 				return false;
 			};
 			$stack.removeTop = function () {
+				stickyZIndex += 1;
 				return stack.splice(stack.length - 1, 1)[0];
 			};
 			$stack.length = function () {
@@ -109,7 +110,7 @@ angular.module('hl.sticky', [])
 				});
 				return height;
 			};
-			$stack.totalHeightAt = function (anchor, at) {
+			$stack.heightAt = function (anchor, at) {
 				var atAdjusted = at - 1;
 				var stick;
 				var computedHeight;
@@ -129,8 +130,8 @@ angular.module('hl.sticky', [])
 				}
 				return height;
 			};
-			$stack.totalHeightCurrent = function (anchor) {
-				return $stack.totalHeightAt(anchor, window.pageYOffset || documentEl.scrollTop);
+			$stack.heightCurrent = function (anchor) {
+				return $stack.heightAt(anchor, window.pageYOffset || documentEl.scrollTop);
 			};
 
 			stacks[stackName] = $stack;
@@ -139,9 +140,9 @@ angular.module('hl.sticky', [])
 		}
 
 		return stickyStack;
-	})
+	}])
 
-	.factory('hlStickyElement', function($document, $log, hlStickyStack, throttle, mediaQuery) {
+	.factory('hlStickyElement', ["$document", "$log", "hlStickyStack", "throttle", "mediaQuery", function($document, $log, hlStickyStack, throttle, mediaQuery) {
 		return function(element, options) {
 			options = options || {};
 
@@ -149,7 +150,7 @@ angular.module('hl.sticky', [])
 			var stickyLineBottom;
 			var placeholder;
 
-			var isSticking = false;
+			var _isSticking = false;
 
 			// elements
 			var bodyEl = angular.element($document[0].body);
@@ -178,20 +179,23 @@ angular.module('hl.sticky', [])
 			// Methods
 			//
 			function stickyLinePositionTop() {
-				if (isSticking) {
+				if (_isSticking) {
 					return stickyLineTop;
 				}
 				stickyLineTop = _getTopOffset(nativeEl) - offsetTop - _stackOffsetTop();
 				return stickyLineTop;
 			}
 			function stickyLinePositionBottom() {
-				if (isSticking) {
+				if (_isSticking) {
 					return stickyLineBottom;
 				}
 				stickyLineBottom = _getBottomOffset(nativeEl) - offsetBottom - _stackOffsetBottom();
 				return stickyLineBottom;
 			}
 
+			function isSticky() {
+				return _isSticking;
+			}
 			function sticksAtPosition(anchor, scrolledDistance) {
 				if (!matchesMediaQuery()) {
 					return false;
@@ -229,16 +233,16 @@ angular.module('hl.sticky', [])
 
 				// Switch the sticky mode if the element crosses the sticky line
 				// don't make the element sticky when it's already sticky
-				if (shouldStick && !isSticking) {
+				if (shouldStick && !_isSticking) {
 					stickElement();
 				}
 				// don't unstick the element sticky when it isn't sticky already
-				else if (!shouldStick && isSticking) {
+				else if (!shouldStick && _isSticking) {
 					unstickElement();
 				}
 
 				// stick after care
-				if (isSticking) {
+				if (_isSticking) {
 					// update the top offset at an already sticking element
 					if (anchor === 'top') {
 						element.css('top', (offsetTop + _stackOffset(anchor) - containerBoundsBottom()) + 'px');
@@ -248,7 +252,7 @@ angular.module('hl.sticky', [])
 			}
 
 			function stickElement() {
-				isSticking = true;
+				_isSticking = true;
 
 				element.addClass(stickyClass);
 
@@ -271,7 +275,7 @@ angular.module('hl.sticky', [])
 				}
 			}
 			function unstickElement() {
-				isSticking = false;
+				_isSticking = false;
 
 				element.removeClass(stickyClass);
 
@@ -314,8 +318,11 @@ angular.module('hl.sticky', [])
 					extraOffset += globalOffset.top;
 				}
 				if (stickIndex > 0) {
+					// @todo the stack range calculation should be diverted to the stack
 					stack.range(0, stickIndex).forEach(function (stick) {
-						extraOffset += stick.computedHeight(anchor);
+						if (stick.isSticky()) {
+							extraOffset += stick.computedHeight(anchor);
+						}
 					});
 				}
 				return extraOffset;
@@ -342,8 +349,7 @@ angular.module('hl.sticky', [])
 
 			// add element to the sticky stack and save the id
 			var stackItem = stack.add(options.id, {
-				width: elementWidth,
-				height: elementHeight,
+				isSticky: isSticky,
 				computedHeight: computedHeight,
 				sticksAtPosition: sticksAtPosition
 			});
@@ -361,7 +367,7 @@ angular.module('hl.sticky', [])
 					globalOffset.zIndex = offset.zIndex;
 				}
 
-				// for resizing, we simply unstick the element and restick it using the render method
+				// for resizing or other purposes that require a forced re-draw, we simply unstick the element and restick it using the render method
 				if (drawOptions.force === true) {
 					unstickElement();
 				}
@@ -375,7 +381,7 @@ angular.module('hl.sticky', [])
 
 			return $api;
 		};
-	})
+	}])
 
 	.constant('DefaultStickyStackName', 'default-stack')
 
@@ -391,7 +397,7 @@ angular.module('hl.sticky', [])
 			elementsDefaults: {
 
 			},
-			$get: function($rootScope, $window, $document, $log, DefaultStickyStackName, hlStickyElement, hlStickyStack, throttle) {
+			$get: ["$rootScope", "$window", "$document", "$log", "DefaultStickyStackName", "hlStickyElement", "hlStickyStack", "throttle", function($rootScope, $window, $document, $log, DefaultStickyStackName, hlStickyElement, hlStickyStack, throttle) {
 
 				var windowEl = angular.element($window);
 
@@ -468,7 +474,6 @@ angular.module('hl.sticky', [])
 
 					$sticky.addElement = function (element, stickyOptions) {
 						stickyOptions = stickyOptions || {};
-						stickyOptions.addScrollEvent = false;
 						stickyOptions.stack = stickyStackFactory;
 						var sticky = hlStickyElement(element, stickyOptions);
 						trackedElements.push({
@@ -501,7 +506,7 @@ angular.module('hl.sticky', [])
 								name: options.parent
 							});
 							_drawOptions.offset = {
-								top: parentStack.totalHeightCurrent('top'),
+								top: parentStack.heightCurrent('top'),
 								zIndex: parentStack.length()
 							};
 						}
@@ -511,12 +516,12 @@ angular.module('hl.sticky', [])
 						});
 					};
 
-					$sticky.destroy = function(force) {
-						// if the collection is empty or force is set to true, remove it from the service
-						if (force === true || trackedElements.length === 0) {
-							delete $stickyElement.collections[collectionName];
-							destroy();
-						}
+					$sticky.destroy = function() {
+						angular.forEach(angular.copy(trackedElements), function(element) {
+							$sticky.removeElement(element);
+						});
+						delete $stickyElement.collections[collectionName];
+						destroy();
 					};
 
 					$sticky.trackedElements = function() {
@@ -530,45 +535,39 @@ angular.module('hl.sticky', [])
 					return $sticky;
 				}
 				return stickyElementFactory;
-			}
+			}]
 		};
 		return $stickyElement;
 	})
 
-	.directive('hlSticky', function($log, $window, $document, hlStickyElementCollection) {
+	.directive('hlSticky', ["$log", "$window", "$document", "hlStickyElementCollection", function($log, $window, $document, hlStickyElementCollection) {
 		return {
 			restrict: 'A',
 			transclude: true,
 			replace: true,
 			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
-				var stickyEl = $element;
-
-				var stickyElementFactory = hlStickyElementCollection({
+				var stickyElementCollection = hlStickyElementCollection({
 					name: $attrs.collection,
 					parent: $attrs.collectionParent
 				});
-				stickyElementFactory.addElement(stickyEl, {
-					id: $attrs.hlSticky || $attrs.stickyId,
-					mediaQuery: $attrs.mediaQuery,
-					stickyClass: $attrs.stickyClass,
-					usePlaceholder: $attrs.usePlaceholder,
-					offsetTop: $attrs.offsetTop,
-					offsetBottom: $attrs.offsetBottom,
-					anchor: $attrs.anchor,
-					container: $attrs.container
+				var options = {
+					id: $attrs.hlSticky
+				};
+				angular.forEach(['mediaQuery', 'stickyClass', 'usePlaceholder', 'offsetTop', 'offsetBottom', 'anchor', 'container'], function(option) {
+					options[option] = $attrs[option];
 				});
+				stickyElementCollection.addElement($element, options);
 
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
-					stickyElementFactory.removeElement(stickyEl);
-					stickyElementFactory.destroy();
+					stickyElementCollection.destroy();
 				});
 			}
 		};
-	})
+	}])
 
-	.factory('throttle', function($timeout) {
+	.factory('throttle', ["$timeout", function($timeout) {
 		return function(func, wait, options) {
 			var timeout = null;
 			options = options || {};
@@ -589,4 +588,4 @@ angular.module('hl.sticky', [])
 				}
 			};
 		};
-	});
+	}]);
