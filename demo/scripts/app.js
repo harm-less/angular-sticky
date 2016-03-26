@@ -47,9 +47,7 @@ var demo = angular.module('demo', [
 	'hl.sticky'
 ])
 
-	.config(function($locationProvider, $stateProvider, $urlRouterProvider){
-
-		$locationProvider.html5Mode(true);
+	.config(function($stateProvider, $urlRouterProvider){
 		$urlRouterProvider.otherwise('/');
 
 		$stateProvider

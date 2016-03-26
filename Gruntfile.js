@@ -298,7 +298,7 @@ module.exports = function(grunt) {
 	// builds and pushes the demo to the gh-pages branch
 	grunt.registerTask('github-pages-update', [
 		'buildDemo',
-		//'gh-pages:demo'
+		'gh-pages:demo'
 	]);
 
 	grunt.registerTask('release', function() {
