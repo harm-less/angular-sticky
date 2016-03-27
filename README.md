@@ -30,9 +30,13 @@ angular.module('myModule', ['hl.sticky']);
 # Contributing to the project
 We are always looking for quality contributions!
 
+There are several useful Grunt tasks you can run in order to use/change the project:
+
+* ```serve```: Use to demo application in order to develop the scripts from the ```js``` folder.
+* ```build```: Build the files from the ```js``` folder to the ```dist``` folder
+
 ### Todo
 * Configurable z-index (preferably in each stack)
-* Setting stack to false in the options for hlStickyElement should not add the sticky element to any stack. In fact, it should be in the API of the hlStickyElement so you have more control over what happens
 * Expand the API of the hlStickyElement so it can also be used by the stack
 * Anchor "bottom". There is already a bit of groundwork done for this
 * Media queries based on predefined breakpoints (e.g. min-width: lg-max) so the code is DRYer in combination with Bootstrap or other grid frameworks

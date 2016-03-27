@@ -151,6 +151,7 @@ angular.module('hl.sticky', [])
 			var documentEl = $document[0].documentElement;
 
 			// attributes
+			var id = options.id || null;
 			var stickyMediaQuery = angular.isDefined(options.mediaQuery) ? options.mediaQuery : false;
 			var stickyClass = angular.isString(options.stickyClass) && options.stickyClass !== '' ? options.stickyClass : 'is-sticky';
 			var usePlaceholder = angular.isDefined(options.usePlaceholder) ? options.usePlaceholder : true;
@@ -158,7 +159,7 @@ angular.module('hl.sticky', [])
 			var offsetBottom = options.offsetBottom ? parseInt(options.offsetBottom) : 0;
 			var anchor = typeof options.anchor === 'string' ? options.anchor.toLowerCase().trim() : 'top';
 			var container = null;
-			var stack = options.stack || hlStickyStack();
+			var stack = options.stack === false ? null : options.stack || hlStickyStack();
 			var globalOffset = {
 				top: 0,
 				bottom: 0
@@ -254,7 +255,7 @@ angular.module('hl.sticky', [])
 					'width': elementWidth() + 'px',
 					'position': 'fixed',
 					'left': rect.left + 'px',
-					'z-index': stack.get(id).zIndex - (globalOffset.zIndex || 0)
+					'z-index': stack ? stack.get(id).zIndex - (globalOffset.zIndex || 0) : null
 				};
 
 				css['margin-' + anchor] = 0;
@@ -304,19 +305,21 @@ angular.module('hl.sticky', [])
 			}
 
 			function _stackOffset(anchor) {
-				var stickIndex = stack.index(id);
 				var extraOffset = 0;
 
 				if (anchor === 'top' && globalOffset.top > 0) {
 					extraOffset += globalOffset.top;
 				}
-				if (stickIndex > 0) {
-					// @todo the stack range calculation should be diverted to the stack
-					stack.range(0, stickIndex).forEach(function (stick) {
-						if (stick.isSticky()) {
-							extraOffset += stick.computedHeight(anchor);
-						}
-					});
+				if (stack) {
+					var stickIndex = stack.index(id);
+					if (stickIndex > 0) {
+						// @todo the stack range calculation should be diverted to the stack
+						stack.range(0, stickIndex).forEach(function (stick) {
+							if (stick.isSticky()) {
+								extraOffset += stick.computedHeight(anchor);
+							}
+						});
+					}
 				}
 				return extraOffset;
 			}
@@ -341,12 +344,14 @@ angular.module('hl.sticky', [])
 			}
 
 			// add element to the sticky stack and save the id
-			var stackItem = stack.add(options.id, {
-				isSticky: isSticky,
-				computedHeight: computedHeight,
-				sticksAtPosition: sticksAtPosition
-			});
-			var id = stackItem.id;
+			if (stack) {
+				var stackItem = stack.add(id, {
+					isSticky: isSticky,
+					computedHeight: computedHeight,
+					sticksAtPosition: sticksAtPosition
+				});
+				id = stackItem.id;
+			}
 
 			var $api = {};
 
@@ -369,7 +374,9 @@ angular.module('hl.sticky', [])
 
 			$api.destroy = function() {
 				unstickElement();
-				stack.remove(id);
+				if (stack) {
+					stack.remove(id);
+				}
 			};
 
 			return $api;

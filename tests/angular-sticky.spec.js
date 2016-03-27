@@ -305,10 +305,12 @@ describe('angular-sticky', function() {
 		var hlStickyElement;
 
 		var element;
+		var hlStickyStack;
 		var stickyElement;
 		var sticky;
 
-		beforeEach(inject(function (_hlStickyElement_) {
+		beforeEach(inject(function (_hlStickyStack_, _hlStickyElement_) {
+			hlStickyStack = _hlStickyStack_;
 			hlStickyElement = _hlStickyElement_;
 		}));
 
@@ -395,16 +397,21 @@ describe('angular-sticky', function() {
 				expect(stickyElement.attr('style')).toBe('');
 			});
 
-			it('should make it sticky with offset', function() {
+			it('should not use a stack', function() {
 				compileSticky(templateStickyElementOffsetSmall, {
-					offsetTop: 30
+					stack: false
 				});
 
-				drawAt(19);
+				var stack = hlStickyStack();
+				expect(stack.length()).toBe(0);
+
+				drawAt(49);
 				expect(stickyElement).not.toBeSticky();
 
-				drawAt(20);
+				drawAt(50);
 				expect(stickyElement).toBeSticky();
+
+				sticky.destroy();
 			});
 
 			it('should not have a placeholder', function() {
