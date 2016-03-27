@@ -305,13 +305,16 @@ describe('angular-sticky', function() {
 		var hlStickyElement;
 
 		var element;
-		var hlStickyStack;
-		var stickyElement;
 		var sticky;
 
-		beforeEach(inject(function (_hlStickyStack_, _hlStickyElement_) {
-			hlStickyStack = _hlStickyStack_;
+		var stickyElement;
+		var hlStickyStack;
+		var mediaQuery;
+
+		beforeEach(inject(function (_hlStickyElement_, _hlStickyStack_, _mediaQuery_) {
 			hlStickyElement = _hlStickyElement_;
+			hlStickyStack = _hlStickyStack_;
+			mediaQuery = _mediaQuery_;
 		}));
 
 		function compileSticky(html, options) {
@@ -397,6 +400,18 @@ describe('angular-sticky', function() {
 				expect(stickyElement.attr('style')).toBe('');
 			});
 
+			it('should make it sticky with offset', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					offsetTop: 30
+				});
+
+				drawAt(19);
+				expect(stickyElement).not.toBeSticky();
+
+				drawAt(20);
+				expect(stickyElement).toBeSticky();
+			});
+
 			it('should not use a stack', function() {
 				compileSticky(templateStickyElementOffsetSmall, {
 					stack: false
@@ -412,6 +427,26 @@ describe('angular-sticky', function() {
 				expect(stickyElement).toBeSticky();
 
 				sticky.destroy();
+			});
+
+			it('should not pass the media query check', function() {
+				spyOn(mediaQuery, 'matches').and.returnValue(false);
+				compileSticky(templateStickyElementOffsetSmall, {
+					mediaQuery: 'some-media-query'
+				});
+
+				var stack = hlStickyStack();
+				expect(stack.heightAt('top', 1000)).toBe(0);
+			});
+
+			it('should pass the media query check', function() {
+				spyOn(mediaQuery, 'matches').and.returnValue(true);
+				compileSticky(templateStickyElementOffsetSmall, {
+					mediaQuery: 'some-media-query'
+				});
+
+				var stack = hlStickyStack();
+				expect(stack.heightAt('top', 1000)).toBe(30);
 			});
 
 			it('should not have a placeholder', function() {

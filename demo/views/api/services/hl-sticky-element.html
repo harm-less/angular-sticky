@@ -167,13 +167,34 @@
 		</ul>
 	</li>
 	<li>
+		<h4><code>anchor()</code></h4>
+		<p>
+			Will return the anchor currently active.
+		</p>
+	</li>
+	<li>
+		<h4><code>isSticky()</code></h4>
+		<p>
+			Will return a boolean telling you if the sticky element is sticky or not
+		</p>
+	</li>
+	<li>
+		<h4><code>computedHeight(scrolledDistance:int)</code></h4>
+		<p>
+			Will return a integer with the height of the sticky element. If the element is not sticky at the scrolled distance the result will be 0.
+		</p>
+	</li>
+	<li>
+		<h4><code>sticksAtPosition(scrolledDistance:int)</code></h4>
+		<p>
+			Will return a boolean telling you if the sticky element will stick at a certain position. The conditions also includes the media query if that was set.
+		</p>
+	</li>
+	<li>
 		<h4><code>destroy()</code></h4>
 		<p>
 			Destroys the sticky element from the stack it was attached to and it makes sure it un-sticks itself.
 			It is vital you call this method after you for example switch pages in your Angular application, otherwise it might cause weird artifacts on follow up pages.
 		</p>
-		<pre class="code" apply-content highlight-lang="js">
-			stickyElementInstance.destroy();
-		</pre>
 	</li>
 </ul>

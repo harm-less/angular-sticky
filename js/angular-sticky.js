@@ -36,16 +36,16 @@ angular.module('hl.sticky', [])
 			$stack.options = options;
 			$stack.stackName = stackName;
 
-			$stack.add = function (id, values) {
+			$stack.add = function (id, sticky) {
 				if (!angular.isString(id) || id === '') {
 					id = $stack.length();
 				}
-				values.id = id;
-				values.zIndex = stickyZIndex;
-				stack.push(values);
+				sticky.id = id;
+				sticky.zIndex = stickyZIndex;
+				stack.push(sticky);
 
 				stickyZIndex -= 1;
-				return values;
+				return sticky;
 			};
 			$stack.get = function (id) {
 				for (var i = 0; i < stack.length; i++) {
@@ -97,31 +97,38 @@ angular.module('hl.sticky', [])
 			};
 
 			$stack.height = function (anchor) {
-				var height = 0;
+				var height = {
+					top: 0,
+					bottom: 0
+				};
 				angular.forEach(stack, function(item) {
-					height += item.computedHeight(anchor);
+					height[item.anchor()] += item.computedHeight(anchor);
 				});
-				return height;
+				return height[anchor];
 			};
 			$stack.heightAt = function (anchor, at) {
 				var atAdjusted = at - 1;
 				var stick;
 				var computedHeight;
-				var height = 0;
+				var height = {
+					top: 0,
+					bottom: 0
+				};
 				for (var i = 0; i < stack.length; i++) {
 					stick = stack[i];
 					// check if the sticky element sticks at the queried position minus 1 pixel if the position is at the same place
 					if (stick.sticksAtPosition(anchor, atAdjusted)) {
-						computedHeight = stick.computedHeight(anchor, atAdjusted - height);
+						var stickyAnchor = stick.anchor();
+						computedHeight = stick.computedHeight(anchor, atAdjusted - height[stickyAnchor]);
 
 						// add the height of the sticky element to the total
-						height += computedHeight;
+						height[stickyAnchor] += computedHeight;
 
 						// correct for the position by decreasing it with the computed height
 						at -= computedHeight;
 					}
 				}
-				return height;
+				return height[anchor];
 			};
 			$stack.heightCurrent = function (anchor) {
 				return $stack.heightAt(anchor, window.pageYOffset || documentEl.scrollTop);
@@ -343,17 +350,13 @@ angular.module('hl.sticky', [])
 				return 0;
 			}
 
-			// add element to the sticky stack and save the id
+			var $api = {};
+
 			if (stack) {
-				var stackItem = stack.add(id, {
-					isSticky: isSticky,
-					computedHeight: computedHeight,
-					sticksAtPosition: sticksAtPosition
-				});
+				// add element to the sticky stack and save the id
+				var stackItem = stack.add(id, $api);
 				id = stackItem.id;
 			}
-
-			var $api = {};
 
 			$api.draw = function(drawOptions) {
 				drawOptions = drawOptions || {};
@@ -365,12 +368,20 @@ angular.module('hl.sticky', [])
 					globalOffset.zIndex = offset.zIndex;
 				}
 
-				// for resizing or other purposes that require a forced re-draw, we simply unstick the element and restick it using the render method
+				// for resizing or other purposes that require a forced re-draw, we simply un-stick the element and re-stick it using the render method
 				if (drawOptions.force === true) {
 					unstickElement();
 				}
 				render();
 			};
+
+			$api.anchor = function() {
+				return anchor;
+			};
+
+			$api.isSticky = isSticky;
+			$api.computedHeight = computedHeight;
+			$api.sticksAtPosition = sticksAtPosition;
 
 			$api.destroy = function() {
 				unstickElement();
