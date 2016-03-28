@@ -58,6 +58,10 @@ module.exports = function(grunt) {
 								'/bower_components',
 								connect.static('./bower_components')
 							),
+							connect().use(
+								'/js',
+								connect.static('./js')
+							),
 							connect.static('demo')
 						];
 					}
