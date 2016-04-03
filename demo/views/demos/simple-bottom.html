@@ -1,0 +1,36 @@
+<div save-content="intro">
+	<h2>Simple bottom anchored demo</h2>
+	<p>
+		Same as the simple demo, but this sticky element is anchored to the bottom because of the <code>anchor</code> attribute.
+	</p>
+</div>
+
+<div save-content="css">
+	.sticks {
+		display: none;
+	}
+	.is-sticky .sticks {
+		display: block;
+	}
+	.is-sticky .not-sticky {
+		display: none;
+	}
+</div>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12" >
+				<div class="top-margin">
+					Scroll down to see the sticky element in action
+				</div>
+				<div save-content="html">
+					<div hl-sticky anchor="bottom" class="simple">
+						<span class="not-sticky">Scroll to make me sticky</span>
+						<span class="sticks">Look, I'm sticky!</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

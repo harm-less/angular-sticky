@@ -190,7 +190,7 @@ angular.module('hl.sticky', [])
 				if (_isSticking) {
 					return stickyLineBottom;
 				}
-				stickyLineBottom = _getBottomOffset(nativeEl) - offsetBottom - _stackOffsetBottom();
+				stickyLineBottom = _getBottomOffset(nativeEl) + offsetBottom + _stackOffsetBottom();
 				return stickyLineBottom;
 			}
 
@@ -247,8 +247,11 @@ angular.module('hl.sticky', [])
 					// update the top offset at an already sticking element
 					if (anchor === 'top') {
 						element.css('top', (offsetTop + _stackOffset(anchor) - containerBoundsBottom()) + 'px');
-						element.css('width', elementWidth() + 'px');
 					}
+					else if (anchor === 'bottom') {
+						element.css('bottom', (offsetBottom + _stackOffset(anchor) - containerBoundsTop()) + 'px');
+					}
+					element.css('width', elementWidth() + 'px');
 				}
 			}
 
@@ -308,7 +311,7 @@ angular.module('hl.sticky', [])
 			}
 
 			function _getBottomOffset (element) {
-				return element.offsetTop + element.clientHeight;
+				return _getTopOffset(element) + element.clientHeight;
 			}
 
 			function _stackOffset(anchor) {
@@ -317,15 +320,28 @@ angular.module('hl.sticky', [])
 				if (anchor === 'top' && globalOffset.top > 0) {
 					extraOffset += globalOffset.top;
 				}
+				if (anchor === 'bottom' && globalOffset.bottom > 0) {
+					extraOffset += globalOffset.bottom;
+				}
 				if (stack) {
 					var stickIndex = stack.index(id);
-					if (stickIndex > 0) {
-						// @todo the stack range calculation should be diverted to the stack
-						stack.range(0, stickIndex).forEach(function (stick) {
-							if (stick.isSticky()) {
+					if (anchor === 'top') {
+						if (stickIndex > 0) {
+							// @todo the stack range calculation should be diverted to the stack
+							stack.range(0, stickIndex).forEach(function (stick) {
+								if (stick.isSticky()) {
+									extraOffset += stick.computedHeight(anchor);
+								}
+							});
+						}
+					}
+					if (anchor === 'bottom') {
+						if (stickIndex !== stack.length() - 1) {
+							// @todo the stack range calculation should be diverted to the stack
+							stack.range(stickIndex, stack.length() - 1).forEach(function (stick) {
 								extraOffset += stick.computedHeight(anchor);
-							}
-						});
+							});
+						}
 					}
 				}
 				return extraOffset;
@@ -334,9 +350,28 @@ angular.module('hl.sticky', [])
 			function _stackOffsetBottom() { return _stackOffset('bottom'); }
 
 			function computedHeight(anchor, scrolledDistance) {
-				return (anchor === 'top' ? Math.max(0, elementHeight() - containerBoundsBottom(scrolledDistance) + offsetTop) : 0);
+				if (anchor === 'top') {
+					return Math.max(0, elementHeight() - containerBoundsBottom(scrolledDistance) + offsetTop);
+				}
+				else if (anchor === 'bottom') {
+					return Math.max(0, elementHeight() - containerBoundsTop(scrolledDistance) + offsetBottom);
+				}
+				return 0;
 			}
 
+			// @todo dffgdg
+			function containerBoundsTop(scrolledDistance) {
+				if (container === null) {
+					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
+				}
+				if (container) {
+					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
+					var containerRect = container.getBoundingClientRect();
+					var containerBottom = !hasScrollDistance ? containerRect.top - window.innerHeight + elementHeight() : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
+					return Math.max(0, containerBottom - (offsetTop + _stackOffset(anchor)));
+				}
+				return 0;
+			}
 			function containerBoundsBottom(scrolledDistance) {
 				if (container === null) {
 					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;

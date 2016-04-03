@@ -1,0 +1,72 @@
+<div save-content="intro">
+	<h2>Service: Sticky stack</h2>
+	<p>
+		<code>hlStickyStack</code>
+	</p>
+	<p>
+		Ahh, the sticky stack (isn't that catchy?). Using the sticky stack will give you super powers. Well, not literally of course, but it could be a handy functionality indeed.
+		Stacks are a way to have multiple independent sticky elements working together.
+		See for yourself and scroll this page. As soon as multiple sticky elements become sticky the others neatly adjust their offset automatically.
+	</p>
+	<p>
+		It could be useful if you have multiple ui element on your page that are on different places but still need to be always shown.
+		And thanks to the service you can also get the current stack height or the height of the stack at a certain scroll position.
+		This can be useful if you want to scroll to a certain position on the page but you're not sure how high your sticky element stack will be.
+	</p>
+</div>
+
+<script save-content="js">
+	function StackController($scope, $window, hlStickyStack) {
+
+		// get the default stack instance
+		var stack = hlStickyStack();
+
+		angular.element($window).bind('mousemove', function updateStackVariables(event) {
+			var mousePosition = event.clientY + window.pageYOffset;
+
+			// get the current total height of the stack
+			$scope.stackHeightCurrent = stack.heightCurrent('bottom');
+
+			// get the total height of the stack at the position of the mouse
+			$scope.stackHeightAtPosition = stack.heightAt('bottom', mousePosition);
+			$scope.$apply();
+		});
+
+		$scope.elements = [
+			{
+				description: 'I\'ll be leading the pack'
+			},
+			{
+				description: 'I\'ll append myself to "Element 1"'
+			},
+			{
+				description: 'Do I still need to explain?'
+			},
+			{
+				description: 'I\'m the last item in the sticky stack'
+			}
+		];
+	}
+</script>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12" ng-controller="StackController">
+				<hl-scroll-along>
+					Current stack height: {{stackHeightCurrent}}px<br>
+					Stack height at this scroll position: {{stackHeightAtPosition}}px
+				</hl-scroll-along>
+				<div save-content="html">
+					<div class="divider-elements"></div>
+					<div ng-repeat="element in elements">
+						<div hl-sticky anchor="bottom" class="simple">
+							<b>Element {{$index + 1}}</b><br>{{element.description}}
+						</div>
+						<div class="divider">I'm just here to give the sticky elements some space</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
