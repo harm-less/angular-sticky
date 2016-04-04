@@ -21,15 +21,21 @@
 		// get the default stack instance
 		var stack = hlStickyStack();
 
-		angular.element($window).bind('mousemove', function updateStackVariables(event) {
-			var mousePosition = event.clientY + window.pageYOffset;
+		var clientY;
+		angular.forEach(['mousemove', 'scroll'], function(eventName) {
+			angular.element($window).bind(eventName, function updateStackVariables(event) {
+				if (angular.isDefined(event.clientY)) {
+					clientY = event.clientY;
+				}
+				var mousePosition = clientY + window.pageYOffset;
 
-			// get the current total height of the stack
-			$scope.stackHeightCurrent = stack.heightCurrent('top');
+				// get the current total height of the stack
+				$scope.stackHeightCurrent = stack.heightCurrent('top');
 
-			// get the total height of the stack at the position of the mouse
-			$scope.stackHeightAtPosition = stack.heightAt('top', mousePosition);
-			$scope.$apply();
+				// get the total height of the stack at the position of the mouse
+				$scope.stackHeightAtPosition = stack.heightAt('top', mousePosition);
+				$scope.$apply();
+			});
 		});
 
 		$scope.elements = [

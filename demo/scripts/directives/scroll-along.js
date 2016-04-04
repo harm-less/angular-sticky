@@ -14,8 +14,12 @@ angular.module('demo.directive.scroll-along', [])
 				angular.element($window).bind('scroll', render);
 				angular.element($window).bind('mousemove', render);
 
+				var clientY;
 				function render(event) {
-					var normalised = event.clientY - _getTopOffset(container);
+					if (angular.isDefined(event.clientY)) {
+						clientY = event.clientY;
+					}
+					var normalised = clientY - _getTopOffset(container);
 					nativeEl.css('top', Math.max(0, normalised + window.pageYOffset));
 					scope.$apply();
 				}
