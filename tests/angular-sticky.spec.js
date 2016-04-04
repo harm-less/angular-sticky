@@ -123,8 +123,8 @@ describe('angular-sticky', function() {
 		return size;
 	}
 
-	function createBottomSticky(html) {
-		return '<div style="height: ' + (window.innerHeight + 50) + 'px;"></div>' + html;
+	function createBottomSticky(html, extraOffset) {
+		return '<div style="height: ' + (window.innerHeight + (angular.isNumber(extraOffset) ? extraOffset : 50)) + 'px;"></div>' + html;
 	}
 
 	var templateStickyElementOffsetSmall = '<div style="height: 50px;"></div><div id="sticky" style="height: 30px;"></div>';
@@ -272,7 +272,7 @@ describe('angular-sticky', function() {
 			expect(stack.length()).toBe(1);
 		});
 
-		describe('calculate stack heights', function() {
+		describe('calculate stack heights when using sticky element anchored to the top', function() {
 
 			var el;
 			beforeEach(function () {
@@ -307,6 +307,44 @@ describe('angular-sticky', function() {
 				expect(stack.heightCurrent('top')).toBe(50);
 				scrollTo(41);
 				expect(stack.heightCurrent('top')).toBe(110);
+			});
+		});
+
+		describe('calculate stack heights when using sticky element anchored to the bottom', function() {
+
+			var el;
+			beforeEach(function () {
+				el = compile(createBottomSticky('<div><div id="before" style="height: 20px;">Before all the sticky bars</div><div hl-sticky anchor="bottom" style="height: 50px;">Sticky bar 1</div><div id="between" style="height: 20px;">Between all the sticky bars</div><div hl-sticky anchor="bottom" style="height: 60px;">Sticky bar 2</div><div id="underneath" style="20px;">Underneath all the sticky bars</div></div>', 0));
+			});
+
+			it('calculate stack height at a certain position', function() {
+				var stack = hlStickyStack();
+				expect(stack.length()).toBe(2);
+				expect(stack.height('bottom')).toBe(110);
+			});
+
+			it('calculate stack height at a certain position', function() {
+				var stack = hlStickyStack();
+				expect(stack.length()).toBe(2);
+				expect(stack.heightAt('bottom', 0)).toBe(110);
+				expect(stack.heightAt('bottom', 131)).toBe(110);
+				expect(stack.heightAt('bottom', 132)).toBe(60);
+				expect(stack.heightAt('bottom', 151)).toBe(60);
+				expect(stack.heightAt('bottom', 152)).toBe(0);
+			});
+
+			it('calculate stack height at current position', function() {
+				var stack = hlStickyStack();
+				expect(stack.length()).toBe(2);
+				expect(stack.heightCurrent('bottom')).toBe(110);
+				scrollTo(131);
+				expect(stack.heightCurrent('bottom')).toBe(110);
+				scrollTo(132);
+				expect(stack.heightCurrent('bottom')).toBe(60);
+				scrollTo(151);
+				expect(stack.heightCurrent('bottom')).toBe(60);
+				scrollTo(152);
+				expect(stack.heightCurrent('bottom')).toBe(0);
 			});
 		});
 	});
