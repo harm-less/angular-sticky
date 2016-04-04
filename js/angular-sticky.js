@@ -221,8 +221,8 @@ angular.module('hl.sticky', [])
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
-				var scrollBottom = scrolledDistance + window.innerHeight;
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : (window.pageYOffset || bodyEl.scrollTop()) + window.innerHeight;
+				var scrollBottom = scrolledDistance;
 				return scrollBottom <= stickyLinePositionBottom();
 			}
 			function matchesMediaQuery() {
