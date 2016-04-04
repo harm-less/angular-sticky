@@ -258,6 +258,13 @@ angular.module('hl.sticky', [])
 			function stickElement() {
 				_isSticking = true;
 
+				// create placeholder to avoid jump
+				if (usePlaceholder) {
+					placeholder = placeholder || angular.element('<div>');
+					placeholder.css('height', elementHeight() + 'px');
+					element.after(placeholder);
+				}
+
 				element.addClass(stickyClass);
 
 				var rect = nativeEl.getBoundingClientRect();
@@ -270,13 +277,6 @@ angular.module('hl.sticky', [])
 
 				css['margin-' + anchor] = 0;
 				element.css(css);
-
-				// create placeholder to avoid jump
-				if (usePlaceholder) {
-					placeholder = placeholder || angular.element('<div>');
-					placeholder.css('height', elementHeight() + 'px');
-					element.after(placeholder);
-				}
 			}
 			function unstickElement() {
 				_isSticking = false;
