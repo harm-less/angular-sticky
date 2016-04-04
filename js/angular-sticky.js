@@ -338,7 +338,7 @@ angular.module('hl.sticky', [])
 					if (anchor === 'bottom') {
 						if (stickIndex !== stack.length() - 1) {
 							// @todo the stack range calculation should be diverted to the stack
-							stack.range(stickIndex, stack.length() - 1).forEach(function (stick) {
+							stack.range(stickIndex + 1, stack.length()).forEach(function (stick) {
 								extraOffset += stick.computedHeight(anchor);
 							});
 						}
