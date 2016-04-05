@@ -123,9 +123,6 @@ angular.module('hl.sticky', [])
 
 						// add the height of the sticky element to the total
 						height[stickyAnchor] += computedHeight;
-
-						// correct for the position by decreasing it with the computed height
-						at -= computedHeight;
 					}
 				}
 				return height[anchor];
