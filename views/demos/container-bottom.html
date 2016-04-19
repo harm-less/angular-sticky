@@ -1,0 +1,30 @@
+<div save-content="intro">
+	<h2>Container bottom</h2>
+	<p>
+		Container are useful for constraining a sticky element.
+		Setting a container is done by adding a <code>container</code> attribute the id of an element.
+		It simply checks the bounding box of that container element. If the container's bounding box is not big enough to contain the sticky element it starts to disappear.
+	</p>
+	<p>
+		This variant however is anchored to the bottom.
+	</p>
+</div>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<h2 class="text-center"><span class="glyphicon glyphicon-arrow-down"></span> Scroll down <span class="glyphicon glyphicon-arrow-down"></span></h2>
+				<div save-content="html">
+					<div class="divider">I'm just here to give the container some space.</div>
+					<div id="sticky-container">
+						<div class="divider">I'm just here to give the sticky elements some space.</div>
+						<div hl-sticky anchor="bottom" container="sticky-container">
+							I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

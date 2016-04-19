@@ -30,10 +30,10 @@
 				var mousePosition = clientY + window.pageYOffset;
 
 				// get the current total height of the stack
-				$scope.stackHeightCurrent = stack.heightCurrent('top');
+				$scope.stackHeightCurrent = stack.heightCurrent('bottom');
 
 				// get the total height of the stack at the position of the mouse
-				$scope.stackHeightAtPosition = stack.heightAt('top', mousePosition);
+				$scope.stackHeightAtPosition = stack.heightAt('bottom', mousePosition);
 
 				// trigger a scope digest because the event wasn't from Angular
 				$scope.$apply();
@@ -66,8 +66,9 @@
 					Stack height at this scroll position: {{stackHeightAtPosition}}px
 				</hl-scroll-along>
 				<div save-content="html">
+					<div class="divider-sticky-elements"></div>
 					<div ng-repeat="element in elements">
-						<div hl-sticky class="simple">
+						<div hl-sticky anchor="bottom" class="simple">
 							<b>Element {{$index + 1}}</b><br>{{element.description}}
 						</div>
 						<div class="divider">I'm just here to give the sticky elements some space</div>

@@ -20,7 +20,8 @@
 	     offset-top="100"
 	     container="id-of-container"
 	     collection="name-of-collection"
-	     collectionParent="name-of-collection">
+	     collectionParent="name-of-collection"
+	     event="stickyEvent(event)">
 		I'll become sticky
 	</div>
 </pre>
@@ -29,6 +30,7 @@
 <ul>
 	<li><a ui-sref="root.demo-container.demo({name: 'simple'})">Simple usage demo</a></li>
 	<li><a ui-sref="root.demo-container.demo({name: 'media-queries'})">Media queries demo</a></li>
+	<li><a ui-sref="root.demo-container.demo({name: 'events'})">Events demo</a></li>
 	<li><a ui-sref="root.demo-container.demo({name: 'container'})">Container demo</a></li>
 </ul>
 
@@ -65,6 +67,13 @@
 	<li>
 		<code>container</code><br>
 		Documentation can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>container</code>
+	</li>
+	<li>
+		<code>event()</code><br>
+		<pre class="code" apply-content highlight-lang="html">
+			<div hl-sticky event="stickyEvent(event)"></div>
+		</pre>
+		More documentation about the parameters can be found here <code><a ui-sref="root.api.service({name: 'hl-sticky-element'})">hlStickyElement</a></code> at <code>event</code>
 	</li>
 	<li>
 		<code>collection</code><br>

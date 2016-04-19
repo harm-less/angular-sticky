@@ -79,7 +79,7 @@
 				<code>anchor</code>
 				(Default: 'top') - Determines to what edge the sticky element should stick.
 				<ul class="list-unstyled">
-					<li class="text-danger"><b><i>Note:</i> This feature is under construction and only <code>top</code> can be used at this moment.</b></li>
+					<li><i>Note:</i> <code>top</code> and <code>bottom</code> are valid values.</li>
 				</ul>
 			</li>
 			<li>
@@ -91,10 +91,9 @@
 				</ul>
 			</li>
 			<li>
-				<code><strike>offsetBottom</strike></code>
+				<code>offsetBottom</code>
 				(Default: 0) - Adds offset to the bottom of the sticky element to act as margin.<br>
 				<ul class="list-unstyled">
-					<li class="text-danger"><b><i>Note:</i> This feature is under construction and cannot be used at this moment.</b></li>
 					<li><i>Note:</i> <code>anchor</code> must be set to <code>bottom</code> to make it work.</li>
 					<li><i>Note:</i> This value can also be negative</li>
 				</ul>
@@ -105,6 +104,31 @@
 				<p>
 					Check out the <a ui-sref="root.demo-container.demo({name: 'container'})">container demo</a>.
 				</p>
+			</li>
+			<li>
+				<code>event</code>
+				(Default: None) - Calls method whenever something noteworthy happens.<br>
+				<p>Example:</p>
+				<code>options.event = function(event:object)</code>
+
+				<h5><strong>Event object</strong></h5>
+				<pre class="code" apply-content highlight-lang="js">
+					event: {
+						event:string //event name
+					}
+				</pre>
+
+				<p>
+					The possible events are as follows:
+				</p>
+				<ul>
+					<li>
+						<code>stick</code>: The sticky element becomes sticky
+					</li>
+					<li>
+						<code>unstick</code>: The sticky element lost it stickiness
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</li>
@@ -138,15 +162,20 @@
 				<p>
 					Perhaps not extremely useful when using single sticky elements, but the <code><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></code> service is using this for parent collections to accommodate for the stack height.
 				</p>
+				<ul class="list-unstyled">
+					<li><i>Note:</i> <code>anchor</code> must be set to <code>top</code> to make it work.</li>
+					<li><i>Note:</i> This value can also be negative</li>
+				</ul>
 			</li>
 			<li>
-				<code><strike>offset.bottom</strike></code>
+				<code>offset.bottom</code>
 				(Default: 0) - Gives the sticky element additional offset from the bottom.
 				<p>
 					Perhaps not extremely useful when using single sticky elements, but the <code><a ui-sref="root.api.service({name: 'hl-sticky-element-collection'})">hlStickyElementCollection</a></code> service is using this for parent collections to accommodate for the stack height.
 				</p>
 				<ul class="list-unstyled">
-					<li class="text-danger"><b><i>Note:</i> This feature is under construction and cannot be used at this moment.</b></li>
+					<li><i>Note:</i> <code>anchor</code> must be set to <code>bottom</code> to make it work.</li>
+					<li><i>Note:</i> This value can also be negative</li>
 				</ul>
 			</li>
 			<li>
@@ -167,13 +196,34 @@
 		</ul>
 	</li>
 	<li>
+		<h4><code>anchor()</code></h4>
+		<p>
+			Will return the anchor currently active.
+		</p>
+	</li>
+	<li>
+		<h4><code>isSticky()</code></h4>
+		<p>
+			Will return a boolean telling you if the sticky element is sticky or not
+		</p>
+	</li>
+	<li>
+		<h4><code>computedHeight(scrolledDistance:int)</code></h4>
+		<p>
+			Will return a integer with the height of the sticky element. If the element is not sticky at the scrolled distance the result will be 0.
+		</p>
+	</li>
+	<li>
+		<h4><code>sticksAtPosition(scrolledDistance:int)</code></h4>
+		<p>
+			Will return a boolean telling you if the sticky element will stick at a certain position. The conditions also includes the media query if that was set.
+		</p>
+	</li>
+	<li>
 		<h4><code>destroy()</code></h4>
 		<p>
 			Destroys the sticky element from the stack it was attached to and it makes sure it un-sticks itself.
 			It is vital you call this method after you for example switch pages in your Angular application, otherwise it might cause weird artifacts on follow up pages.
 		</p>
-		<pre class="code" apply-content highlight-lang="js">
-			stickyElementInstance.destroy();
-		</pre>
 	</li>
 </ul>
