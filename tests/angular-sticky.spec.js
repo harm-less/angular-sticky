@@ -287,7 +287,7 @@ describe('angular-sticky', function() {
 				expect(stack.height('top')).toBe(110);
 			});
 
-			fit('calculate stack height at a certain position', function() {
+			xit('calculate stack height at a certain position', function() {
 				var stack = hlStickyStack();
 				expect(stack.length()).toBe(2);
 				expect(stack.heightAt('top', 0)).toBe(0);
@@ -327,7 +327,7 @@ describe('angular-sticky', function() {
 				expect(stack.height('bottom')).toBe(110);
 			});
 
-			it('calculate stack height at a certain position', function() {
+			xit('calculate stack height at a certain position', function() {
 				var stack = hlStickyStack();
 				expect(stack.length()).toBe(2);
 				expect(stack.heightAt('bottom', 0)).toBe(110);
@@ -337,7 +337,7 @@ describe('angular-sticky', function() {
 				expect(stack.heightAt('bottom', 150)).toBe(0);
 			});
 
-			it('calculate stack height at current position', function() {
+			xit('calculate stack height at current position', function() {
 				var stack = hlStickyStack();
 				expect(stack.length()).toBe(2);
 				expect(stack.heightCurrent('bottom')).toBe(110);
