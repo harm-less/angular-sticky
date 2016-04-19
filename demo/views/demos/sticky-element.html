@@ -26,8 +26,10 @@
 		});
 
 		angular.element($window).bind('scroll', function() {
-			// draw the sticky element
-			stickyElement.draw();
+			// draw the sticky element through an apply as the event wasn't from Angular
+			$scope.$apply(function() {
+				stickyElement.draw();
+			});
 		});
 
 		$scope.$on('$destroy', function() {
