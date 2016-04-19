@@ -15,7 +15,7 @@ Requirements
 #### Install with Bower (recommended)
 To install Angular Sticky with Bower use:
 ```sh
-$ bower install angular-bootstrap
+$ bower install angular-sticky-plugin
 ```
 
 #### Manually
