@@ -51,7 +51,12 @@ var demo = angular.module('demo', [
 		$urlRouterProvider.otherwise('/');
 
 		$stateProvider
-			.state('root',{
+			.state('test', {
+				url: '/test',
+				templateUrl: 'views/test.html',
+				controller: 'HomeController'
+			})
+			.state('root', {
 				abstract: true,
 				url: '',
 				views: {

@@ -1,0 +1,29 @@
+<style>
+	div {
+		background-color: #080808;
+	}
+	div.hl-sticky {
+		background-color: #004444;
+	}
+</style>
+
+<script>
+	$(window).scroll(function() {
+		console.log($(document).height(), $(window).height(), window.pageYOffset);
+	});
+</script>
+
+<div>
+	<div id="before" style="height: 20px;">Before all the sticky bars</div>
+	<div hl-sticky style="height: 50px;">Sticky bar 1</div>
+	<div id="between" style="height: 20px;">Between all the sticky bars</div>
+	<div hl-sticky style="height: 60px;">Sticky bar 2</div>
+	<div id="underneath">Underneath all the sticky bars</div>
+
+	<div style="height: 370px;">Before all the sticky bars</div>
+	<div id="before" style="height: 20px;">Before all the sticky bars</div>
+	<div hl-sticky anchor="bottom" style="height: 50px;">Sticky bar 1</div>
+	<div id="between" style="height: 20px;">Between all the sticky bars</div>
+	<div hl-sticky anchor="bottom" style="height: 60px;">Sticky bar 2</div>
+	<div id="underneath" style="height: 20px;">Underneath all the sticky bars</div>
+</div>
