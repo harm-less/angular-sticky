@@ -425,6 +425,33 @@ describe('angular-sticky', function() {
 				expect(stickyElement).not.toBeSticky();
 			});
 
+			it('should fire all events properly', function() {
+				var lastEvent;
+				var options = {
+					event: function (event) {
+						lastEvent = event.event;
+					}
+				};
+				var eventSpy = spyOn(options, 'event').and.callThrough();
+				compileSticky(templateStickyElementOffsetSmall, options);
+
+				// just before it get sticky
+				drawAt(49);
+				expect(stickyElement).not.toBeSticky();
+				expect(lastEvent).toBeUndefined();
+
+				// just at the point it gets sticky
+				drawAt(50);
+				expect(stickyElement).toBeSticky();
+				expect(eventSpy).toHaveBeenCalled();
+				expect(lastEvent).toBe('stick');
+
+				// just at the point it gets sticky
+				drawAt(49);
+				expect(stickyElement).not.toBeSticky();
+				expect(lastEvent).toBe('unstick');
+			});
+
 			it('should destroy a hlStickyElement properly', function() {
 				compileSticky(templateStickyElementOffsetSmall, {
 					stickyClass: 'custom-sticky-class'
@@ -648,6 +675,34 @@ describe('angular-sticky', function() {
 				expect(stickyElement.next().length).toBe(0);
 				expect(element.has('#placeHolder').size()).toBe(0);
 				expect(stickyElement).not.toBeSticky();
+			});
+
+			it('should fire all events properly', function() {
+				var lastEvent;
+				var options = {
+					anchor: 'bottom',
+					event: function (event) {
+						lastEvent = event.event;
+					}
+				};
+				var eventSpy = spyOn(options, 'event').and.callThrough();
+				compileStickyBottom(templateStickyElementBottomOffsetSmall, options);
+
+				// just before it get sticky
+				drawAtBottom(51);
+				expect(stickyElement).not.toBeSticky();
+				expect(lastEvent).toBeUndefined();
+
+				// just at the point it gets sticky
+				drawAtBottom(50);
+				expect(stickyElement).toBeSticky();
+				expect(eventSpy).toHaveBeenCalled();
+				expect(lastEvent).toBe('stick');
+
+				// just at the point it gets sticky
+				drawAtBottom(51);
+				expect(stickyElement).not.toBeSticky();
+				expect(lastEvent).toBe('unstick');
 			});
 
 			it('should destroy a hlStickyElement properly', function() {

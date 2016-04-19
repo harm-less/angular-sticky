@@ -1,0 +1,88 @@
+<div save-content="intro">
+	<h2>Events</h2>
+	<p>
+		You want to know what happens inside the directive? Why not set up an event listener.
+	</p>
+	<p>
+		You can use it in combination with the directive or with the service. The the dispatcher returns the following events:
+	</p>
+	<ul>
+		<li>The element becomes sticky</li>
+		<li>The element becomes unsticky</li>
+	</ul>
+</div>
+
+<script save-content="js">
+	function StickyEventsController($scope, $window, hlStickyElement) {
+
+		//## events using a service
+		// get the element from the dom
+		var element = angular.element(document.querySelector('#sticky'));
+
+		$scope.serviceEvents = [];
+		// create a new instance with a bit of offset
+		var stickyElement = hlStickyElement(element, {
+			event: function(event) {
+				// save the event in an array that is limited to 4 items
+				$scope.serviceEvents.unshift('Event: "' + event.event);
+				if ($scope.serviceEvents.length > 4) $scope.serviceEvents.length = 4;
+			}
+		});
+
+		angular.element($window).bind('scroll', function() {
+			// draw the sticky element through an apply as the event wasn't from Angular
+			$scope.$apply(function() {
+				stickyElement.draw();
+			});
+		});
+
+		$scope.$on('$destroy', function() {
+			// make sure we clean up after ourselves otherwise the sticky element will stay in the stack and could cause trouble
+			stickyElement.destroy();
+		});
+
+		//## events using a directive
+		$scope.directive = {
+			events: [],
+			stickyEvent: function(event) {
+				// save the event in an array that is limited to 4 items
+				$scope.directive.events.unshift('Event: "' + event.event);
+				if ($scope.directive.events.length > 4) $scope.directive.events.length = 4;
+			}
+		};
+	}
+</script>
+
+<div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12" ng-controller="StickyEventsController">
+				<div save-content="html">
+					<div id="sticky">
+						I'm initialised using the <code>hlStickyElement</code> service. Scroll the page so you can see when something happens.
+
+						<ul class="list-events">
+							<li ng-repeat="serviceEvent in serviceEvents track by $index">
+								{{serviceEvent}}
+							</li>
+						</ul>
+					</div>
+
+					<div class="divider">
+						I'm just here to give the bottom anchored sticky element some room
+					</div>
+
+					<div hl-sticky event="directive.stickyEvent(event)" anchor="bottom">
+						I'm initialised using the <code>hl-sticky</code> directive. Scroll the page so you can see when something happens.
+
+						<ul class="list-events">
+							<li ng-repeat="directiveEvent in directive.events track by $index">
+								{{directiveEvent}}
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

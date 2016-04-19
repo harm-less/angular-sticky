@@ -1,0 +1,21 @@
+.demo-events {
+	 .hl-sticky, #sticky {
+		 .sticky-element-default();
+	 }
+
+	.list-items(@i) when (@i > 0) {
+		.list-items(@i - 1);
+		li:nth-child(@{i}) {
+			color: darken(#fff, 1% * (@i * 15));
+		}
+	}
+
+	.list-events {
+		.list-unstyled();
+		.list-items(4);
+	}
+
+	.divider {
+		.divider-default(800px);
+	}
+ }

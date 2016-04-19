@@ -105,6 +105,31 @@
 					Check out the <a ui-sref="root.demo-container.demo({name: 'container'})">container demo</a>.
 				</p>
 			</li>
+			<li>
+				<code>event</code>
+				(Default: None) - Calls method whenever something noteworthy happens.<br>
+				<p>Example:</p>
+				<code>options.event = function(event:object)</code>
+
+				<h5><strong>Event object</strong></h5>
+				<pre class="code" apply-content highlight-lang="js">
+					event: {
+						event:string //event name
+					}
+				</pre>
+
+				<p>
+					The possible events are as follows:
+				</p>
+				<ul>
+					<li>
+						<code>stick</code>: The sticky element becomes sticky
+					</li>
+					<li>
+						<code>unstick</code>: The sticky element lost it stickiness
+					</li>
+				</ul>
+			</li>
 		</ul>
 	</li>
 </ul>
