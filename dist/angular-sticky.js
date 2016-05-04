@@ -2,7 +2,7 @@
  * angular-sticky
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.1.1-0 - 2016-04-19
+ * Version: 0.1.1-0 - 2016-05-04
  * License: MIT
  */
 'use strict';
@@ -222,12 +222,12 @@ angular.module('hl.sticky', [])
 				return false;
 			}
 			function sticksAtPositionTop(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop;
 				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : (window.pageYOffset || bodyEl.scrollTop());
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : (window.pageYOffset || bodyEl.scrollTop);
 				var scrollBottom = scrolledDistance + window.innerHeight;
 				return scrollBottom <= stickyLinePositionBottom();
 			}
@@ -370,7 +370,7 @@ angular.module('hl.sticky', [])
 			// @todo dffgdg
 			function containerBoundsTop(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
+					container = options.container !== undefined ? angular.isString(options.container) ? document.getElementById(options.container) : options.container : false;
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
@@ -382,7 +382,7 @@ angular.module('hl.sticky', [])
 			}
 			function containerBoundsBottom(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
+					container = options.container !== undefined ? angular.isString(options.container) ? document.getElementById(options.container) : options.container : false;
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
