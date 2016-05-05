@@ -4,7 +4,14 @@
   "author": "Harm van der Werf",
   "keywords": [
     "angular",
-    "sticky"
+    "sticky",
+    "stick",
+    "sidebar",
+    "fixed",
+    "scrolling",
+    "scroll",
+    "directive",
+    "service"
   ],
   "main": [
     "dist/angular-sticky.js"

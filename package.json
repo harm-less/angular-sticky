@@ -1,12 +1,23 @@
 {
-  "author": "https://github.com/harm-less",
-  "name": "angular-sticky",
+  "author": "Harm van der Werf <harmvdwerf@gmail.com> {https://github.com/harm-less}",
+  "name": "angular-sticky-plugin",
   "version": "0.1.1-0",
   "homepage": "https://github.com/harm-less/angular-sticky",
   "main": "dist/angular-sticky.js",
   "scripts": {
     "test": "grunt test"
   },
+  "keywords": [
+    "angular",
+    "sticky",
+    "stick",
+    "sidebar",
+    "fixed",
+    "scrolling",
+    "scroll",
+    "directive",
+    "service"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/harm-less/angular-sticky.git"
