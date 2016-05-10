@@ -24,7 +24,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.4.0"
+    "angular": "^1.4.0"
   },
   "devDependencies": {
     "underscore": "~1.8.3",
