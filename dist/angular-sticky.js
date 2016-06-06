@@ -1,8 +1,8 @@
 /*
- * angular-sticky
+ * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.1.1-0 - 2016-04-19
+ * Version: 0.1.1-0 - 2016-06-06
  * License: MIT
  */
 'use strict';
@@ -370,7 +370,7 @@ angular.module('hl.sticky', [])
 			// @todo dffgdg
 			function containerBoundsTop(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
+					container = options.container !== undefined ? angular.isString(options.container) ? angular.element(documentEl.querySelector('#' + options.container))[0] : options.container : false;
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
@@ -382,7 +382,7 @@ angular.module('hl.sticky', [])
 			}
 			function containerBoundsBottom(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
+					container = options.container !== undefined ? angular.isString(options.container) ? angular.element(documentEl.querySelector('#' + options.container))[0] : options.container : false;
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
