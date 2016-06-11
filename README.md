@@ -13,9 +13,14 @@ Requirements
 * Supports all major browsers and IE9 and up (lower versions might not be supported)
 
 #### Install with Bower (recommended)
-To install Angular Sticky with Bower use:
+To install Angular Sticky with [Bower](http://bower.io/) use:
 ```sh
-$ bower install angular-sticky-plugin
+bower install angular-sticky-plugin
+```
+
+Or with [npm](https://www.npmjs.com/)
+```sh
+npm install angular-sticky-plugin
 ```
 
 #### Manually

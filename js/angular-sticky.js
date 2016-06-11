@@ -169,6 +169,8 @@ angular.module('hl.sticky', [])
 			var anchor = typeof options.anchor === 'string' ? options.anchor.toLowerCase().trim() : 'top';
 			var container = null;
 			var stack = options.stack === false ? null : options.stack || hlStickyStack();
+
+			var event = angular.isFunction(options.event) ? options.event : angular.noop;
 			var globalOffset = {
 				top: 0,
 				bottom: 0
@@ -245,10 +247,12 @@ angular.module('hl.sticky', [])
 				// don't make the element sticky when it's already sticky
 				if (shouldStick && !_isSticking) {
 					stickElement();
+					event({event: 'stick'});
 				}
 				// don't unstick the element sticky when it isn't sticky already
 				else if (!shouldStick && _isSticking) {
 					unstickElement();
+					event({event: 'unstick'});
 				}
 
 				// stick after care
@@ -582,6 +586,9 @@ angular.module('hl.sticky', [])
 			restrict: 'A',
 			transclude: true,
 			replace: true,
+			scope: {
+				event: '&'
+			},
 			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
 				var stickyElementCollection = hlStickyElementCollection({
@@ -589,7 +596,12 @@ angular.module('hl.sticky', [])
 					parent: $attrs.collectionParent
 				});
 				var options = {
-					id: $attrs.hlSticky
+					id: $attrs.hlSticky,
+					event: function(event) {
+						$scope.event({
+							event: event
+						})
+					}
 				};
 				angular.forEach(['mediaQuery', 'stickyClass', 'usePlaceholder', 'offsetTop', 'offsetBottom', 'anchor', 'container'], function(option) {
 					options[option] = $attrs[option];

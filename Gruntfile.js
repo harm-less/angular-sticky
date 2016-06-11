@@ -306,7 +306,7 @@ module.exports = function(grunt) {
 	]);
 
 	grunt.registerTask('release', function() {
-		var releaseType = grunt.option('releaseType') ? grunt.option('releaseType') : 'patch';
+		var releaseType = grunt.option('release-type') ? grunt.option('release-type') : 'patch';
 
 		grunt.task.run('bump-only:' + releaseType);
 		grunt.task.run('build');

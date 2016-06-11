@@ -34,6 +34,8 @@
 
 				// get the total height of the stack at the position of the mouse
 				$scope.stackHeightAtPosition = stack.heightAt('bottom', mousePosition);
+
+				// trigger a scope digest because the event wasn't from Angular
 				$scope.$apply();
 			});
 		});
