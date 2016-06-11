@@ -1,8 +1,8 @@
 /*
- * angular-sticky
+ * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.1.1-0 - 2016-04-19
+ * Version: 0.2.0 - 2016-06-11
  * License: MIT
  */
 'use strict';
