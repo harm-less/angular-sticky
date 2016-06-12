@@ -167,7 +167,7 @@ angular.module('hl.sticky', [])
 			var offsetTop = options.offsetTop ? parseInt(options.offsetTop) : 0;
 			var offsetBottom = options.offsetBottom ? parseInt(options.offsetBottom) : 0;
 			var anchor = typeof options.anchor === 'string' ? options.anchor.toLowerCase().trim() : 'top';
-			var container = null;
+			var container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
 			var stack = options.stack === false ? null : options.stack || hlStickyStack();
 
 			var event = angular.isFunction(options.event) ? options.event : angular.noop;
@@ -183,7 +183,7 @@ angular.module('hl.sticky', [])
 
 			// Methods
 			//
-			function stickyLinePositionTop() {
+			function stickyLinePositionTop(setGlobal) {
 				if (_isSticking && setGlobal) {
 					return _stickyLineTop;
 				}
@@ -356,9 +356,6 @@ angular.module('hl.sticky', [])
 
 			// @todo dffgdg
 			function containerBoundsTop(scrolledDistance) {
-				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
-				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
 					var containerRect = container.getBoundingClientRect();
@@ -368,9 +365,6 @@ angular.module('hl.sticky', [])
 				return 0;
 			}
 			function containerBoundsBottom(scrolledDistance) {
-				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? $('#' + options.container)[0] : options.container : false;
-				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
 					var containerRect = container.getBoundingClientRect();
