@@ -74,7 +74,7 @@ module.exports = function(grunt) {
 				spawn: false,
 				files: [
 					'.tmp/styles/*.css',
-
+					'js/*.js'
 				]
 			},
 			tests: {
