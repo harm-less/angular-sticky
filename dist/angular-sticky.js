@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.2.0 - 2016-06-11
+ * Version: 0.2.1 - 2016-06-23
  * License: MIT
  */
 'use strict';
@@ -266,14 +266,14 @@ angular.module('hl.sticky', [])
 			function stickElement() {
 				_isSticking = true;
 
+				element.addClass(stickyClass);
+
 				// create placeholder to avoid jump
 				if (usePlaceholder) {
 					placeholder = placeholder || angular.element('<div>');
 					placeholder.css('height', elementHeight() + 'px');
 					element.after(placeholder);
 				}
-
-				element.addClass(stickyClass);
 
 				var rect = nativeEl.getBoundingClientRect();
 				var css = {
