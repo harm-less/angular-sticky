@@ -259,14 +259,14 @@ angular.module('hl.sticky', [])
 			function stickElement() {
 				_isSticking = true;
 
+				element.addClass(stickyClass);
+
 				// create placeholder to avoid jump
 				if (usePlaceholder) {
 					placeholder = placeholder || angular.element('<div>');
 					placeholder.css('height', elementHeight() + 'px');
 					element.after(placeholder);
 				}
-
-				element.addClass(stickyClass);
 
 				var rect = nativeEl.getBoundingClientRect();
 				var css = {

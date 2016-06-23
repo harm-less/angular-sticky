@@ -13,6 +13,10 @@ describe('angular-sticky', function() {
 
 	var hlStickyElementCollectionProvider;
 
+	beforeAll(function() {
+		window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";.custom-sticky-class {height: 40px !important;}</style>');
+	});
+
 	beforeEach(module('hl.sticky'));
 	beforeEach(module(function (_hlStickyElementCollectionProvider_) {
 		hlStickyElementCollectionProvider = _hlStickyElementCollectionProvider_;
@@ -541,6 +545,16 @@ describe('angular-sticky', function() {
 				// and back to un-sticky again
 				drawAt(49);
 				expect(stickyElement.next().length).toBe(0);
+			});
+
+			it('should have a placeholder which has adapted to a variable sticky element height', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					stickyClass: 'custom-sticky-class'
+				});
+
+				drawAt(50);
+				var placeHolder = stickyElement.next();
+				expect(placeHolder.height()).toBe(40);
 			});
 
 			it('should make it sticky with custom sticky class', function() {
