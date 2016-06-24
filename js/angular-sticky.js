@@ -616,7 +616,10 @@ angular.module('hl.sticky', [])
 
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
-					stickyElementCollection.destroy();
+					stickyElementCollection.removeElement($element);
+					if (!stickyElementCollection.trackedElements.length) {
+						stickyElementCollection.destroy();
+					}
 				});
 			}
 		};
