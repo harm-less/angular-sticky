@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.2.1 - 2016-06-23
+ * Version: 0.2.2 - 2016-06-24
  * License: MIT
  */
 'use strict';
@@ -623,7 +623,10 @@ angular.module('hl.sticky', [])
 
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
-					stickyElementCollection.destroy();
+					stickyElementCollection.removeElement($element);
+					if (!stickyElementCollection.trackedElements.length) {
+						stickyElementCollection.destroy();
+					}
 				});
 			}
 		};
