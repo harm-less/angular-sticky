@@ -541,7 +541,9 @@ angular.module('hl.sticky', [])
 							}
 						}
 						var deletedElement = trackedElements.splice(toDelete, 1)[0];
-						deletedElement.stickyElement.destroy();
+						if (deletedElement) {
+							deletedElement.stickyElement.destroy();
+						}
 
 						return deletedElement;
 					};
@@ -617,7 +619,7 @@ angular.module('hl.sticky', [])
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
 					stickyElementCollection.removeElement($element);
-					if (stickyElementCollection.trackedElements.length === 0) {
+					if (!stickyElementCollection.trackedElements().length) {
 						stickyElementCollection.destroy();
 					}
 				});
