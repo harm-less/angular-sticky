@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.2.2 - 2016-06-24
+ * Version: 0.2.3 - 2016-06-27
  * License: MIT
  */
 'use strict';
@@ -548,7 +548,9 @@ angular.module('hl.sticky', [])
 							}
 						}
 						var deletedElement = trackedElements.splice(toDelete, 1)[0];
-						deletedElement.stickyElement.destroy();
+						if (deletedElement) {
+							deletedElement.stickyElement.destroy();
+						}
 
 						return deletedElement;
 					};
@@ -624,7 +626,7 @@ angular.module('hl.sticky', [])
 				// listeners
 				$scope.$on('$destroy', function onDestroy() {
 					stickyElementCollection.removeElement($element);
-					if (!stickyElementCollection.trackedElements.length) {
+					if (!stickyElementCollection.trackedElements().length) {
 						stickyElementCollection.destroy();
 					}
 				});
