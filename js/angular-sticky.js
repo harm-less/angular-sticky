@@ -595,13 +595,19 @@ angular.module('hl.sticky', [])
 			transclude: true,
 			replace: true,
 			scope: {
+				container: '@',
+				anchor: '@',
+				stickyClass: '@',
+				mediaQuery: '@',
+				collection: '@',
+				collectionParent: '@',
 				event: '&'
 			},
 			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
 				var stickyElementCollection = hlStickyElementCollection({
-					name: $attrs.collection,
-					parent: $attrs.collectionParent
+					name: $scope.collection,
+					parent: $scope.collectionParent
 				});
 				var options = {
 					id: $attrs.hlSticky,
@@ -611,8 +617,15 @@ angular.module('hl.sticky', [])
 						})
 					}
 				};
-				angular.forEach(['mediaQuery', 'stickyClass', 'usePlaceholder', 'offsetTop', 'offsetBottom', 'anchor', 'container'], function(option) {
-					options[option] = $attrs[option];
+				angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery'], function(option) {
+					if ($scope[option]) {
+						options[option] = $scope[option];
+					}
+				});
+				angular.forEach(['usePlaceholder', 'offsetTop', 'offsetBottom'], function(option) {
+					if (angular.isDefined($attrs[option])) {
+						options[option] = $scope.$parent.$eval($attrs[option]);
+					}
 				});
 				stickyElementCollection.addElement($element, options);
 

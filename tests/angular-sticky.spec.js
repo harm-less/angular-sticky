@@ -1081,16 +1081,478 @@ describe('angular-sticky', function() {
 			scope = $rootScope.$new();
 		});
 
-		function compile(element) {
-			return angular.element($compile(element)(scope));
+		function compileDirective(element) {
+			var compiledElement = compile('<div>' + element + '</div>', scope);
+			var sticky = compiledElement.find('.hl-sticky');
+
+			return {
+				element: compiledElement,
+				sticky: sticky
+			};
 		}
 
 		it('passes the simplest directive usage', function () {
-			var element = compile('<div hl-sticky></div>');
-			expect(element.hasClass('hl-sticky')).toBe(true);
+			var compiled = compileDirective('<div hl-sticky></div>');
+			expect(compiled.sticky.hasClass('hl-sticky')).toBe(true);
 
 			scope.$destroy();
 			expect(objectSize(hlStickyElementCollectionProvider.collections)).toBe(0);
+		});
+
+		describe('directive options', function() {
+
+			function defaultOptionCompile() {
+				var compiled = compileDirective('<div hl-sticky></div>');
+				scrollTo(1);
+				return compiled;
+			}
+
+			function optionCompile(variable, value) {
+				var compiled = compileDirective('<div hl-sticky ' + variable + '="' + value + '"></div>');
+				scrollTo(1);
+				return compiled;
+			}
+
+			describe('stickyClass', function () {
+
+				function tryStickyClass(value, findQuery) {
+					var compiled = angular.isDefined(value) ? optionCompile('sticky-class', value) : defaultOptionCompile();
+					findQuery = angular.isDefined(findQuery) ? findQuery : value;
+					var stickyClass = value ? compiled.element.find('.' + findQuery) : {};
+					return angular.extend(compiled, {
+						stickyClass: stickyClass
+					});
+				}
+
+				it('hardcoded class', function () {
+					var attempt = tryStickyClass('custom-class');
+					expect(attempt.stickyClass.length).toBe(1);
+				});
+				it('evaluated variable', function () {
+					scope.customClass = 'custom-class';
+					var attempt = tryStickyClass('{{customClass}}', 'custom-class');
+					expect(attempt.stickyClass.length).toBe(1);
+				});
+			});
+
+			describe('usePlaceholder', function () {
+
+				function tryUsePlaceholder(value) {
+					var compiled = angular.isDefined(value) ? optionCompile('use-placeholder', value) : defaultOptionCompile();
+					var placeHolder = compiled.sticky.next();
+					return angular.extend(compiled, {
+						placeholder: placeHolder
+					});
+				}
+
+				it('defaults to true', function () {
+					var attempt = tryUsePlaceholder();
+					expect(attempt.placeholder.length).toBe(1);
+				});
+
+				it('hardcoded true', function () {
+					var attempt = tryUsePlaceholder('true');
+					expect(attempt.placeholder.length).toBe(1);
+				});
+				it('hardcoded false', function () {
+					var attempt = tryUsePlaceholder('false');
+					expect(attempt.placeholder.length).toBe(0);
+				});
+				it('evaluated variable', function () {
+					var attempt = tryUsePlaceholder('{{false}}');
+					expect(attempt.placeholder.length).toBe(0);
+				});
+				it('evaluated scope variable', function () {
+					scope.usePlaceholder = false;
+					var attempt = tryUsePlaceholder('{{usePlaceholder}}');
+					expect(attempt.placeholder.length).toBe(0);
+				});
+			});
+
+			describe('anchor', function () {
+
+				function scrollToBottom(position) {
+					scrollTo(position + 50);
+				}
+
+				it('defaults to "top"', function() {
+					var compiled = compileDirective('<div style="height: 20px;"></div><div hl-sticky></div>');
+					var stickyElement = compiled.sticky;
+
+					// just before it becomes sticky
+					scrollTo(19);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(20);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('should stick to the top', function() {
+					var compiled = compileDirective('<div style="height: 20px;"></div><div hl-sticky anchor="top"></div>');
+					var stickyElement = compiled.sticky;
+
+					// just before it becomes sticky
+					scrollTo(19);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(20);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('should be able to handle scope evaluated values', function() {
+					scope.anchor = 'bottom';
+					var compiled = compileDirective(createBottomSticky('<div hl-sticky anchor="{{anchor}}">'));
+					var stickyElement = compiled.sticky;
+
+					// just before it becomes sticky
+					scrollToBottom(1);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollToBottom(0);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('should stick to the bottom', function() {
+					var compiled = compileDirective(createBottomSticky('<div hl-sticky anchor="bottom">'));
+					var stickyElement = compiled.sticky;
+
+					// just before it becomes sticky
+					scrollToBottom(1);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollToBottom(0);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+			});
+
+			describe('offsetTop', function () {
+
+				function tryOffsetTop(value) {
+					return compileDirective(angular.isDefined(value) ? '<div style="height: 50px;"></div><div hl-sticky offset-top="' + value + '"></div>' : '<div style="height: 50px;"></div><div hl-sticky></div>');
+				}
+
+				it('defaults to no offset', function () {
+					var attempt = tryOffsetTop();
+					var stickyElement = attempt.sticky;
+
+					// just before it becomes sticky
+					scrollTo(49);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(50);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('hardcoded offset', function () {
+					var attempt = tryOffsetTop('10');
+					var stickyElement = attempt.sticky;
+
+					// just before it becomes sticky
+					scrollTo(39);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(40);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('should evaluate scope variable', function () {
+					scope.offsetTop = 20;
+					var attempt = tryOffsetTop('{{offsetTop}}');
+					var stickyElement = attempt.sticky;
+
+					// just before it becomes sticky
+					scrollTo(29);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(30);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+			});
+
+			describe('offsetBottom', function () {
+
+				function tryOffsetBottom(value) {
+					return compileDirective(createBottomSticky(angular.isDefined(value) ? '<div style="height: 50px;"></div><div hl-sticky anchor="bottom" offset-bottom="' + value + '"></div>' : '<div style="height: 50px;"></div><div hl-sticky anchor="bottom"></div>'));
+				}
+
+				function scrollToBottom(position) {
+					scrollTo(position + 50);
+				}
+
+				it('default to no offset', function() {
+					var compiled = tryOffsetBottom();
+					var stickyElement = compiled.sticky;
+
+					// just before it becomes sticky
+					scrollToBottom(51);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollToBottom(50);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('hardcoded offset', function() {
+					var compiled = tryOffsetBottom('20');
+					var stickyElement = compiled.sticky;
+
+					// just before it becomes sticky
+					scrollToBottom(71);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollToBottom(70);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('hardcoded offset', function() {
+					scope.offsetBottom = 30;
+					var compiled = tryOffsetBottom('{{offsetBottom}}');
+					var stickyElement = compiled.sticky;
+
+					// just before it becomes sticky
+					scrollToBottom(81);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollToBottom(80);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+			});
+
+			describe('container', function () {
+
+				function tryContainer(value) {
+					var compiled = compileDirective('<div style="height: 50px;"></div><div id="container" style="height: 100px"><div hl-sticky container="' + value + '" style="height: 20px;"></div></div>');
+					var container = compiled.element.find('#container');
+					return angular.extend(compiled, {
+						container: container
+					});
+				}
+
+				function tryContainerValue(value) {
+					var compiled = tryContainer(value);
+					var stickyElement = compiled.sticky;
+
+					// just before the container begins it should not be sticky
+					scrollTo(49);
+					scope.$digest();
+					expect(stickyElement).not.toBeSticky();
+
+					// just when the container begins it become sticky
+					scrollTo(50);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+
+					// just before the container ends it should be sticky and in the viewport
+					scrollTo(149);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+					expect(stickyElement).toBeInTheViewport();
+
+					// just when the container is not longer in the viewport, so shouldn't the sticky element
+					scrollTo(150);
+					scope.$digest();
+					expect(stickyElement).not.toBeInTheViewport();
+				}
+
+				it('hardcoded container', function () {
+					tryContainerValue('container');
+				});
+
+				it('scope evaluated container', function () {
+					scope.container = 'container';
+					tryContainerValue('{{container}}');
+				});
+			});
+
+			describe('event', function () {
+
+				function tryEvent(value) {
+					return compileDirective('<div style="height: 50px;"></div><div hl-sticky event="' + value + '"></div>')
+				}
+
+				it('default implementation', function () {
+					var lastEvent;
+					scope.stickyEvent = function (event) {
+						lastEvent = event.event;
+					};
+					var eventSpy = spyOn(scope, 'stickyEvent').and.callThrough();
+
+					var attempt = tryEvent('stickyEvent(event)');
+					var stickyElement = attempt.sticky;
+
+					// just before it get sticky
+					scrollTo(49);
+					scope.$digest();
+					expect(stickyElement).not.toBeSticky();
+					expect(lastEvent).toBeUndefined();
+
+					// just at the point it gets sticky
+					scrollTo(50);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+					expect(eventSpy).toHaveBeenCalled();
+					expect(lastEvent).toBe('stick');
+
+					// just at the point it gets sticky
+					scrollTo(49);
+					scope.$digest();
+					expect(stickyElement).not.toBeSticky();
+					expect(lastEvent).toBe('unstick');
+				});
+			});
+
+			describe('collection', function () {
+
+				var hlStickyElementCollection;
+
+				beforeEach(inject(function(_hlStickyElementCollection_) {
+					hlStickyElementCollection = _hlStickyElementCollection_;
+				}));
+
+				function tryCollection(value, collectionName) {
+					var hasCollection = angular.isDefined(value);
+					var compiled = hasCollection ? optionCompile('collection', value) : defaultOptionCompile();
+					var collection = hlStickyElementCollection(hasCollection ? {name: collectionName || value} : null);
+					return angular.extend(compiled, {
+						collection: collection
+					});
+				}
+
+				it('defaults to default collection', function () {
+					var attempt = tryCollection();
+					expect(attempt.collection.trackedElements().length).toBe(1);
+				});
+
+				it('hardcoded value', function () {
+					var attempt = tryCollection('differentCollection');
+					expect(attempt.collection.trackedElements().length).toBe(1);
+				});
+
+				it('scope evaluated value', function () {
+					scope.differentCollection = 'differentCollection';
+					var attempt = tryCollection('{{differentCollection}}', 'differentCollection');
+					expect(attempt.collection.trackedElements().length).toBe(1);
+				});
+			});
+
+			describe('collectionParent', function () {
+
+				var hlStickyElementCollection;
+				var firstStickyElement;
+
+				beforeEach(inject(function(_hlStickyElementCollection_) {
+					hlStickyElementCollection = _hlStickyElementCollection_;
+
+					firstStickyElement = _collection('first');
+				}));
+
+				function _collection(collectionName, collectionParent) {
+					collectionParent = collectionParent || '';
+					var compiled = compileDirective('<div style="height: 50px;"></div><div hl-sticky collection="' + collectionName + '" collection-parent="' + collectionParent + '" style="height: 20px;"></div>');
+					var collection = hlStickyElementCollection({name: collectionName});
+					return angular.extend(compiled, {
+						collection: collection
+					});
+				}
+
+				function tryCollectionParent(value) {
+					return _collection('second', value);
+				}
+
+				it('defaults to no parent', function () {
+					var attempt = tryCollectionParent();
+					var stickyElement = attempt.sticky;
+					expect(firstStickyElement.collection.trackedElements().length).toBe(1);
+					expect(attempt.collection.trackedElements().length).toBe(1);
+
+					// just before it becomes sticky
+					scrollTo(119);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(120);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('hardcoded value', function () {
+					var attempt = tryCollectionParent('first');
+					var stickyElement = attempt.sticky;
+					expect(firstStickyElement.collection.trackedElements().length).toBe(1);
+					expect(attempt.collection.trackedElements().length).toBe(1);
+
+					// just before it becomes sticky
+					scrollTo(99);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(100);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+
+				it('evaluated scope value', function () {
+					scope.collectionParent = 'first';
+					var attempt = tryCollectionParent('{{collectionParent}}');
+					var stickyElement = attempt.sticky;
+					expect(firstStickyElement.collection.trackedElements().length).toBe(1);
+					expect(attempt.collection.trackedElements().length).toBe(1);
+
+					// just before it becomes sticky
+					scrollTo(99);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					// just at the point it gets sticky
+					scrollTo(100);
+					scope.$digest();
+					expect(stickyElement).toBeSticky();
+				});
+			});
 		});
 	});
 });
