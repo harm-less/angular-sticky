@@ -236,6 +236,9 @@ module.exports = function(grunt) {
 				commitFiles: ['-a']
 			}
 		},
+		'npm-publish': {
+		},
+
 		'gh-pages': {
 			demo: {
 				options: {
@@ -311,5 +314,6 @@ module.exports = function(grunt) {
 		grunt.task.run('bump-only:' + releaseType);
 		grunt.task.run('build');
 		grunt.task.run('bump-commit');
+		grunt.task.run('npm-publish');
 	});
 };

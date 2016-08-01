@@ -50,6 +50,7 @@
     "karma-html2js-preprocessor": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.1",
     "karma-coverage": "~0.5.3",
+    "grunt-npm": "^0.0.2",
     "load-grunt-tasks": "3.4.0"
   },
   "license": "MIT"
