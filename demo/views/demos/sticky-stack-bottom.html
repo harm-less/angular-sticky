@@ -21,6 +21,17 @@
 		// get the default stack instance
 		var stack = hlStickyStack();
 
+		$scope.enableSticky = true;
+		setTimeout(function () {
+			$scope.enableSticky = false;
+			$scope.$apply();
+		}, 3000);
+
+		setTimeout(function () {
+			$scope.enableSticky = true;
+			$scope.$apply();
+		}, 6000);
+
 		var clientY;
 		angular.forEach(['mousemove', 'scroll'], function(eventName) {
 			angular.element($window).bind(eventName, function updateStackVariables(event) {
@@ -68,7 +79,7 @@
 				<div save-content="html">
 					<div class="divider-sticky-elements"></div>
 					<div ng-repeat="element in elements">
-						<div hl-sticky anchor="bottom" class="simple">
+						<div hl-sticky anchor="bottom" enable="enableSticky" class="simple">
 							<b>Element {{$index + 1}}</b><br>{{element.description}}
 						</div>
 						<div class="divider">I'm just here to give the sticky elements some space</div>

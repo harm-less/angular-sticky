@@ -1553,6 +1553,43 @@ describe('angular-sticky', function() {
 					expect(stickyElement).toBeSticky();
 				});
 			});
+
+			describe('enable', function () {
+
+				it('should enable sticky behavior on startup if true', function () {
+					var compiled = optionCompile('enable', true);
+
+					expect(compiled.sticky).toBeSticky();
+				});
+
+				it('should disable sticky behavior on startup if false', function () {
+					var compiled = optionCompile('enable', false);
+
+					expect(compiled.sticky).not.toBeSticky();
+				});
+
+				it('should disable stickyness while being sticky', function () {
+					var compiled = optionCompile('enable', true);
+
+					expect(compiled.sticky).toBeSticky();
+
+					compiled.sticky.isolateScope().enable = false;
+					compiled.sticky.isolateScope().$digest();
+
+					expect(compiled.sticky).not.toBeSticky();
+				});
+
+				it('should enable stickyness while not being sticky', function () {
+					var compiled = optionCompile('enable', false);
+
+					expect(compiled.sticky).not.toBeSticky();
+
+					compiled.sticky.isolateScope().enable = true;
+					compiled.sticky.isolateScope().$digest();
+
+					expect(compiled.sticky).toBeSticky();
+				});
+			});
 		});
 	});
 });
