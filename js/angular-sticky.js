@@ -192,9 +192,11 @@ angular.module('hl.sticky', [])
 				stickyLineBottom = _getBottomOffset(nativeEl) + offsetBottom + _stackOffsetBottom();
 				return stickyLineBottom;
 			}
-
+			function isEnabled() {
+				return (!angular.isDefined(options.enable) || options.enable);
+			}
 			function isSticky() {
-				return _isSticking;
+				return isEnabled() && _isSticking;
 			}
 			function sticksAtPosition(anchor, scrolledDistance) {
 				if (!matchesMediaQuery()) {
@@ -344,7 +346,9 @@ angular.module('hl.sticky', [])
 						if (stickIndex !== stack.length() - 1) {
 							// @todo the stack range calculation should be diverted to the stack
 							stack.range(stickIndex + 1, stack.length()).forEach(function (stick) {
-								extraOffset += stick.computedHeight(anchor);
+								if (stick.isEnabled()) {
+									extraOffset += stick.computedHeight(anchor);
+								}
 							});
 						}
 					}
@@ -420,6 +424,7 @@ angular.module('hl.sticky', [])
 			};
 
 			$api.isSticky = isSticky;
+			$api.isEnabled = isEnabled;
 			$api.computedHeight = computedHeight;
 			$api.sticksAtPosition = sticksAtPosition;
 
