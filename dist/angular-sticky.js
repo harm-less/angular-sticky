@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.2.4 - 2016-07-24
+ * Version: 0.3.0 - 2016-09-02
  * License: MIT
  */
 'use strict';
@@ -199,9 +199,11 @@ angular.module('hl.sticky', [])
 				stickyLineBottom = _getBottomOffset(nativeEl) + offsetBottom + _stackOffsetBottom();
 				return stickyLineBottom;
 			}
-
+			function isEnabled() {
+				return (!angular.isDefined(options.enable) || options.enable);
+			}
 			function isSticky() {
-				return _isSticking;
+				return isEnabled() && _isSticking;
 			}
 			function sticksAtPosition(anchor, scrolledDistance) {
 				if (!matchesMediaQuery()) {
@@ -237,6 +239,10 @@ angular.module('hl.sticky', [])
 
 			function render() {
 				var shouldStick = sticksAtPosition(anchor);
+
+				if (angular.isDefined(options.enable) && !options.enable) {
+					shouldStick = false;
+				}
 
 				// Switch the sticky mode if the element crosses the sticky line
 				// don't make the element sticky when it's already sticky
@@ -347,7 +353,9 @@ angular.module('hl.sticky', [])
 						if (stickIndex !== stack.length() - 1) {
 							// @todo the stack range calculation should be diverted to the stack
 							stack.range(stickIndex + 1, stack.length()).forEach(function (stick) {
-								extraOffset += stick.computedHeight(anchor);
+								if (stick.isEnabled()) {
+									extraOffset += stick.computedHeight(anchor);
+								}
 							});
 						}
 					}
@@ -423,6 +431,7 @@ angular.module('hl.sticky', [])
 			};
 
 			$api.isSticky = isSticky;
+			$api.isEnabled = isEnabled;
 			$api.computedHeight = computedHeight;
 			$api.sticksAtPosition = sticksAtPosition;
 
@@ -608,7 +617,8 @@ angular.module('hl.sticky', [])
 				mediaQuery: '@',
 				collection: '@',
 				collectionParent: '@',
-				event: '&'
+				event: '&',
+				enable: '='
 			},
 			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
@@ -624,8 +634,8 @@ angular.module('hl.sticky', [])
 						})
 					}
 				};
-				angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery'], function(option) {
-					if ($scope[option]) {
+				angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery', 'enable'], function(option) {
+					if (angular.isDefined($scope[option])) {
 						options[option] = $scope[option];
 					}
 				});
@@ -637,6 +647,12 @@ angular.module('hl.sticky', [])
 				stickyElementCollection.addElement($element, options);
 
 				// listeners
+				$scope.$watch('enable', function (newValue, oldValue) {
+					if (newValue !== oldValue) {
+						options.enable = $scope.enable;
+						stickyElementCollection.draw({force: true});
+					}
+				});
 				$scope.$on('$destroy', function onDestroy() {
 					stickyElementCollection.removeElement($element);
 					if (!stickyElementCollection.trackedElements().length) {
