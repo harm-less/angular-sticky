@@ -654,6 +654,54 @@ describe('angular-sticky', function() {
 				expect(stickyElement).toBeSticky();
 				expect(stickyElement2).toBeSticky();
 			});
+
+			it('should not be sticky with enable option set to false', function() {
+				compileSticky(templateStickyElementOffsetSmallWithoutStyle, {
+					enable: false
+				});
+
+				drawAt(50);
+				expect(stickyElement).not.toBeSticky();
+			});
+
+			it('should be sticky with enable option set to true', function() {
+				compileSticky(templateStickyElementOffsetSmallWithoutStyle, {
+					enable: true
+				});
+
+				drawAt(50);
+				expect(stickyElement).toBeSticky();
+			});
+
+			it('should handle multiple sticky elements with different values for the option parameter', function() {
+				var options1 = { enable: true };
+				var options2 = { enable: true };
+				compileSticky(templateMultipleStickyElements, null, [options1, options2]);
+
+				var stickyElement1 = element.find('#sticky1');
+				var sticky1 = hlStickyElement(stickyElement1, options1);
+
+				var stickyElement2 = element.find('#sticky2');
+				var sticky2 = hlStickyElement(stickyElement2, options2);
+
+				drawAt(40);
+				drawAt(40, sticky2);
+				expect(stickyElement).toBeSticky();
+				expect(stickyElement2).toBeSticky();
+
+				options2.enable = false;
+				drawAt(40, sticky2);
+				expect(stickyElement2).not.toBeSticky();
+
+				options1.enable = false;
+				drawAt(40, sticky1);
+				expect(stickyElement1).not.toBeSticky();
+
+				options2.enable = true;
+				drawAt(40, sticky2);
+				expect(stickyElement2).toBeSticky();
+			});
+			
 		});
 
 		describe('sticky bottom', function() {
@@ -1551,6 +1599,43 @@ describe('angular-sticky', function() {
 					scrollTo(100);
 					scope.$digest();
 					expect(stickyElement).toBeSticky();
+				});
+			});
+
+			describe('enable', function () {
+
+				it('should enable sticky behavior on startup if true', function () {
+					var compiled = optionCompile('enable', true);
+
+					expect(compiled.sticky).toBeSticky();
+				});
+
+				it('should disable sticky behavior on startup if false', function () {
+					var compiled = optionCompile('enable', false);
+
+					expect(compiled.sticky).not.toBeSticky();
+				});
+
+				it('should disable stickyness while being sticky', function () {
+					var compiled = optionCompile('enable', true);
+
+					expect(compiled.sticky).toBeSticky();
+
+					compiled.sticky.isolateScope().enable = false;
+					compiled.sticky.isolateScope().$digest();
+
+					expect(compiled.sticky).not.toBeSticky();
+				});
+
+				it('should enable stickyness while not being sticky', function () {
+					var compiled = optionCompile('enable', false);
+
+					expect(compiled.sticky).not.toBeSticky();
+
+					compiled.sticky.isolateScope().enable = true;
+					compiled.sticky.isolateScope().$digest();
+
+					expect(compiled.sticky).toBeSticky();
 				});
 			});
 		});
