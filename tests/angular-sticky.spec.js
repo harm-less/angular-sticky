@@ -701,6 +701,15 @@ describe('angular-sticky', function() {
 				drawAt(40, sticky2);
 				expect(stickyElement2).toBeSticky();
 			});
+
+			it('should make it sticky with alwaysSticky option set to true', function() {
+				compileSticky(templateStickyElementOffsetSmallWithoutStyle, {
+					alwaysSticky: true
+				});
+
+				drawAt(49);
+				expect(stickyElement).toBeSticky();
+			});
 			
 		});
 
@@ -1636,6 +1645,30 @@ describe('angular-sticky', function() {
 					compiled.sticky.isolateScope().$digest();
 
 					expect(compiled.sticky).toBeSticky();
+				});
+			});
+
+			describe('alwaysSticky', function () {
+
+				it('should overwrite stickyness behavior', function () {
+					var compiled = optionCompile('alwaysSticky', true);
+
+					expect(compiled.sticky).toBeSticky();
+				});
+
+				it('should overwrite sticky behavior regardless of element position',  function () {
+					var compiled = compileDirective(createBottomSticky('<div style="height: 50px;"></div><div hl-sticky anchor="bottom" offset-bottom="30"></div>'));
+					var stickyElement = compiled.sticky;
+
+					scrollTo(81 + 50);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					compiled.sticky.isolateScope().alwaysSticky = true;
+					compiled.sticky.isolateScope().$digest();
+
+					expect(stickyElement).toBeSticky();
 				});
 			});
 		});
