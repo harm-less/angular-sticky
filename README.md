@@ -13,9 +13,14 @@ Requirements
 * Supports all major browsers and IE9 and up (lower versions might not be supported)
 
 #### Install with Bower (recommended)
-To install Angular Sticky with Bower use:
+To install Angular Sticky with [Bower](http://bower.io/) use:
 ```sh
-$ bower install angular-sticky-plugin
+bower install angular-sticky-plugin
+```
+
+Or with [npm](https://www.npmjs.com/)
+```sh
+npm install angular-sticky-plugin
 ```
 
 #### Manually
@@ -35,9 +40,10 @@ There are several useful Grunt tasks you can run in order to use/change the proj
 * ```serve```: Use to demo application in order to develop the scripts from the ```js``` folder.
 * ```build```: Build the files from the ```js``` folder to the ```dist``` folder
 
+**Note**: If you make a pull-request, there is no need to build the project as this is done only for a new release.
+
 ### Todo
 * Configurable z-index (preferably in each stack)
-* Anchor "bottom". There is already a bit of groundwork done for this
 * Media queries based on predefined breakpoints (e.g. min-width: lg-max) so the code is DRYer in combination with Bootstrap or other grid frameworks
 * There seems to be a weird bug were an element becoming sticky starts shaking a little
 * I strongly suspect that performance can be improved at various parts in the code. For example by caching more.

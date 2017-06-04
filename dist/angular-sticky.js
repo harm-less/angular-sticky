@@ -1,8 +1,8 @@
 /*
- * angular-sticky
+ * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.1.1-0 - 2016-04-19
+ * Version: 0.3.0 - 2016-12-01
  * License: MIT
  */
 'use strict';
@@ -199,9 +199,11 @@ angular.module('hl.sticky', [])
 				stickyLineBottom = _getBottomOffset(nativeEl) + offsetBottom + _stackOffsetBottom();
 				return stickyLineBottom;
 			}
-
+			function isEnabled() {
+				return (!angular.isDefined(options.enable) || options.enable);
+			}
 			function isSticky() {
-				return _isSticking;
+				return (isEnabled() && _isSticking) || options.alwaysSticky;
 			}
 			function sticksAtPosition(anchor, scrolledDistance) {
 				if (!matchesMediaQuery()) {
@@ -238,6 +240,14 @@ angular.module('hl.sticky', [])
 			function render() {
 				var shouldStick = sticksAtPosition(anchor);
 
+				if (angular.isDefined(options.enable) && !options.enable) {
+					shouldStick = false;
+				}
+
+				if (angular.isDefined(options.alwaysSticky) && options.alwaysSticky) {
+					shouldStick = true;
+				}
+
 				// Switch the sticky mode if the element crosses the sticky line
 				// don't make the element sticky when it's already sticky
 				if (shouldStick && !_isSticking) {
@@ -266,14 +276,14 @@ angular.module('hl.sticky', [])
 			function stickElement() {
 				_isSticking = true;
 
+				element.addClass(stickyClass);
+
 				// create placeholder to avoid jump
 				if (usePlaceholder) {
 					placeholder = placeholder || angular.element('<div>');
 					placeholder.css('height', elementHeight() + 'px');
 					element.after(placeholder);
 				}
-
-				element.addClass(stickyClass);
 
 				var rect = nativeEl.getBoundingClientRect();
 				var css = {
@@ -347,7 +357,9 @@ angular.module('hl.sticky', [])
 						if (stickIndex !== stack.length() - 1) {
 							// @todo the stack range calculation should be diverted to the stack
 							stack.range(stickIndex + 1, stack.length()).forEach(function (stick) {
-								extraOffset += stick.computedHeight(anchor);
+								if (stick.isSticky()) {
+									extraOffset += stick.computedHeight(anchor);
+								}
 							});
 						}
 					}
@@ -423,6 +435,7 @@ angular.module('hl.sticky', [])
 			};
 
 			$api.isSticky = isSticky;
+			$api.isEnabled = isEnabled;
 			$api.computedHeight = computedHeight;
 			$api.sticksAtPosition = sticksAtPosition;
 
@@ -548,7 +561,9 @@ angular.module('hl.sticky', [])
 							}
 						}
 						var deletedElement = trackedElements.splice(toDelete, 1)[0];
-						deletedElement.stickyElement.destroy();
+						if (deletedElement) {
+							deletedElement.stickyElement.destroy();
+						}
 
 						return deletedElement;
 					};
@@ -600,13 +615,21 @@ angular.module('hl.sticky', [])
 			transclude: true,
 			replace: true,
 			scope: {
-				event: '&'
+				container: '@',
+				anchor: '@',
+				stickyClass: '@',
+				mediaQuery: '@',
+				collection: '@',
+				collectionParent: '@',
+				event: '&',
+				enable: '=',
+				alwaysSticky: '='
 			},
 			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
 				var stickyElementCollection = hlStickyElementCollection({
-					name: $attrs.collection,
-					parent: $attrs.collectionParent
+					name: $scope.collection,
+					parent: $scope.collectionParent
 				});
 				var options = {
 					id: $attrs.hlSticky,
@@ -616,14 +639,36 @@ angular.module('hl.sticky', [])
 						})
 					}
 				};
-				angular.forEach(['mediaQuery', 'stickyClass', 'usePlaceholder', 'offsetTop', 'offsetBottom', 'anchor', 'container'], function(option) {
-					options[option] = $attrs[option];
+				angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery', 'enable', 'alwaysSticky'], function(option) {
+					if (angular.isDefined($scope[option])) {
+						options[option] = $scope[option];
+					}
+				});
+				angular.forEach(['usePlaceholder', 'offsetTop', 'offsetBottom'], function(option) {
+					if (angular.isDefined($attrs[option])) {
+						options[option] = $scope.$parent.$eval($attrs[option]);
+					}
 				});
 				stickyElementCollection.addElement($element, options);
 
 				// listeners
+				$scope.$watch('enable', function (newValue, oldValue) {
+					if (newValue !== oldValue) {
+						options.enable = $scope.enable;
+						stickyElementCollection.draw({force: true});
+					}
+				});
+				$scope.$watch('alwaysSticky', function (newValue, oldValue) {
+					if (newValue !== oldValue) {
+						options.alwaysSticky = $scope.alwaysSticky;
+						stickyElementCollection.draw({force: true});
+					}
+				});
 				$scope.$on('$destroy', function onDestroy() {
-					stickyElementCollection.destroy();
+					stickyElementCollection.removeElement($element);
+					if (!stickyElementCollection.trackedElements().length) {
+						stickyElementCollection.destroy();
+					}
 				});
 			}
 		};
