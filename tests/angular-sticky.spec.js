@@ -1527,12 +1527,6 @@ describe('angular-sticky', function() {
 				var hlStickyElementCollection;
 				var firstStickyElement;
 
-				beforeEach(inject(function(_hlStickyElementCollection_) {
-					hlStickyElementCollection = _hlStickyElementCollection_;
-
-					firstStickyElement = _collection('first');
-				}));
-
 				function _collection(collectionName, collectionParent) {
 					collectionParent = collectionParent || '';
 					var compiled = compileDirective('<div style="height: 50px;"></div><div hl-sticky collection="' + collectionName + '" collection-parent="' + collectionParent + '" style="height: 20px;"></div>');
@@ -1546,6 +1540,12 @@ describe('angular-sticky', function() {
 					return _collection('second', value);
 				}
 
+				beforeEach(inject(function(_hlStickyElementCollection_) {
+					hlStickyElementCollection = _hlStickyElementCollection_;
+
+					firstStickyElement = _collection('first');
+				}));
+
 				it('defaults to no parent', function () {
 					var attempt = tryCollectionParent();
 					var stickyElement = attempt.sticky;
@@ -1553,7 +1553,7 @@ describe('angular-sticky', function() {
 					expect(attempt.collection.trackedElements().length).toBe(1);
 
 					// just before it becomes sticky
-					scrollTo(119);
+					scrollTo(99);
 					scope.$digest();
 
 					expect(stickyElement).not.toBeSticky();
@@ -1571,7 +1571,7 @@ describe('angular-sticky', function() {
 					expect(attempt.collection.trackedElements().length).toBe(1);
 
 					// just before it becomes sticky
-					scrollTo(99);
+					scrollTo(79);
 					scope.$digest();
 
 					expect(stickyElement).not.toBeSticky();
@@ -1590,7 +1590,7 @@ describe('angular-sticky', function() {
 					expect(attempt.collection.trackedElements().length).toBe(1);
 
 					// just before it becomes sticky
-					scrollTo(99);
+					scrollTo(79);
 					scope.$digest();
 
 					expect(stickyElement).not.toBeSticky();
