@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
 	require('load-grunt-tasks')(grunt);
 
+	var serveStatic = require('serve-static');
 	var modRewrite = require('connect-modrewrite');
 
 	grunt.initConfig({
@@ -53,16 +54,16 @@ module.exports = function(grunt) {
 					middleware: function (connect) {
 						return [
 							modRewrite(['^[^\\.]*$ /index.html [L]']),
-							connect.static('.tmp'),
+							serveStatic('.tmp'),
 							connect().use(
 								'/bower_components',
-								connect.static('./bower_components')
+								serveStatic('./bower_components')
 							),
 							connect().use(
 								'/js',
-								connect.static('./js')
+								serveStatic('./js')
 							),
-							connect.static('demo')
+							serveStatic('demo')
 						];
 					}
 				}
