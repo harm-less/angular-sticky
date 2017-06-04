@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.3.0 - 2016-09-02
+ * Version: 0.3.0 - 2016-12-01
  * License: MIT
  */
 'use strict';
@@ -203,7 +203,7 @@ angular.module('hl.sticky', [])
 				return (!angular.isDefined(options.enable) || options.enable);
 			}
 			function isSticky() {
-				return isEnabled() && _isSticking;
+				return (isEnabled() && _isSticking) || options.alwaysSticky;
 			}
 			function sticksAtPosition(anchor, scrolledDistance) {
 				if (!matchesMediaQuery()) {
@@ -242,6 +242,10 @@ angular.module('hl.sticky', [])
 
 				if (angular.isDefined(options.enable) && !options.enable) {
 					shouldStick = false;
+				}
+
+				if (angular.isDefined(options.alwaysSticky) && options.alwaysSticky) {
+					shouldStick = true;
 				}
 
 				// Switch the sticky mode if the element crosses the sticky line
@@ -353,7 +357,7 @@ angular.module('hl.sticky', [])
 						if (stickIndex !== stack.length() - 1) {
 							// @todo the stack range calculation should be diverted to the stack
 							stack.range(stickIndex + 1, stack.length()).forEach(function (stick) {
-								if (stick.isEnabled()) {
+								if (stick.isSticky()) {
 									extraOffset += stick.computedHeight(anchor);
 								}
 							});
@@ -618,7 +622,8 @@ angular.module('hl.sticky', [])
 				collection: '@',
 				collectionParent: '@',
 				event: '&',
-				enable: '='
+				enable: '=',
+				alwaysSticky: '='
 			},
 			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
@@ -634,7 +639,7 @@ angular.module('hl.sticky', [])
 						})
 					}
 				};
-				angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery', 'enable'], function(option) {
+				angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery', 'enable', 'alwaysSticky'], function(option) {
 					if (angular.isDefined($scope[option])) {
 						options[option] = $scope[option];
 					}
@@ -650,6 +655,12 @@ angular.module('hl.sticky', [])
 				$scope.$watch('enable', function (newValue, oldValue) {
 					if (newValue !== oldValue) {
 						options.enable = $scope.enable;
+						stickyElementCollection.draw({force: true});
+					}
+				});
+				$scope.$watch('alwaysSticky', function (newValue, oldValue) {
+					if (newValue !== oldValue) {
+						options.alwaysSticky = $scope.alwaysSticky;
 						stickyElementCollection.draw({force: true});
 					}
 				});
