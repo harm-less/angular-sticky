@@ -217,12 +217,12 @@ angular.module('hl.sticky', [])
 				return false;
 			}
 			function sticksAtPositionTop(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop();
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop;
 				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : (window.pageYOffset || bodyEl.scrollTop());
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : (window.pageYOffset || bodyEl.scrollTop);
 				var scrollBottom = scrolledDistance + window.innerHeight;
 				return scrollBottom <= stickyLinePositionBottom();
 			}
