@@ -605,8 +605,6 @@ angular.module('hl.sticky', [])
 	.directive('hlSticky', function($log, $window, $document, hlStickyElementCollection) {
 		return {
 			restrict: 'A',
-			transclude: true,
-			replace: true,
 			scope: {
 				container: '@',
 				anchor: '@',
@@ -618,8 +616,9 @@ angular.module('hl.sticky', [])
 				enable: '=',
 				alwaysSticky: '='
 			},
-			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
+				$element.addClass('hl-sticky');
+
 				var stickyElementCollection = hlStickyElementCollection({
 					name: $scope.collection,
 					parent: $scope.collectionParent
