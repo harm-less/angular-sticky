@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.4.0 - 2017-06-12
+ * Version: 0.4.1 - 2017-06-12
  * License: MIT
  */
 'use strict';
@@ -612,8 +612,6 @@ angular.module('hl.sticky', [])
 	.directive('hlSticky', ["$log", "$window", "$document", "hlStickyElementCollection", function($log, $window, $document, hlStickyElementCollection) {
 		return {
 			restrict: 'A',
-			transclude: true,
-			replace: true,
 			scope: {
 				container: '@',
 				anchor: '@',
@@ -625,8 +623,9 @@ angular.module('hl.sticky', [])
 				enable: '=',
 				alwaysSticky: '='
 			},
-			template: '<div class="hl-sticky" ng-transclude></div>',
 			link: function($scope, $element, $attrs) {
+				$element.addClass('hl-sticky');
+
 				var stickyElementCollection = hlStickyElementCollection({
 					name: $scope.collection,
 					parent: $scope.collectionParent
