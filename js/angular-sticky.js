@@ -460,6 +460,7 @@ angular.module('hl.sticky', [])
 			$get: function($rootScope, $window, $document, $log, DefaultStickyStackName, hlStickyElement, hlStickyStack, throttle) {
 
 				var windowEl = angular.element($window);
+				var windowWidth = window.innerWidth;
 
 				var unbindViewContentLoaded;
 				var unbindIncludeContentLoaded;
@@ -474,7 +475,15 @@ angular.module('hl.sticky', [])
 					}
 
 					// bind events
-					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay, {leading: false});
+					throttledResize = function(event) {
+
+						var newWidth = window.innerWidth;
+
+						if (width != newWidth) {
+							throttle(resize, $stickyElement.defaults.checkDelay, {leading: false})(arguments);
+							width = newWidth;
+						}
+					};
 					windowEl.on('resize', throttledResize);
 					windowEl.on('scroll', drawEvent);
 
