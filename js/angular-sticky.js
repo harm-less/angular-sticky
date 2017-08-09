@@ -479,9 +479,9 @@ angular.module('hl.sticky', [])
 
 						var newWidth = window.innerWidth;
 
-						if (width != newWidth) {
+						if (windowWidth != newWidth) {
 							throttle(resize, $stickyElement.defaults.checkDelay, {leading: false})(arguments);
-							width = newWidth;
+							windowWidth = newWidth;
 						}
 					};
 					windowEl.on('resize', throttledResize);
