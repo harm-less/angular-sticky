@@ -1,6 +1,6 @@
 /*
  * angular-sticky-plugin
- * https://github.com/harm-less/angular-sticky
+ * https://github.com/mysidewalk/angular-sticky
 
  * Version: 0.4.1-pr32 - 2017-10-03
  * License: MIT
