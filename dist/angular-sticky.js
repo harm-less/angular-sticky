@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.4.1 - 2017-06-12
+ * Version: 0.4.2 - 2017-11-01
  * License: MIT
  */
 'use strict';
@@ -157,7 +157,7 @@ angular.module('hl.sticky', [])
 			var _isSticking = false;
 
 			// elements
-			var bodyEl = angular.element($document[0].body);
+			var bodyEl = $document[0].body;
 			var nativeEl = element[0];
 			var documentEl = $document[0].documentElement;
 
