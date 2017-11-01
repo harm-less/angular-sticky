@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.4.2 - 2017-11-01
+ * Version: 0.4.3 - 2017-11-01
  * License: MIT
  */
 'use strict';
