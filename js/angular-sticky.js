@@ -150,7 +150,7 @@ angular.module('hl.sticky', [])
 			var _isSticking = false;
 
 			// elements
-			var bodyEl = angular.element($document[0].body);
+			var bodyEl = $document[0].body;
 			var nativeEl = element[0];
 			var documentEl = $document[0].documentElement;
 
