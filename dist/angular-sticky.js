@@ -8,10 +8,6 @@
 'use strict';
 
 angular.module('hl.sticky', [])
-	.constant('DefaultStickyStackName', 'default-stack')
-
-	// 1039 should be above all Bootstrap's z-indexes (but just before the modals)
-	.constant('DefaultStickyStackZIndex', 1039)
 
 	.factory('mediaQuery', function () {
 		return {
@@ -39,7 +35,7 @@ angular.module('hl.sticky', [])
 			}
 
 			// should be above all Bootstrap's z-indexes (but just before the modals)
-			var stickyZIndex = options.zIndex;
+			var stickyZIndex = 1039;
 			var stack = [];
 
 			var $stack = {};
@@ -529,7 +525,6 @@ angular.module('hl.sticky', [])
 					options = angular.extend({}, $stickyElement.elementsDefaults, options);
 
 					var collectionName = options.name || DefaultStickyStackName;
-					var zIndex = parseInt(options.zIndex, 10);
 
 					// use existing element collection
 					if ($stickyElement.collections[collectionName]) {
@@ -537,8 +532,7 @@ angular.module('hl.sticky', [])
 					}
 
 					var stickyStackFactory = hlStickyStack({
-						name: collectionName,
-						zIndex: zIndex
+						name: collectionName
 					});
 
 					var trackedElements = [];
@@ -615,7 +609,7 @@ angular.module('hl.sticky', [])
 		return $stickyElement;
 	})
 
-	.directive('hlSticky', ["$log", "$window", "$document", "DefaultStickyStackZIndex", "hlStickyElementCollection", function($log, $window, $document, DefaultStickyStackZIndex, hlStickyElementCollection) {
+	.directive('hlSticky', ["$log", "$window", "$document", "hlStickyElementCollection", function($log, $window, $document, hlStickyElementCollection) {
 		return {
 			restrict: 'A',
 			scope: {
@@ -634,8 +628,7 @@ angular.module('hl.sticky', [])
 
 				var stickyElementCollection = hlStickyElementCollection({
 					name: $scope.collection,
-					parent: $scope.collectionParent,
-					zIndex: $attrs.zIndex || DefaultStickyStackZIndex
+					parent: $scope.collectionParent
 				});
 				var options = {
 					id: $attrs.hlSticky,
