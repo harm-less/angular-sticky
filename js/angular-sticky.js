@@ -1,6 +1,10 @@
 'use strict';
 
 angular.module('hl.sticky', [])
+	.constant('DefaultStickyStackName', 'default-stack')
+
+	// 1039 should be above all Bootstrap's z-indexes (but just before the modals)
+	.constant('DefaultStickyStackZIndex', 1039)
 
 	.factory('mediaQuery', function () {
 		return {
@@ -10,7 +14,7 @@ angular.module('hl.sticky', [])
 		};
 	})
 
-	.factory('hlStickyStack', function ($document, DefaultStickyStackName) {
+	.factory('hlStickyStack', function ($document, DefaultStickyStackName, DefaultStickyStackZIndex) {
 
 		var documentEl = $document[0].documentElement;
 
@@ -27,8 +31,7 @@ angular.module('hl.sticky', [])
 				return stacks[stackName];
 			}
 
-			// should be above all Bootstrap's z-indexes (but just before the modals)
-			var stickyZIndex = 1039;
+			var stickyZIndex = options.zIndex || DefaultStickyStackZIndex;
 			var stack = [];
 
 			var $stack = {};
@@ -443,8 +446,6 @@ angular.module('hl.sticky', [])
 		};
 	})
 
-	.constant('DefaultStickyStackName', 'default-stack')
-
 	.provider('hlStickyElementCollection', function() {
 
 		var $$count = 0;
@@ -518,6 +519,7 @@ angular.module('hl.sticky', [])
 					options = angular.extend({}, $stickyElement.elementsDefaults, options);
 
 					var collectionName = options.name || DefaultStickyStackName;
+					var zIndex = parseInt(options.zIndex, 10);
 
 					// use existing element collection
 					if ($stickyElement.collections[collectionName]) {
@@ -525,7 +527,8 @@ angular.module('hl.sticky', [])
 					}
 
 					var stickyStackFactory = hlStickyStack({
-						name: collectionName
+						name: collectionName,
+						zIndex: zIndex
 					});
 
 					var trackedElements = [];
@@ -602,7 +605,7 @@ angular.module('hl.sticky', [])
 		return $stickyElement;
 	})
 
-	.directive('hlSticky', function($log, $window, $document, hlStickyElementCollection) {
+	.directive('hlSticky', function($log, $window, $document, hlStickyElementCollection, DefaultStickyStackZIndex) {
 		return {
 			restrict: 'A',
 			scope: {
@@ -621,7 +624,8 @@ angular.module('hl.sticky', [])
 
 				var stickyElementCollection = hlStickyElementCollection({
 					name: $scope.collection,
-					parent: $scope.collectionParent
+					parent: $scope.collectionParent,
+					zIndex: $attrs.zIndex || DefaultStickyStackZIndex
 				});
 				var options = {
 					id: $attrs.hlSticky,
