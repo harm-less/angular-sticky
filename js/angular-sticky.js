@@ -381,7 +381,7 @@ angular.module('hl.sticky', [])
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
 					var containerRect = container.getBoundingClientRect();
 					var containerBottom = !hasScrollDistance ? containerRect.top - window.innerHeight + elementHeight() : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
-					return Math.max(0, containerBottom - (offsetTop + _stackOffset(anchor)));
+					return Math.max(0, (containerBottom + offsetTop + offsetBottom) - (_stackOffset(anchor)));
 				}
 				return 0;
 			}
@@ -393,7 +393,7 @@ angular.module('hl.sticky', [])
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
 					var containerRect = container.getBoundingClientRect();
 					var containerBottom = !hasScrollDistance ? containerRect.bottom : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
-					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight()) - containerBottom);
+					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight() + offsetBottom) - containerBottom);
 				}
 				return 0;
 			}
