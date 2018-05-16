@@ -266,6 +266,8 @@ angular.module('hl.sticky', [])
 					event({event: 'unstick'});
 				}
 
+				setBeforeAfterClass();
+
 				// stick after care
 				if (_isSticking) {
 					// update the top offset at an already sticking element
@@ -277,6 +279,40 @@ angular.module('hl.sticky', [])
 					}
 					element.css('width', elementWidth() + 'px');
 				}
+			}
+
+			function setBeforeAfterClass() {
+				var beforeOrAfter = null
+				element.removeClass(options.beforeStickyClass);
+				element.removeClass(options.afterStickyClass);
+
+				switch (anchor) {
+					case 'top':
+						if (!_isSticking) {
+							element.addClass(options.beforeStickyClass);
+							beforeOrAfter = "before";
+						} else if (containerBoundsBottom() > 0) {
+							element.addClass(options.afterStickyClass);
+							beforeOrAfter = "after";
+						}
+						break;
+					case 'bottom':
+						if (containerBoundsTop() > 0) {
+							element.addClass(options.beforeStickyClass);
+							beforeOrAfter = "before";
+						} else if (!_isSticking) {
+							element.addClass(options.afterStickyClass);
+							beforeOrAfter = "after";
+						}
+						break;
+				}
+				if (beforeOrAfter !== "before") {
+					element.removeClass(options.beforeStickyClass);
+				}
+				if (beforeOrAfter !== "after") {
+					element.removeClass(options.afterStickyClass);
+				}
+
 			}
 
 			function stickElement() {
