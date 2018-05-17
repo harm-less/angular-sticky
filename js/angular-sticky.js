@@ -155,11 +155,11 @@ angular.module('hl.sticky', [])
 			var documentEl = $document[0].documentElement;
 
 
-			if (!angular.isFunction(options.stickyEvent)) {
-				delete options.stickyEvent;
+			if (!angular.isFunction(options.event)) {
+				delete options.event;
 			}
 			angular.forEach(DefaultStickyStackOptions, function(value, key) {
-				if (angular.isUndefined(options[key])) {
+				if (angular.isUndefined(options[key]) || options[key] === "") {
 					options[key] = value;
 				} else if (options[key] && !isNaN(options[key])) {
 					options[key] *= 1;
@@ -175,7 +175,7 @@ angular.module('hl.sticky', [])
 			var offsetBottom = options.offsetBottom;
 			var anchor = options.anchor.toLowerCase().trim();
 
-			var event = options.stickyEvent;
+			var event = options.event;
 			var stack = options.stack === false ? null : options.stack || hlStickyStack({zIndex:options.zIndex});
 
 			var container = null;
@@ -468,7 +468,7 @@ angular.module('hl.sticky', [])
 		offsetBottom: 0,
 		anchor: 'top',
 		container: null,
-		stickyEvent: angular.noop,
+		event: angular.noop,
 		stack: null,
 		defaultStack: 'default-stack',
 		collection: null,
@@ -648,7 +648,7 @@ angular.module('hl.sticky', [])
 				usePlaceholder: '@',
 				offsetTop: '@',
 				offsetBottom: '@',
-				stickyEvent: '&',
+				event: '&',
 				zIndex: '@',
 				enable: '=',
 				alwaysSticky: '=',
@@ -658,30 +658,27 @@ angular.module('hl.sticky', [])
 				$element.addClass('hl-sticky');
 				var options;
 
-				var defaultEvent = function(event) {
-					$scope.event({
-						event: event
-					})
-				};
-
 				if (!$scope.options) {
 					options = {
 						id: $attrs.hlSticky,
-						stickyEvent: defaultEvent
+						event: function() {
+							var eventHandler = $scope.event();
+							if (angular.isFunction(eventHandler)) {
+								eventHandler.apply(null, arguments);
+							}
+						}
 					};
 					angular.forEach($scope, function(value, key) {
+						if (key === "event") return;
 						if (key[0] !== '$' && angular.isDefined(value)) {
 							options[key] = $scope[key];
-							if (!isNaN(options[key])) {
+							if (options[key] && !isNaN(options[key])) {
 								options[key] *= 1; //convert to number
 							}
 						}
 					});
 				} else {
 					options = $scope.options;
-					if (!options.stickyEvent) {
-						options.stickyEvent = defaultEvent;
-					}
 				}
 
 				var stickyElementCollection = hlStickyElementCollection({
