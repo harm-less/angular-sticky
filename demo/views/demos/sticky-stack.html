@@ -42,16 +42,30 @@
 
 		$scope.elements = [
 			{
-				description: 'I\'ll be leading the pack'
+				description: 'I\'ll be leading the pack',
+				options: {
+					anchor: "top",
+					offsetTop: 30,
+				}
 			},
 			{
-				description: 'I\'ll append myself to "Element 1"'
+				description: 'I\'ll append myself to "Element 1"',
+				options: {
+					anchor: "top",
+				}
 			},
 			{
-				description: 'Do I still need to explain?'
+				description: 'Do I still need to explain?',
+				options: {
+					anchor: "top",
+					offsetTop: 30,
+				}
 			},
 			{
-				description: 'I\'m the last item in the sticky stack'
+				description: 'I\'m the last item in the sticky stack',
+				options: {
+					anchor: "top",
+				}
 			}
 		];
 	}
@@ -67,7 +81,7 @@
 				</hl-scroll-along>
 				<div save-content="html">
 					<div ng-repeat="element in elements">
-						<div hl-sticky class="simple">
+						<div hl-sticky options="element.options" ng-class="'element-'+($index+1)" class="simple">
 							<b>Element {{$index + 1}}</b><br>{{element.description}}
 						</div>
 						<div class="divider">I'm just here to give the sticky elements some space</div>
