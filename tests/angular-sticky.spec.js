@@ -14,7 +14,14 @@ describe('angular-sticky', function() {
 	var hlStickyElementCollectionProvider;
 
 	beforeAll(function() {
-		window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";.custom-sticky-class {height: 40px !important;}</style>');
+		var charset = '@charset "UTF-8";'; //stop IDE from throwing error
+		window.angular.element(document.head).prepend('<style type="text/css">'+charset
+			+'.custom-sticky-class {height: 40px !important;}'
+			+'body > div {outline:1px solid black; outline-offset:2px;}'
+			+'div {outline:1px solid blue;}'
+			+'#container {outline:1px solid red;}'
+			+'#sticky {outline:1px solid green;}'
+			+'</style>');
 	});
 
 	beforeEach(module('hl.sticky'));
@@ -568,13 +575,49 @@ describe('angular-sticky', function() {
 				drawAt(50);
 				expect(stickyElement.hasClass('custom-sticky-class')).toBeTruthy();
 			});
-			it('should make it sticky with empty custom sticky class', function() {
+			it('should make it sticky with no sticky class', function() {
 				compileSticky(templateStickyElementOffsetSmall, {
 					stickyClass: null
 				});
 
 				drawAt(50);
+				expect(stickyElement.hasClass('is-sticky')).toBeFalsy();
+			});
+			it('should make it sticky with default sticky class', function() {
+				compileSticky(templateStickyElementOffsetSmall, {});
+
+				drawAt(50);
 				expect(stickyElement.hasClass('is-sticky')).toBeTruthy();
+			});
+
+			it('should make sticky with different zIndex', function() {
+				compileSticky(templateStickyElementOffsetSmall, {
+					zIndex: 80085
+				});
+				drawAt(50);
+				expect(stickyElement[0].style.zIndex).toEqual("80085");
+			});
+
+			it('should have before and after classes', function() {
+				compileSticky(templateStickyElementWithContainer, {
+					container: 'container'
+				});
+
+				// just before the container begins it should not be sticky
+				drawAt(49);
+				expect(stickyElement.hasClass('sticky-before')).toBeTruthy();
+
+				// just when the container begins it become sticky
+				drawAt(50);
+				expect(stickyElement.hasClass('sticky-before')).toBeFalsy();
+
+				// just before the sticky hits the bottom of the container
+				drawAt(130);
+				expect(stickyElement.hasClass('sticky-after')).toBeFalsy();
+
+				// just after the sticky hits the bottom of its container
+				drawAt(131);
+				expect(stickyElement.hasClass('sticky-after')).toBeTruthy();
 			});
 
 			it('should stick within container', function() {
@@ -880,10 +923,16 @@ describe('angular-sticky', function() {
 				drawAtBottom(50);
 				expect(stickyElement.hasClass('custom-sticky-class')).toBeTruthy();
 			});
-			xit('should make it sticky with empty custom sticky class', function() {
+			it('should make it sticky with no sticky class', function() {
 				compileStickyBottom(templateStickyElementBottomOffsetSmall, {
 					stickyClass: null
 				});
+
+				drawAtBottom(50);
+				expect(stickyElement.hasClass('is-sticky')).toBeFalsy();
+			});
+			xit('should make it sticky with default sticky class', function() {
+				compileStickyBottom(templateStickyElementBottomOffsetSmall, {});
 
 				drawAtBottom(50);
 				expect(stickyElement.hasClass('is-sticky')).toBeTruthy();
@@ -999,15 +1048,15 @@ describe('angular-sticky', function() {
 		var $timeout;
 
 		var hlStickyElementCollection;
-		var DefaultStickyStackName;
+		var DefaultStickyStackOptions;
 
 		var hlStickyStack;
 
-		beforeEach(inject(function (_$timeout_, _hlStickyElementCollection_, _DefaultStickyStackName_, _hlStickyStack_) {
+		beforeEach(inject(function (_$timeout_, _hlStickyElementCollection_, _DefaultStickyStackOptions_, _hlStickyStack_) {
 			$timeout = _$timeout_;
 
 			hlStickyElementCollection = _hlStickyElementCollection_;
-			DefaultStickyStackName = _DefaultStickyStackName_;
+			DefaultStickyStackOptions = _DefaultStickyStackOptions_;
 
 			hlStickyStack = _hlStickyStack_;
 		}));
@@ -1015,10 +1064,10 @@ describe('angular-sticky', function() {
 		it('creates a new instance of hlStickyElementCollection()', function() {
 			var element = compile(templateStickyElementOffsetSmall);
 
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack]).toBeUndefined();
 
 			var collection = hlStickyElementCollection();
-			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements();
+			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack].trackedElements();
 			expect(trackedElements.length).toBe(0);
 
 			collection.addElement(element);
@@ -1038,12 +1087,12 @@ describe('angular-sticky', function() {
 			var element = compile(templateStickyElementOffsetSmall);
 
 			var collection = hlStickyElementCollection();
-			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements();
+			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack].trackedElements();
 
 			collection.addElement(element);
 			expect(trackedElements.length).toBe(1);
 
-			hlStickyElementCollection().addElement(element);
+			collection.destroy();
 		});
 
 		it('creates multiple instances of hlStickyElementCollection()', function() {
@@ -1066,11 +1115,11 @@ describe('angular-sticky', function() {
 			var stack = hlStickyStack();
 			var collection = hlStickyElementCollection();
 			collection.addElement(element);
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName].trackedElements().length).toBe(1);
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack].trackedElements().length).toBe(1);
 			expect(stack.length()).toBe(1);
 
 			collection.destroy();
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackName]).toBeUndefined();
+			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack]).toBeUndefined();
 			expect(stack.length()).toBe(0);
 		});
 
@@ -1207,20 +1256,16 @@ describe('angular-sticky', function() {
 				});
 
 				it('hardcoded true', function () {
-					var attempt = tryUsePlaceholder('true');
+					var attempt = tryUsePlaceholder(true);
 					expect(attempt.placeholder.length).toBe(1);
 				});
 				it('hardcoded false', function () {
-					var attempt = tryUsePlaceholder('false');
+					var attempt = tryUsePlaceholder(false);
 					expect(attempt.placeholder.length).toBe(0);
 				});
-				it('evaluated variable', function () {
-					var attempt = tryUsePlaceholder('{{false}}');
-					expect(attempt.placeholder.length).toBe(0);
-				});
-				it('evaluated scope variable', function () {
+				it('scope variable', function () {
 					scope.usePlaceholder = false;
-					var attempt = tryUsePlaceholder('{{usePlaceholder}}');
+					var attempt = tryUsePlaceholder('usePlaceholder');
 					expect(attempt.placeholder.length).toBe(0);
 				});
 			});
@@ -1472,7 +1517,7 @@ describe('angular-sticky', function() {
 					};
 					var eventSpy = spyOn(scope, 'stickyEvent').and.callThrough();
 
-					var attempt = tryEvent('stickyEvent(event)');
+					var attempt = tryEvent('stickyEvent');
 					var stickyElement = attempt.sticky;
 
 					// just before it get sticky

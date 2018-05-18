@@ -321,7 +321,7 @@ angular.module('hl.sticky', [])
 				element.addClass(stickyClass);
 
 				// create placeholder to avoid jump
-				if (usePlaceholder) {
+				if (options.usePlaceholder) {
 					placeholder = placeholder || angular.element('<div>');
 					placeholder.css('height', elementHeight() + 'px');
 					element.after(placeholder);
@@ -683,14 +683,14 @@ angular.module('hl.sticky', [])
 				mediaQuery: '@',
 				collection: '@',
 				collectionParent: '@',
-				usePlaceholder: '@',
 				offsetTop: '@',
 				offsetBottom: '@',
-				event: '&',
 				zIndex: '@',
-				enable: '=',
-				alwaysSticky: '=',
-				options: '='
+				event: '&',
+				usePlaceholder: '=?',
+				enable: '=?',
+				alwaysSticky: '=?',
+				options: '=?'
 			},
 			link: function($scope, $element, $attrs) {
 				$element.addClass('hl-sticky');
