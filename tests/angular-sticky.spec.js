@@ -1048,15 +1048,15 @@ describe('angular-sticky', function() {
 		var $timeout;
 
 		var hlStickyElementCollection;
-		var DefaultStickyStackOptions;
+		var StickyStackDefaults;
 
 		var hlStickyStack;
 
-		beforeEach(inject(function (_$timeout_, _hlStickyElementCollection_, _DefaultStickyStackOptions_, _hlStickyStack_) {
+		beforeEach(inject(function (_$timeout_, _hlStickyElementCollection_, _StickyStackDefaults_, _hlStickyStack_) {
 			$timeout = _$timeout_;
 
 			hlStickyElementCollection = _hlStickyElementCollection_;
-			DefaultStickyStackOptions = _DefaultStickyStackOptions_;
+			StickyStackDefaults = _StickyStackDefaults_;
 
 			hlStickyStack = _hlStickyStack_;
 		}));
@@ -1064,10 +1064,10 @@ describe('angular-sticky', function() {
 		it('creates a new instance of hlStickyElementCollection()', function() {
 			var element = compile(templateStickyElementOffsetSmall);
 
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack]).toBeUndefined();
+			expect(hlStickyElementCollectionProvider.collections[StickyStackDefaults.defaultStack]).toBeUndefined();
 
 			var collection = hlStickyElementCollection();
-			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack].trackedElements();
+			var trackedElements = hlStickyElementCollectionProvider.collections[StickyStackDefaults.defaultStack].trackedElements();
 			expect(trackedElements.length).toBe(0);
 
 			collection.addElement(element);
@@ -1087,7 +1087,7 @@ describe('angular-sticky', function() {
 			var element = compile(templateStickyElementOffsetSmall);
 
 			var collection = hlStickyElementCollection();
-			var trackedElements = hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack].trackedElements();
+			var trackedElements = hlStickyElementCollectionProvider.collections[StickyStackDefaults.defaultStack].trackedElements();
 
 			collection.addElement(element);
 			expect(trackedElements.length).toBe(1);
@@ -1115,11 +1115,11 @@ describe('angular-sticky', function() {
 			var stack = hlStickyStack();
 			var collection = hlStickyElementCollection();
 			collection.addElement(element);
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack].trackedElements().length).toBe(1);
+			expect(hlStickyElementCollectionProvider.collections[StickyStackDefaults.defaultStack].trackedElements().length).toBe(1);
 			expect(stack.length()).toBe(1);
 
 			collection.destroy();
-			expect(hlStickyElementCollectionProvider.collections[DefaultStickyStackOptions.defaultStack]).toBeUndefined();
+			expect(hlStickyElementCollectionProvider.collections[StickyStackDefaults.defaultStack]).toBeUndefined();
 			expect(stack.length()).toBe(0);
 		});
 
@@ -1296,6 +1296,8 @@ describe('angular-sticky', function() {
 					var compiled = compileDirective('<div style="height: 20px;"></div><div hl-sticky anchor="top"></div>');
 					var stickyElement = compiled.sticky;
 
+					expect(stickyElement.hasClass('sticky-top')).toBeTruthy();
+
 					// just before it becomes sticky
 					scrollTo(19);
 					scope.$digest();
@@ -1328,6 +1330,8 @@ describe('angular-sticky', function() {
 				it('should stick to the bottom', function() {
 					var compiled = compileDirective(createBottomSticky('<div hl-sticky anchor="bottom">'));
 					var stickyElement = compiled.sticky;
+
+					expect(stickyElement.hasClass('sticky-bottom')).toBeTruthy();
 
 					// just before it becomes sticky
 					scrollToBottom(1);

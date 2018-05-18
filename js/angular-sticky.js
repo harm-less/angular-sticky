@@ -10,7 +10,7 @@ angular.module('hl.sticky', [])
 		};
 	})
 
-	.factory('hlStickyStack', function ($document, DefaultStickyStackOptions) {
+	.factory('hlStickyStack', function ($document, StickyStackDefaults) {
 
 		var documentEl = $document[0].documentElement;
 
@@ -20,7 +20,7 @@ angular.module('hl.sticky', [])
 
 			options = options || {};
 
-			var stackName = options.name || DefaultStickyStackOptions.defaultStack;
+			var stackName = options.name || StickyStackDefaults.defaultStack;
 
 			// use existing sticky stack
 			if (stacks[stackName]) {
@@ -28,7 +28,7 @@ angular.module('hl.sticky', [])
 			}
 
 			// should be above all Bootstrap's z-indexes (but just before the modals)
-			var stickyZIndex = options.zIndex || DefaultStickyStackOptions.zIndex;
+			var stickyZIndex = options.zIndex || StickyStackDefaults.zIndex;
 			var stack = [];
 
 			var $stack = {};
@@ -139,7 +139,7 @@ angular.module('hl.sticky', [])
 		return stickyStack;
 	})
 
-	.factory('hlStickyElement', function($document, $log, hlStickyStack, throttle, mediaQuery, DefaultStickyStackOptions) {
+	.factory('hlStickyElement', function($document, $log, hlStickyStack, throttle, mediaQuery, StickyStackDefaults) {
 		return function(element, options) {
 			options = options || {};
 
@@ -158,7 +158,7 @@ angular.module('hl.sticky', [])
 			if (!angular.isFunction(options.event)) {
 				delete options.event;
 			}
-			angular.forEach(DefaultStickyStackOptions, function(value, key) {
+			angular.forEach(StickyStackDefaults, function(value, key) {
 				if (angular.isUndefined(options[key]) || options[key] === "") {
 					options[key] = value;
 				} else if (options[key] && !isNaN(options[key])) {
@@ -188,6 +188,7 @@ angular.module('hl.sticky', [])
 			var initialCSS = {
 				style: element.attr('style') || ''
 			};
+			element.addClass('sticky-'+anchor);
 
 			// Methods
 			//
@@ -492,7 +493,7 @@ angular.module('hl.sticky', [])
 		};
 	})
 
-	.constant('DefaultStickyStackOptions', {
+	.constant('StickyStackDefaults', {
 		id: null,
 		enable: true,
 		mediaQuery: false,
@@ -524,7 +525,7 @@ angular.module('hl.sticky', [])
 			elementsDefaults: {
 
 			},
-			$get: function($rootScope, $window, $document, $log, DefaultStickyStackOptions, hlStickyElement, hlStickyStack, throttle) {
+			$get: function($rootScope, $window, $document, $log, StickyStackDefaults, hlStickyElement, hlStickyStack, throttle) {
 
 				var windowEl = angular.element($window);
 
@@ -586,7 +587,7 @@ angular.module('hl.sticky', [])
 					}
 					options = angular.extend({}, $stickyElement.elementsDefaults, options);
 
-					var collectionName = options.name || DefaultStickyStackOptions.defaultStack;
+					var collectionName = options.name || StickyStackDefaults.defaultStack;
 
 					// use existing element collection
 					if ($stickyElement.collections[collectionName]) {
