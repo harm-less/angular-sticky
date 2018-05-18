@@ -16,8 +16,8 @@
 	.box-shadow(0 10px 20px 0px fade(@color, 40%));
 }
 
-.sticky-element-default() {
-	.sticky-element();
+.sticky-element-default(@minHeight: @sticky-element-min-height) {
+	.sticky-element(@minHeight);
 	.sticky-element-shadow();
 	background-color: @gray-dark;
 }
