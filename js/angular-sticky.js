@@ -519,7 +519,7 @@ angular.module('hl.sticky', [])
 		var $stickyElement = {
 			collections: {},
 			defaults: {
-				checkDelay: 250
+				checkDelay: 20
 			},
 			elementsDefaults: {
 
@@ -535,18 +535,20 @@ angular.module('hl.sticky', [])
 				function init() {
 					$$count++;
 
+					resize();
 					// make sure we can initialize it only once
 					if ($$count > 1) {
 						return;
 					}
 
 					// bind events
-					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay, {leading: false});
+					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay);
 					windowEl.on('resize', throttledResize);
 					windowEl.on('scroll', drawEvent);
 
 					unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
 					unbindIncludeContentLoaded = $rootScope.$on('$includeContentLoaded', throttledResize);
+
 					throttledResize();
 				}
 
@@ -760,17 +762,10 @@ angular.module('hl.sticky', [])
 				var that = this;
 				var args = arguments;
 
-				if (!timeout) {
-					if (options.leading !== false) {
-						func.apply(that, args);
-					}
-					timeout = $timeout(function later() {
-						timeout = null;
-						if (options.trailing !== false) {
-							func.apply(that, args);
-						}
-					}, wait, false);
-				}
+				$timeout.cancel(timeout);
+				timeout = $timeout(function later() {
+					func.apply(that, args);
+				}, wait, false);
 			};
 		};
 	});
