@@ -425,7 +425,7 @@ angular.module('hl.sticky', [])
 			// @todo dffgdg
 			function containerBoundsTop(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? angular.element(documentEl.querySelector('#' + options.container))[0] : options.container : false;
+					container = getContainer();
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
@@ -437,7 +437,7 @@ angular.module('hl.sticky', [])
 			}
 			function containerBoundsBottom(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? angular.element(documentEl.querySelector('#' + options.container))[0] : options.container : false;
+					container = getContainer();
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
@@ -446,6 +446,23 @@ angular.module('hl.sticky', [])
 					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight() + offsetBottom) - containerBottom);
 				}
 				return 0;
+			}
+
+			function getContainer() {
+				var selector, el = false;
+
+				if (angular.isDefined(options.container)) {
+					if (angular.isString(options.container)) {
+						selector = options.container;
+						if (selector.indexOf(".") === -1 && selector.indexOf("#") === -1) {
+							selector = "#" + selector;
+						}
+						el = angular.element(documentEl.querySelector(selector))[0];
+					} else {
+						el = options.container;
+					}
+				}
+				return el;
 			}
 
 			var $api = {};
