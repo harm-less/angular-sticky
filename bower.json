@@ -24,13 +24,13 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "^1.4.0"
+    "angular": "~1.4.0"
   },
   "devDependencies": {
     "underscore": "~1.8.3",
     "jquery": "~2.0.3",
     "bootstrap": "~3.3.6",
-    "angular-mocks": "^1.4.0",
+    "angular-mocks": "~1.4.4",
     "angular-bootstrap": "~1.1.2",
     "angular-ui-router": "~0.2.18",
     "google-code-prettify": "1.0.1",
