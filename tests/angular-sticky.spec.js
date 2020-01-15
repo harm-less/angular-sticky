@@ -719,10 +719,7 @@ describe('angular-sticky', function() {
 			it('should handle multiple sticky elements with different values for the option parameter', function() {
 				var options1 = { enable: true };
 				var options2 = { enable: true };
-				compileSticky(templateMultipleStickyElements, null, [options1, options2]);
-
-				var stickyElement1 = angular.element(element[0].querySelector('#sticky1'));
-				var sticky1 = hlStickyElement(stickyElement1, options1);
+				compileSticky(templateMultipleStickyElements, options1);
 
 				var stickyElement2 = angular.element(element[0].querySelector('#sticky2'));
 				var sticky2 = hlStickyElement(stickyElement2, options2);
@@ -737,11 +734,11 @@ describe('angular-sticky', function() {
 				expect(stickyElement2).not.toBeSticky();
 
 				options1.enable = false;
-				drawAt(40, sticky1);
-				expect(stickyElement1).not.toBeSticky();
+				drawAt(40, sticky);
+				expect(stickyElement).not.toBeSticky();
 
 				options2.enable = true;
-				drawAt(40, sticky2);
+				drawAt(90, sticky2);
 				expect(stickyElement2).toBeSticky();
 			});
 

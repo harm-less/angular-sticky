@@ -182,12 +182,13 @@ angular.module('hl.sticky', [])
 			var offsetTop = options.offsetTop;
 			var offsetBottom = options.offsetBottom;
 			var anchor = options.anchor.toLowerCase().trim();
+			var absoluteOffset = 0;
 
 			var event = options.event;
 			var stack = options.stack === false ? null : options.stack || hlStickyStack({zIndex:options.zIndex});
 
 			var container = null;
-			var scrollBodyContainer = null;
+			var scrollerContainer = null;
 			var globalOffset = {
 				top: 0,
 				bottom: 0
@@ -241,7 +242,8 @@ angular.module('hl.sticky', [])
 			}
 			function sticksAtPositionTop(scrolledDistance) {
 				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
-				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
+				var scrollTop = scrolledDistance + ( Math.max(getScrollerOffset(), 0) + getScrollerScrolled());
+				// absoluteOffset = stickyLinePositionTop() - scrollTop; //possible use for absolute position
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
@@ -254,6 +256,7 @@ angular.module('hl.sticky', [])
 			}
 
 			function render() {
+				var offsetCalc = 0;
 				var shouldStick = sticksAtPosition(anchor);
 
 				if (angular.isDefined(options.enable) && !options.enable) {
@@ -282,11 +285,25 @@ angular.module('hl.sticky', [])
 				if (_isSticking) {
 					// update the top offset at an already sticking element
 					if (anchor === 'top') {
-						element.css('top', (offsetTop + _stackOffset(anchor) - containerBoundsBottom()) + 'px');
-					}
+
+						if (options.useAbsolutePosition) {
+                            stickElementAbsolute();
+						} else {
+                            offsetCalc = offsetTop + _stackOffset(anchor) - containerBoundsBottom() + Math.max(getScrollerOffset(), 0);
+                            element.css('top', (offsetCalc) + 'px');
+						}
+
+                    }
 					else if (anchor === 'bottom') {
-						element.css('bottom', (offsetBottom + _stackOffset(anchor) - containerBoundsTop()) + 'px');
-					}
+
+						if (options.useAbsolutePosition) {
+                            stickElementAbsolute();
+						} else {
+                            offsetCalc = offsetBottom + _stackOffset(anchor) - containerBoundsTop();
+							element.css('bottom', (offsetCalc) + 'px');
+						}
+
+                    }
 					element.css('width', elementWidth() + 'px');
 				}
 			}
@@ -323,6 +340,15 @@ angular.module('hl.sticky', [])
 					element.removeClass(options.afterStickyClass);
 				}
 
+			}
+
+			function stickElementAbsolute() {
+
+                    // element.css({
+                    //     'position': 'absolute',
+                    // 	'left': 0,
+                    // 	'top': getScrollerScrolled()
+                    // });
 			}
 
 			function stickElement() {
@@ -451,8 +477,10 @@ angular.module('hl.sticky', [])
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
 					var containerRect = container.getBoundingClientRect();
-					var containerBottom = !hasScrollDistance ? containerRect.bottom : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
-					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight() + offsetBottom) - containerBottom);
+					var containerBottom = !hasScrollDistance ?
+													containerRect.bottom
+												  : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
+					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight() + offsetBottom) - (containerBottom - Math.max(getScrollerOffset(), 0)) );
 				}
 				return 0;
 			}
@@ -475,25 +503,61 @@ angular.module('hl.sticky', [])
 			}
 
 			function getPageScrolled() {
-                var selector, el = false, adjustment = 0;
+                return window.pageYOffset || documentEl.scrollTop || bodyEl.scrollTop;
+            }
 
-                if (angular.isDefined(options.scrollBodyContainer)) {
-                    if (angular.isFunction(options.scrollBodyContainer)) {
-                    	return options.scrollBodyContainer();
-                    } else if (angular.isString(options.scrollBodyContainer)) {
-                        selector = options.scrollBodyContainer;
+            function getScrollerContainer() {
+                var selector, el = false;
+
+                if (angular.isDefined(options.scrollerContainer)) {
+                    if (angular.isFunction(options.scrollerContainer)) {
+
+                    } else if (angular.isString(options.scrollerContainer)) {
+                        selector = options.scrollerContainer;
                         if (selector.indexOf(".") === -1 && selector.indexOf("#") === -1) {
                             selector = "#" + selector;
                         }
                         el = angular.element(documentEl.querySelector(selector))[0];
                     } else {
-                        el = options.scrollBodyContainer;
+                        el = options.scrollerContainer;
                     }
-                    adjustment = el.scrollTop;
+                }
+                return el;
+            }
+
+            function getScrollerScrolled() {
+                var el, scrolled = 0, pixels = 0;
+
+                // //Gets all additional scrolling from multiple embeded scrolling containers
+                // el = nativeEl.parentElement;
+                // if (el) {
+                //     do {
+                //     	if (["BODY","HTML"].includes(el.tagName.toUpperCase())) {
+                //     		break;
+				// 		}
+                //         pixels += el.scrollTop;
+                //         el = el.parentElement;
+                //     } while (el);
+                // }
+                // return pixels;
+
+				el = getScrollerContainer();
+				if (el) {
+                    scrolled = el.scrollTop;
+                }
+                return scrolled;
+            }
+            
+            function getScrollerOffset() {
+				var el, offset = 0;
+
+				el = getScrollerContainer();
+				if (el) {
+                    offset = _getTopOffset(el) - getPageScrolled();
                 }
 
-                return (window.pageYOffset || documentEl.scrollTop || bodyEl.scrollTop) + adjustment;
-            }
+				return offset;
+			}
 
 			var $api = {};
 
@@ -592,9 +656,9 @@ angular.module('hl.sticky', [])
 					// bind events
 					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay);
 					windowEl.on('resize', throttledResize);
-					windowEl.on('scroll', drawEvent);
+                    $window.addEventListener('scroll', drawEvent, true);
 
-					unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
+                    unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
 					unbindIncludeContentLoaded = $rootScope.$on('$includeContentLoaded', throttledResize);
 
 					throttledResize();
@@ -610,6 +674,7 @@ angular.module('hl.sticky', [])
 					// unbind events
 					windowEl.off('resize', throttledResize);
 					windowEl.off('scroll', drawEvent);
+                    $window.removeEventListener('scroll', drawEvent, true);
 					unbindViewContentLoaded();
 					unbindIncludeContentLoaded();
 				}
@@ -726,7 +791,7 @@ angular.module('hl.sticky', [])
 			restrict: 'A',
 			scope: {
 				container: '@',
-                scrollBodyContainer: '@',
+                scrollerContainer: '@',
 				anchor: '@',
 				stickyClass: '@',
 				mediaQuery: '@',
