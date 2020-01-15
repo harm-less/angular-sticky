@@ -116,6 +116,14 @@ angular.module('hl.sticky', [])
 				};
 				for (var i = 0; i < stack.length; i++) {
 					stick = stack[i];
+
+					if (i === 0) {
+						//first item in the stack, need to get scroll position for that item to start
+
+					}
+
+
+
 					// check if the sticky element sticks at the queried position minus 1 pixel if the position is at the same place
 					if (stick.sticksAtPosition(anchor, atAdjusted)) {
 						var stickyAnchor = stick.anchor();
@@ -139,7 +147,7 @@ angular.module('hl.sticky', [])
 		return stickyStack;
 	})
 
-	.factory('hlStickyElement', function($document, $log, hlStickyStack, throttle, mediaQuery, StickyStackDefaults) {
+	.factory('hlStickyElement', function($document, $window, $log, hlStickyStack, throttle, mediaQuery, StickyStackDefaults) {
 		return function(element, options) {
 			options = options || {};
 
@@ -179,6 +187,7 @@ angular.module('hl.sticky', [])
 			var stack = options.stack === false ? null : options.stack || hlStickyStack({zIndex:options.zIndex});
 
 			var container = null;
+			var scrollBodyContainer = null;
 			var globalOffset = {
 				top: 0,
 				bottom: 0
@@ -231,12 +240,12 @@ angular.module('hl.sticky', [])
 				return false;
 			}
 			function sticksAtPositionTop(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop;
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
 				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : (window.pageYOffset || bodyEl.scrollTop);
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
 				var scrollBottom = scrolledDistance + window.innerHeight;
 				return scrollBottom <= stickyLinePositionBottom();
 			}
@@ -464,6 +473,27 @@ angular.module('hl.sticky', [])
 				}
 				return el;
 			}
+
+			function getPageScrolled() {
+                var selector, el = false, adjustment = 0;
+
+                if (angular.isDefined(options.scrollBodyContainer)) {
+                    if (angular.isFunction(options.scrollBodyContainer)) {
+                    	return options.scrollBodyContainer();
+                    } else if (angular.isString(options.scrollBodyContainer)) {
+                        selector = options.scrollBodyContainer;
+                        if (selector.indexOf(".") === -1 && selector.indexOf("#") === -1) {
+                            selector = "#" + selector;
+                        }
+                        el = angular.element(documentEl.querySelector(selector))[0];
+                    } else {
+                        el = options.scrollBodyContainer;
+                    }
+                    adjustment = el.scrollTop;
+                }
+
+                return (window.pageYOffset || documentEl.scrollTop || bodyEl.scrollTop) + adjustment;
+            }
 
 			var $api = {};
 
@@ -696,6 +726,7 @@ angular.module('hl.sticky', [])
 			restrict: 'A',
 			scope: {
 				container: '@',
+                scrollBodyContainer: '@',
 				anchor: '@',
 				stickyClass: '@',
 				mediaQuery: '@',

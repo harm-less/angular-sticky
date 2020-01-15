@@ -1,0 +1,27 @@
+<div save-content="intro">
+	<h2>Scrolling Container</h2>
+	<p>
+		Scrolling within a div.
+		Setting a container is done by adding a <code>scroll-body-container</code> attribute the id of an element.
+		It will check how much the scroll-body-container has scrolled rather than the page.
+	</p>
+</div>
+
+<div save-content="html">
+	<div class="container-fluid">
+		<div id="scrolling-container">
+			<div class="divider-scrolling-before">Space before the scrolling container.</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div id="sticky-container">
+						<div hl-sticky offset-top="50" container="sticky-container" scroll-body-container="scrolling-container">
+							I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.
+						</div>
+						<div class="divider">I'm just here to give the sticky elements some space.</div>
+					</div>
+				</div>
+			</div>
+			<div class="divider-scrolling-after">Space after the scrolling container.</div>
+		</div>
+	</div>
+</div>
