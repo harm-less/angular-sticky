@@ -243,12 +243,13 @@ angular.module('hl.sticky', [])
 			function sticksAtPositionTop(scrolledDistance) {
 				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
 				var scrollTop = scrolledDistance + ( Math.max(getScrollerOffset(), 0) + getScrollerScrolled());
-				// absoluteOffset = stickyLinePositionTop() - scrollTop; //possible use for absolute position
+				absoluteOffset = scrollTop - stickyLinePositionTop();
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
 				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
 				var scrollBottom = scrolledDistance + window.innerHeight - Math.max(getScrollerBottomOffset(), 0) + getScrollerScrolled();
+				absoluteOffset = scrollBottom - stickyLinePositionBottom();
 				return scrollBottom <= stickyLinePositionBottom();
 			}
 			function matchesMediaQuery() {
@@ -287,23 +288,59 @@ angular.module('hl.sticky', [])
 					if (anchor === 'top') {
 
 						if (options.useAbsolutePosition) {
-                            stickElementAbsolute();
+							if (containerBoundsBottom() <= 0) {
+								offsetCalc = absoluteOffset;
+								element.css({
+									'transform': "translateY(" + offsetCalc + "px)"
+								});
+							}
 						} else {
-                            offsetCalc = offsetTop + _stackOffset(anchor) - containerBoundsBottom() + Math.max(getScrollerOffset(), 0);
-                            element.css('top', (offsetCalc) + 'px');
+							offsetCalc = offsetTop + _stackOffset(anchor) - containerBoundsBottom() + Math.max(getScrollerOffset(), 0);
+							element.css('top', (offsetCalc) + 'px');
 						}
 
-                    }
+					}
 					else if (anchor === 'bottom') {
+						console.log('el',options.offsetBottom);
+
+						var offsetCalcA = offsetBottom + _stackOffset(anchor) - containerBoundsTop() + Math.max(getScrollerBottomOffset(), 0);
+						console.log('stock:', offsetCalcA);
+
+						var offsetCalcB = absoluteOffset;
+						console.log('cust:', offsetCalcB);
+
+						console.log('stackOffsetT', _stackOffset('top'));
+						console.log('stackOffsetB', _stackOffset('bottom'));
+						console.log('------');
+
+
+
 
 						if (options.useAbsolutePosition) {
-                            stickElementAbsolute();
+							if (containerBoundsTop() <= 0) {
+                                element.css({
+                                    "transform": ""
+                                });
+								var elRect = nativeEl.getBoundingClientRect();
+								var containerRect = container.getBoundingClientRect();
+								var space = containerRect.top - elRect.top  + offsetBottom + _stackOffset(anchor) + Math.max(getScrollerBottomOffset(), 0) + getScrollerScrolled();
+                                console.log('space', space);
+
+								offsetCalc = space;
+                                // scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
+                                // var scrollBottom = scrolledDistance + window.innerHeight - Math.max(getScrollerBottomOffset(), 0) + getScrollerScrolled();
+
+                                // offsetCalc = absoluteOffset;
+								element.css({
+									'transform': "translateY(" + offsetCalc + "px)"
+								});
+							}
 						} else {
-                            offsetCalc = offsetBottom + _stackOffset(anchor) - containerBoundsTop() + Math.max(getScrollerBottomOffset(), 0);
+							offsetCalc = offsetBottom + _stackOffset(anchor) - containerBoundsTop() + Math.max(getScrollerBottomOffset(), 0);
 							element.css('bottom', (offsetCalc) + 'px');
 						}
 
-                    }
+					}
 					element.css('width', elementWidth() + 'px');
 				}
 			}
@@ -344,34 +381,41 @@ angular.module('hl.sticky', [])
 
 			function stickElementAbsolute() {
 
-                    // element.css({
-                    //     'position': 'absolute',
-                    // 	'left': 0,
-                    // 	'top': getScrollerScrolled()
-                    // });
+					// element.css({
+					//     'position': 'absolute',
+					// 	'left': 0,
+					// 	'top': getScrollerScrolled()
+					// });
 			}
 
 			function stickElement() {
 				_isSticking = true;
-
+				var css = {};
 				element.addClass(stickyClass);
 
-				// create placeholder to avoid jump
-				if (options.usePlaceholder) {
-					placeholder = placeholder || angular.element('<div>');
-					placeholder.css('height', elementHeight() + 'px');
-					element.after(placeholder);
+				if (options.useAbsolutePosition) {
+					css = {
+						'z-index': stack ? stack.get(id).zIndex - (globalOffset.zIndex || 0) : null,
+                        'transform': "translateY(" + absoluteOffset + "px)"
+                    }
+				} else {
+					// create placeholder to avoid jump
+					if (options.usePlaceholder) {
+						placeholder = placeholder || angular.element('<div>');
+						placeholder.css('height', elementHeight() + 'px');
+						element.after(placeholder);
+					}
+
+					var rect = nativeEl.getBoundingClientRect();
+					css = {
+						'width': elementWidth() + 'px',
+						'position': 'fixed',
+						'left': rect.left + 'px',
+						'z-index': stack ? stack.get(id).zIndex - (globalOffset.zIndex || 0) : null,
+					};
+
+					css['margin-' + anchor] = 0;
 				}
-
-				var rect = nativeEl.getBoundingClientRect();
-				var css = {
-					'width': elementWidth() + 'px',
-					'position': 'fixed',
-					'left': rect.left + 'px',
-					'z-index': stack ? stack.get(id).zIndex - (globalOffset.zIndex || 0) : null
-				};
-
-				css['margin-' + anchor] = 0;
 				element.css(css);
 			}
 			function unstickElement() {
@@ -457,7 +501,7 @@ angular.module('hl.sticky', [])
 				return 0;
 			}
 
-			// @todo dffgdg
+			// returns a positive pixel count if it's before the item
 			function containerBoundsTop(scrolledDistance) {
 				if (container === null) {
 					container = getContainer();
@@ -468,7 +512,8 @@ angular.module('hl.sticky', [])
 					var containerBottom = !hasScrollDistance
 												? containerRect.top - window.innerHeight + elementHeight()
 												: (_getTopOffset(container) + containerRect.height) - scrolledDistance;
-					return Math.max(0, (containerBottom + offsetTop + offsetBottom) - (_stackOffset(anchor)) + Math.max(getScrollerBottomOffset(), 0) );
+					// return Math.max(0, containerBottom - (offsetTop + _stackOffset(anchor)));
+					return Math.max(0, (containerBottom + offsetTop + _stackOffset(anchor)) - Math.max(getScrollerBottomOffset(), 0) );
 				}
 				return 0;
 			}
@@ -505,45 +550,45 @@ angular.module('hl.sticky', [])
 			}
 
 			function getPageScrolled() {
-                return window.pageYOffset || documentEl.scrollTop || bodyEl.scrollTop;
-            }
+				return window.pageYOffset || documentEl.scrollTop || bodyEl.scrollTop;
+			}
 
-            function getScrollerContainer() {
-                var selector, el = false;
+			function getScrollerContainer() {
+				var selector, el = false;
 
-                if (angular.isDefined(options.scrollerContainer)) {
-                    if (angular.isFunction(options.scrollerContainer)) {
+				if (angular.isDefined(options.scrollerContainer)) {
+					if (angular.isFunction(options.scrollerContainer)) {
 
-                    } else if (angular.isString(options.scrollerContainer)) {
-                        selector = options.scrollerContainer;
-                        if (selector.indexOf(".") === -1 && selector.indexOf("#") === -1) {
-                            selector = "#" + selector;
-                        }
-                        el = angular.element(documentEl.querySelector(selector))[0];
-                    } else {
-                        el = options.scrollerContainer;
-                    }
-                }
-                return el;
-            }
+					} else if (angular.isString(options.scrollerContainer)) {
+						selector = options.scrollerContainer;
+						if (selector.indexOf(".") === -1 && selector.indexOf("#") === -1) {
+							selector = "#" + selector;
+						}
+						el = angular.element(documentEl.querySelector(selector))[0];
+					} else {
+						el = options.scrollerContainer;
+					}
+				}
+				return el;
+			}
 
-            function getScrollerScrolled() {
-                var el, scrolled = 0, pixels = 0;
+			function getScrollerScrolled() {
+				var el, scrolled = 0, pixels = 0;
 
 				el = getScrollerContainer();
 				if (el) {
-                    scrolled = el.scrollTop;
-                }
-                return scrolled;
-            }
-            
-            function getScrollerOffset() {
+					scrolled = el.scrollTop;
+				}
+				return scrolled;
+			}
+
+			function getScrollerOffset() {
 				var el, offset = 0;
 
 				el = getScrollerContainer();
 				if (el) {
-                    offset = _getTopOffset(el) - getPageScrolled();
-                }
+					offset = _getTopOffset(el) - getPageScrolled();
+				}
 
 				return offset;
 			}
@@ -657,9 +702,9 @@ angular.module('hl.sticky', [])
 					// bind events
 					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay);
 					windowEl.on('resize', throttledResize);
-                    $window.addEventListener('scroll', drawEvent, true);
+					$window.addEventListener('scroll', drawEvent, true);
 
-                    unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
+					unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
 					unbindIncludeContentLoaded = $rootScope.$on('$includeContentLoaded', throttledResize);
 
 					throttledResize();
@@ -675,7 +720,7 @@ angular.module('hl.sticky', [])
 					// unbind events
 					windowEl.off('resize', throttledResize);
 					windowEl.off('scroll', drawEvent);
-                    $window.removeEventListener('scroll', drawEvent, true);
+					$window.removeEventListener('scroll', drawEvent, true);
 					unbindViewContentLoaded();
 					unbindIncludeContentLoaded();
 				}
@@ -792,7 +837,7 @@ angular.module('hl.sticky', [])
 			restrict: 'A',
 			scope: {
 				container: '@',
-                scrollerContainer: '@',
+				scrollerContainer: '@',
 				anchor: '@',
 				stickyClass: '@',
 				mediaQuery: '@',
@@ -803,6 +848,7 @@ angular.module('hl.sticky', [])
 				zIndex: '@',
 				event: '&',
 				usePlaceholder: '=?',
+				useAbsolutePosition: '=?',
 				enable: '=?',
 				alwaysSticky: '=?',
 				options: '=?'

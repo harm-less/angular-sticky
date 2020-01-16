@@ -7,31 +7,31 @@
 	</p>
 </div>
 
-<h2>Attached to Top</h2>
-<div save-content="html">
-	<div class="container-fluid">
-		<div id="scrolling-box" class="scrolling-container container-fluid">
-			<div class="divider-scrolling-small">Space before the scrolling container.</div>
-			<div class="row">
-				<div class="col-lg-12">
-					<div id="sticky-container">
-						<div class="divider-scrolling-small">...</div>
-						<div hl-sticky offset-top="50" offset-bottom="10" container="sticky-container" scroller-container="scrolling-box">
-							I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.
-						</div>
-						<div class="divider-scrolling-small">...</div>
-						<div class="divider-scrolling-small">...</div>
-						<div hl-sticky offset-top="30" container="sticky-container" scroller-container="scrolling-box">
-							I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.
-						</div>
-						<div class="divider">I'm just here to give the sticky elements some space.</div>
-					</div>
-				</div>
-			</div>
-			<div class="divider-scrolling-big">Space after the scrolling container.</div>
-		</div>
-	</div>
-</div>
+<!--<h2>Attached to Top</h2>-->
+<!--<div save-content="html">-->
+	<!--<div class="container-fluid">-->
+		<!--<div id="scrolling-box" class="scrolling-container container-fluid">-->
+			<!--<div class="divider-scrolling-small">Space before the scrolling container.</div>-->
+			<!--<div class="row">-->
+				<!--<div class="col-lg-12">-->
+					<!--<div id="sticky-container">-->
+						<!--<div class="divider-scrolling-small">...</div>-->
+						<!--<div hl-sticky offset-top="50" offset-bottom="10" container="sticky-container" scroller-container="scrolling-box" use-absolute-position="true">-->
+							<!--I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.-->
+						<!--</div>-->
+						<!--<div class="divider-scrolling-small">...</div>-->
+						<!--<div class="divider-scrolling-small">...</div>-->
+						<!--<div hl-sticky offset-top="30" container="sticky-container" scroller-container="scrolling-box" use-absolute-position="true">-->
+							<!--I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.-->
+						<!--</div>-->
+						<!--<div class="divider">I'm just here to give the sticky elements some space.</div>-->
+					<!--</div>-->
+				<!--</div>-->
+			<!--</div>-->
+			<!--<div class="divider-scrolling-big">Space after the scrolling container.</div>-->
+		<!--</div>-->
+	<!--</div>-->
+<!--</div>-->
 <h2>Attached to Bottom</h2>
 <div class="container-fluid">
 	<div id="scrolling-box-bottom" class="scrolling-container container-fluid">
@@ -40,13 +40,18 @@
 			<div class="col-lg-12">
 				<div id="sticky-container-bottom">
 					<div class="divider">I'm just here to give the sticky elements some space.</div>
-					<div hl-sticky anchor="bottom" offset-top="10" offset-bottom="50" container="sticky-container-bottom" scroller-container="scrolling-box-bottom">
+					<div hl-sticky anchor="bottom" offset-top="20" offset-bottom="1" container="sticky-container-bottom" scroller-container="scrolling-box-bottom" use-absolute-position="true">
+						First element.
+					</div>
+					<div class="divider-scrolling-small">...</div>
+					<div class="divider-scrolling-small">...</div>
+					<div hl-sticky anchor="bottom" offset-top="0" offset-bottom="2" container="sticky-container-bottom" scroller-container="scrolling-box-bottom" use-absolute-position="true">
 						I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.
 					</div>
 					<div class="divider-scrolling-small">...</div>
 					<div class="divider-scrolling-small">...</div>
-					<div hl-sticky anchor="bottom" offset-bottom="30" container="sticky-container-bottom" scroller-container="scrolling-box-bottom">
-						I'll be sticky, but only for a short while. Once the grey box in the background disappears if you scroll too far, the sticky element goes with it.
+					<div hl-sticky anchor="bottom" offset-top="0" offset-bottom="3" container="sticky-container-bottom" scroller-container="scrolling-box-bottom" use-absolute-position="true">
+						Three
 					</div>
 					<div class="divider-scrolling-small">...</div>
 					<div class="divider-scrolling-small">...</div>
