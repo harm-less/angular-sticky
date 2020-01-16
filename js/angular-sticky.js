@@ -116,6 +116,14 @@ angular.module('hl.sticky', [])
 				};
 				for (var i = 0; i < stack.length; i++) {
 					stick = stack[i];
+
+					if (i === 0) {
+						//first item in the stack, need to get scroll position for that item to start
+
+					}
+
+
+
 					// check if the sticky element sticks at the queried position minus 1 pixel if the position is at the same place
 					if (stick.sticksAtPosition(anchor, atAdjusted)) {
 						var stickyAnchor = stick.anchor();
@@ -139,7 +147,7 @@ angular.module('hl.sticky', [])
 		return stickyStack;
 	})
 
-	.factory('hlStickyElement', function($document, $log, hlStickyStack, throttle, mediaQuery, StickyStackDefaults) {
+	.factory('hlStickyElement', function($document, $window, $log, hlStickyStack, throttle, mediaQuery, StickyStackDefaults) {
 		return function(element, options) {
 			options = options || {};
 
@@ -174,11 +182,13 @@ angular.module('hl.sticky', [])
 			var offsetTop = options.offsetTop;
 			var offsetBottom = options.offsetBottom;
 			var anchor = options.anchor.toLowerCase().trim();
+			var absoluteOffset = 0;
 
 			var event = options.event;
 			var stack = options.stack === false ? null : options.stack || hlStickyStack({zIndex:options.zIndex});
 
 			var container = null;
+			var scrollerContainer = null;
 			var globalOffset = {
 				top: 0,
 				bottom: 0
@@ -231,13 +241,15 @@ angular.module('hl.sticky', [])
 				return false;
 			}
 			function sticksAtPositionTop(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : window.pageYOffset || bodyEl.scrollTop;
-				var scrollTop = scrolledDistance - (documentEl.clientTop || 0);
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
+				var scrollTop = scrolledDistance + ( Math.max(getScrollerOffset(), 0) + getScrollerScrolled());
+				absoluteOffset = scrollTop - stickyLinePositionTop();
 				return scrollTop >= stickyLinePositionTop();
 			}
 			function sticksAtPositionBottom(scrolledDistance) {
-				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : (window.pageYOffset || bodyEl.scrollTop);
-				var scrollBottom = scrolledDistance + window.innerHeight;
+				scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
+				var scrollBottom = scrolledDistance + window.innerHeight - Math.max(getScrollerBottomOffset(), 0) + getScrollerScrolled();
+				absoluteOffset = scrollBottom - stickyLinePositionBottom();
 				return scrollBottom <= stickyLinePositionBottom();
 			}
 			function matchesMediaQuery() {
@@ -245,6 +257,7 @@ angular.module('hl.sticky', [])
 			}
 
 			function render() {
+				var offsetCalc = 0;
 				var shouldStick = sticksAtPosition(anchor);
 
 				if (angular.isDefined(options.enable) && !options.enable) {
@@ -273,10 +286,60 @@ angular.module('hl.sticky', [])
 				if (_isSticking) {
 					// update the top offset at an already sticking element
 					if (anchor === 'top') {
-						element.css('top', (offsetTop + _stackOffset(anchor) - containerBoundsBottom()) + 'px');
+
+						if (options.useAbsolutePosition) {
+							if (containerBoundsBottom() <= 0) {
+								offsetCalc = absoluteOffset;
+								element.css({
+									'transform': "translateY(" + offsetCalc + "px)"
+								});
+							}
+						} else {
+							offsetCalc = offsetTop + _stackOffset(anchor) - containerBoundsBottom() + Math.max(getScrollerOffset(), 0);
+							element.css('top', (offsetCalc) + 'px');
+						}
+
 					}
 					else if (anchor === 'bottom') {
-						element.css('bottom', (offsetBottom + _stackOffset(anchor) - containerBoundsTop()) + 'px');
+						console.log('el',options.offsetBottom);
+
+						var offsetCalcA = offsetBottom + _stackOffset(anchor) - containerBoundsTop() + Math.max(getScrollerBottomOffset(), 0);
+						console.log('stock:', offsetCalcA);
+
+						var offsetCalcB = absoluteOffset;
+						console.log('cust:', offsetCalcB);
+
+						console.log('stackOffsetT', _stackOffset('top'));
+						console.log('stackOffsetB', _stackOffset('bottom'));
+						console.log('------');
+
+
+
+
+						if (options.useAbsolutePosition) {
+							if (containerBoundsTop() <= 0) {
+                                element.css({
+                                    "transform": ""
+                                });
+								var elRect = nativeEl.getBoundingClientRect();
+								var containerRect = container.getBoundingClientRect();
+								var space = containerRect.top - elRect.top  + offsetBottom + _stackOffset(anchor) + Math.max(getScrollerBottomOffset(), 0) + getScrollerScrolled();
+                                console.log('space', space);
+
+								offsetCalc = space;
+                                // scrolledDistance = scrolledDistance !== undefined ? scrolledDistance : getPageScrolled();
+                                // var scrollBottom = scrolledDistance + window.innerHeight - Math.max(getScrollerBottomOffset(), 0) + getScrollerScrolled();
+
+                                // offsetCalc = absoluteOffset;
+								element.css({
+									'transform': "translateY(" + offsetCalc + "px)"
+								});
+							}
+						} else {
+							offsetCalc = offsetBottom + _stackOffset(anchor) - containerBoundsTop() + Math.max(getScrollerBottomOffset(), 0);
+							element.css('bottom', (offsetCalc) + 'px');
+						}
+
 					}
 					element.css('width', elementWidth() + 'px');
 				}
@@ -316,27 +379,43 @@ angular.module('hl.sticky', [])
 
 			}
 
+			function stickElementAbsolute() {
+
+					// element.css({
+					//     'position': 'absolute',
+					// 	'left': 0,
+					// 	'top': getScrollerScrolled()
+					// });
+			}
+
 			function stickElement() {
 				_isSticking = true;
-
+				var css = {};
 				element.addClass(stickyClass);
 
-				// create placeholder to avoid jump
-				if (options.usePlaceholder) {
-					placeholder = placeholder || angular.element('<div>');
-					placeholder.css('height', elementHeight() + 'px');
-					element.after(placeholder);
+				if (options.useAbsolutePosition) {
+					css = {
+						'z-index': stack ? stack.get(id).zIndex - (globalOffset.zIndex || 0) : null,
+                        'transform': "translateY(" + absoluteOffset + "px)"
+                    }
+				} else {
+					// create placeholder to avoid jump
+					if (options.usePlaceholder) {
+						placeholder = placeholder || angular.element('<div>');
+						placeholder.css('height', elementHeight() + 'px');
+						element.after(placeholder);
+					}
+
+					var rect = nativeEl.getBoundingClientRect();
+					css = {
+						'width': elementWidth() + 'px',
+						'position': 'fixed',
+						'left': rect.left + 'px',
+						'z-index': stack ? stack.get(id).zIndex - (globalOffset.zIndex || 0) : null,
+					};
+
+					css['margin-' + anchor] = 0;
 				}
-
-				var rect = nativeEl.getBoundingClientRect();
-				var css = {
-					'width': elementWidth() + 'px',
-					'position': 'fixed',
-					'left': rect.left + 'px',
-					'z-index': stack ? stack.get(id).zIndex - (globalOffset.zIndex || 0) : null
-				};
-
-				css['margin-' + anchor] = 0;
 				element.css(css);
 			}
 			function unstickElement() {
@@ -422,30 +501,108 @@ angular.module('hl.sticky', [])
 				return 0;
 			}
 
-			// @todo dffgdg
+			// returns a positive pixel count if it's before the item
 			function containerBoundsTop(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? angular.element(documentEl.querySelector('#' + options.container))[0] : options.container : false;
+					container = getContainer();
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
 					var containerRect = container.getBoundingClientRect();
-					var containerBottom = !hasScrollDistance ? containerRect.top - window.innerHeight + elementHeight() : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
-					return Math.max(0, (containerBottom + offsetTop + offsetBottom) - (_stackOffset(anchor)));
+					var containerBottom = !hasScrollDistance
+												? containerRect.top - window.innerHeight + elementHeight()
+												: (_getTopOffset(container) + containerRect.height) - scrolledDistance;
+					// return Math.max(0, containerBottom - (offsetTop + _stackOffset(anchor)));
+					return Math.max(0, (containerBottom + offsetTop + _stackOffset(anchor)) - Math.max(getScrollerBottomOffset(), 0) );
 				}
 				return 0;
 			}
 			function containerBoundsBottom(scrolledDistance) {
 				if (container === null) {
-					container = options.container !== undefined ? angular.isString(options.container) ? angular.element(documentEl.querySelector('#' + options.container))[0] : options.container : false;
+					container = getContainer();
 				}
 				if (container) {
 					var hasScrollDistance = !(scrolledDistance === null || scrolledDistance === undefined);
 					var containerRect = container.getBoundingClientRect();
-					var containerBottom = !hasScrollDistance ? containerRect.bottom : (_getTopOffset(container) + containerRect.height) - scrolledDistance;
-					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight() + offsetBottom) - containerBottom);
+					var containerBottom = !hasScrollDistance
+												? containerRect.bottom
+												: (_getTopOffset(container) + containerRect.height) - scrolledDistance;
+					return Math.max(0, (offsetTop + _stackOffset(anchor) + elementHeight() + offsetBottom) - (containerBottom - Math.max(getScrollerOffset(), 0)) );
 				}
 				return 0;
+			}
+
+			function getContainer() {
+				var selector, el = false;
+
+				if (angular.isDefined(options.container)) {
+					if (angular.isString(options.container)) {
+						selector = options.container;
+						if (selector.indexOf(".") === -1 && selector.indexOf("#") === -1) {
+							selector = "#" + selector;
+						}
+						el = angular.element(documentEl.querySelector(selector))[0];
+					} else {
+						el = options.container;
+					}
+				}
+				return el;
+			}
+
+			function getPageScrolled() {
+				return window.pageYOffset || documentEl.scrollTop || bodyEl.scrollTop;
+			}
+
+			function getScrollerContainer() {
+				var selector, el = false;
+
+				if (angular.isDefined(options.scrollerContainer)) {
+					if (angular.isFunction(options.scrollerContainer)) {
+
+					} else if (angular.isString(options.scrollerContainer)) {
+						selector = options.scrollerContainer;
+						if (selector.indexOf(".") === -1 && selector.indexOf("#") === -1) {
+							selector = "#" + selector;
+						}
+						el = angular.element(documentEl.querySelector(selector))[0];
+					} else {
+						el = options.scrollerContainer;
+					}
+				}
+				return el;
+			}
+
+			function getScrollerScrolled() {
+				var el, scrolled = 0, pixels = 0;
+
+				el = getScrollerContainer();
+				if (el) {
+					scrolled = el.scrollTop;
+				}
+				return scrolled;
+			}
+
+			function getScrollerOffset() {
+				var el, offset = 0;
+
+				el = getScrollerContainer();
+				if (el) {
+					offset = _getTopOffset(el) - getPageScrolled();
+				}
+
+				return offset;
+			}
+
+			function getScrollerBottomOffset() {
+				var el = false, bottom = 0;
+				el = getScrollerContainer();
+				if (el) {
+					var bound = el.getBoundingClientRect();
+					bottom = getScrollerOffset() + bound.height;
+					bottom = window.innerHeight - bottom;
+				}
+
+				return bottom;
 			}
 
 			var $api = {};
@@ -545,7 +702,7 @@ angular.module('hl.sticky', [])
 					// bind events
 					throttledResize = throttle(resize, $stickyElement.defaults.checkDelay);
 					windowEl.on('resize', throttledResize);
-					windowEl.on('scroll', drawEvent);
+					$window.addEventListener('scroll', drawEvent, true);
 
 					unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
 					unbindIncludeContentLoaded = $rootScope.$on('$includeContentLoaded', throttledResize);
@@ -563,6 +720,7 @@ angular.module('hl.sticky', [])
 					// unbind events
 					windowEl.off('resize', throttledResize);
 					windowEl.off('scroll', drawEvent);
+					$window.removeEventListener('scroll', drawEvent, true);
 					unbindViewContentLoaded();
 					unbindIncludeContentLoaded();
 				}
@@ -679,6 +837,7 @@ angular.module('hl.sticky', [])
 			restrict: 'A',
 			scope: {
 				container: '@',
+				scrollerContainer: '@',
 				anchor: '@',
 				stickyClass: '@',
 				mediaQuery: '@',
@@ -689,6 +848,7 @@ angular.module('hl.sticky', [])
 				zIndex: '@',
 				event: '&',
 				usePlaceholder: '=?',
+				useAbsolutePosition: '=?',
 				enable: '=?',
 				alwaysSticky: '=?',
 				options: '=?'
